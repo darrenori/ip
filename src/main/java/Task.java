@@ -1,0 +1,41 @@
+/**
+ * Represents a task in Nori, including its description and completion state.
+ */
+public class Task {
+    protected String description;
+    protected boolean isDone;
+
+    /**
+     * Creates a task that has not yet been completed.
+     *
+     * @param description the task description
+     */
+    public Task(String description) {
+        this.description = description;
+        this.isDone = false;
+    }
+
+    /** Marks this task as completed. */
+    public void markAsDone() {
+        isDone = true;
+    }
+
+    /** Marks this task as not completed. */
+    public void markAsNotDone() {
+        isDone = false;
+    }
+
+    /**
+     * Returns the marker used in task lists to show whether this task is complete.
+     *
+     * @return {@code "X"} when complete; otherwise, a space
+     */
+    public String getStatusIcon() {
+        return isDone ? "X" : " ";
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + description;
+    }
+}
