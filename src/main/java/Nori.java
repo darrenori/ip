@@ -37,6 +37,11 @@ public class Nori {
                 isDone[taskIndex] = true;
                 printResponse(true, "Nice! I've marked this task as done:",
                         "  [X] " + tasks[taskIndex]);
+            } else if (input.startsWith("unmark ")) {
+                int taskIndex = Integer.parseInt(input.substring("unmark ".length())) - 1;
+                isDone[taskIndex] = false;
+                printResponse(true, "OK, I've marked this task as not done yet:",
+                        "  [ ] " + tasks[taskIndex]);
             } else {
                 tasks[taskCount] = input;
                 taskCount++;
