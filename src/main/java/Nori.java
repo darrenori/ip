@@ -21,6 +21,7 @@ public class Nori {
         printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
 
         String[] tasks = new String[MAX_TASKS];
+        boolean[] isDone = new boolean[MAX_TASKS];
         int taskCount = 0;
 
         Scanner scanner = new Scanner(System.in);
@@ -30,7 +31,12 @@ public class Nori {
                 break;
             }
             if (input.equals("list")) {
-                printResponse(true, formatTaskList(tasks, taskCount));
+                printResponse(true, formatTaskList(tasks, isDone, taskCount));
+            } else if (input.startsWith("mark ")) {
+                int taskIndex = Integer.parseInt(input.substring("mark ".length())) - 1;
+                isDone[taskIndex] = true;
+                printResponse(true, "Nice! I've marked this task as done:",
+                        "  [X] " + tasks[taskIndex]);
             } else {
                 tasks[taskCount] = input;
                 taskCount++;
@@ -43,13 +49,15 @@ public class Nori {
     }
 
     /**
-     * Builds the numbered task list as individual lines (e.g. "1. read book"),
+     * Builds the list heading and numbered task lines (e.g. "1.[X] read book"),
      * one array element per line, so each can be indented consistently by printResponse.
      */
-    private static String[] formatTaskList(String[] tasks, int taskCount) {
-        String[] lines = new String[taskCount];
+    private static String[] formatTaskList(String[] tasks, boolean[] isDone, int taskCount) {
+        String[] lines = new String[taskCount + 1];
+        lines[0] = "Here are the tasks in your list:";
         for (int i = 0; i < taskCount; i++) {
-            lines[i] = (i + 1) + ". " + tasks[i];
+            String status = isDone[i] ? "[X]" : "[ ]";
+            lines[i + 1] = (i + 1) + "." + status + " " + tasks[i];
         }
         return lines;
     }
