@@ -16,6 +16,8 @@ public class Nori {
 
     private static final int MAX_TASKS = 100;
     private static final String TODO_COMMAND = "todo ";
+    private static final String DEADLINE_COMMAND = "deadline ";
+    private static final String DEADLINE_SEPARATOR = " /by ";
 
     public static void main(String[] args) {
         System.out.print(BANNER);
@@ -53,6 +55,15 @@ public class Nori {
             } else if (input.startsWith(TODO_COMMAND)) {
                 String description = input.substring(TODO_COMMAND.length());
                 tasks[taskCount] = new Task(description);
+                taskCount++;
+                printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
+                        "Now you have " + taskCount + " tasks in the list.");
+            } else if (input.startsWith(DEADLINE_COMMAND)) {
+                String deadlineDetails = input.substring(DEADLINE_COMMAND.length());
+                int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
+                String description = deadlineDetails.substring(0, separatorIndex);
+                String by = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length());
+                tasks[taskCount] = new Task(description, by);
                 taskCount++;
                 printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
                         "Now you have " + taskCount + " tasks in the list.");
