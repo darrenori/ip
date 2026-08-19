@@ -1,17 +1,9 @@
 /**
- * Represents a to-do task in Nori, including its description and completion state.
+ * Represents the common state and behaviour shared by every task type in Nori.
  */
-public class Task {
-    private static final String TODO_TYPE = "T";
-    private static final String DEADLINE_TYPE = "D";
-    private static final String EVENT_TYPE = "E";
-
+public abstract class Task {
     protected String description;
     protected boolean isDone;
-    protected String type;
-    protected String by;
-    protected String from;
-    protected String to;
 
     /**
      * Creates a task that has not yet been completed.
@@ -21,41 +13,6 @@ public class Task {
     public Task(String description) {
         this.description = description;
         this.isDone = false;
-        this.type = TODO_TYPE;
-        this.by = null;
-        this.from = null;
-        this.to = null;
-    }
-
-    /**
-     * Creates an incomplete deadline with the given description and due time.
-     *
-     * @param description the deadline description
-     * @param by the due date or time, stored as entered by the user
-     */
-    public Task(String description, String by) {
-        this.description = description;
-        this.isDone = false;
-        this.type = DEADLINE_TYPE;
-        this.by = by;
-        this.from = null;
-        this.to = null;
-    }
-
-    /**
-     * Creates an incomplete event with the given description, start, and end times.
-     *
-     * @param description the event description
-     * @param from the start date or time, stored as entered by the user
-     * @param to the end date or time, stored as entered by the user
-     */
-    public Task(String description, String from, String to) {
-        this.description = description;
-        this.isDone = false;
-        this.type = EVENT_TYPE;
-        this.by = null;
-        this.from = from;
-        this.to = to;
     }
 
     /** Marks this task as completed. */
@@ -88,12 +45,6 @@ public class Task {
 
     @Override
     public String toString() {
-        String dateDetails = "";
-        if (by != null) {
-            dateDetails = " (by: " + by + ")";
-        } else if (from != null) {
-            dateDetails = " (from: " + from + " to: " + to + ")";
-        }
-        return "[" + type + "][" + getStatusIcon() + "] " + description + dateDetails;
+        return "[" + getStatusIcon() + "] " + description;
     }
 }

@@ -57,7 +57,7 @@ public class Nori {
                 }
             } else if (input.startsWith(TODO_COMMAND)) {
                 String description = input.substring(TODO_COMMAND.length());
-                tasks[taskCount] = new Task(description);
+                tasks[taskCount] = new Todo(description);
                 taskCount++;
                 printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
                         "Now you have " + taskCount + " tasks in the list.");
@@ -66,7 +66,7 @@ public class Nori {
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 String description = deadlineDetails.substring(0, separatorIndex);
                 String by = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length());
-                tasks[taskCount] = new Task(description, by);
+                tasks[taskCount] = new Deadline(description, by);
                 taskCount++;
                 printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
                         "Now you have " + taskCount + " tasks in the list.");
@@ -77,12 +77,12 @@ public class Nori {
                 String description = eventDetails.substring(0, fromSeparatorIndex);
                 String from = eventDetails.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(), toSeparatorIndex);
                 String to = eventDetails.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length());
-                tasks[taskCount] = new Task(description, from, to);
+                tasks[taskCount] = new Event(description, from, to);
                 taskCount++;
                 printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
                         "Now you have " + taskCount + " tasks in the list.");
             } else {
-                tasks[taskCount] = new Task(input);
+                tasks[taskCount] = new Todo(input);
                 taskCount++;
                 printResponse(true, "added: " + input);
             }

@@ -30,7 +30,7 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## UI testing after code changes
 
-After each code update:
+After each code update, complete both steps before handing the work back to the user:
 
 1. Review `test/ui-test-plan.md` and update it when the change affects UI behaviour, coverage, inputs, or expected output. Do not rewrite expected output merely to conceal a regression.
 2. Invoke the project-specific `$test-ui` skill to run the UI test plan. If a case fails, report its recorded input plus expected and actual output; the skill stops the test session at the first failure.
