@@ -15,6 +15,7 @@ public class Nori {
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
 
     private static final int MAX_TASKS = 100;
+    private static final String TODO_COMMAND = "todo ";
 
     public static void main(String[] args) {
         System.out.print(BANNER);
@@ -33,14 +34,28 @@ public class Nori {
                 printResponse(true, formatTaskList(tasks, taskCount));
             } else if (input.startsWith("mark ")) {
                 int taskIndex = Integer.parseInt(input.substring("mark ".length())) - 1;
-                tasks[taskIndex].markAsDone();
-                printResponse(true, "Nice! I've marked this task as done:",
-                        "  " + tasks[taskIndex]);
+                if (tasks[taskIndex].isDone()) {
+                    printResponse(true, "Yo! You've already marked this task.");
+                } else {
+                    tasks[taskIndex].markAsDone();
+                    printResponse(true, "Nice! I've marked this task as done:",
+                            "  " + tasks[taskIndex]);
+                }
             } else if (input.startsWith("unmark ")) {
                 int taskIndex = Integer.parseInt(input.substring("unmark ".length())) - 1;
-                tasks[taskIndex].markAsNotDone();
-                printResponse(true, "OK, I've marked this task as not done yet:",
-                        "  " + tasks[taskIndex]);
+                if (!tasks[taskIndex].isDone()) {
+                    printResponse(true, "Yo! You've already unmarked this task.");
+                } else {
+                    tasks[taskIndex].markAsNotDone();
+                    printResponse(true, "OK, I've marked this task as not done yet:",
+                            "  " + tasks[taskIndex]);
+                }
+            } else if (input.startsWith(TODO_COMMAND)) {
+                String description = input.substring(TODO_COMMAND.length());
+                tasks[taskCount] = new Task(description);
+                taskCount++;
+                printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
+                        "Now you have " + taskCount + " tasks in the list.");
             } else {
                 tasks[taskCount] = new Task(input);
                 taskCount++;

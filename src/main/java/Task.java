@@ -1,5 +1,5 @@
 /**
- * Represents a task in Nori, including its description and completion state.
+ * Represents a to-do task in Nori, including its description and completion state.
  */
 public class Task {
     protected String description;
@@ -26,6 +26,15 @@ public class Task {
     }
 
     /**
+     * Returns whether this task has been completed.
+     *
+     * @return {@code true} if this task is completed; otherwise, {@code false}
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Returns the marker used in task lists to show whether this task is complete.
      *
      * @return {@code "X"} when complete; otherwise, a space
@@ -36,6 +45,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[T][" + getStatusIcon() + "] " + description;
     }
 }
