@@ -37,6 +37,7 @@ public class Nori {
             if (input.equals("bye")) {
                 break;
             }
+            try {
             if (input.equals("list")) {
                 printResponse(true, formatTaskList(tasks, taskCount));
             } else if (isCommand(input, MARK_COMMAND)) {
@@ -132,8 +133,11 @@ public class Nori {
                     }
                 }
             } else {
-                printResponse(true, "OOPS!!! I'm sorry, but I don't know what that means :-("
+                throw new NoriException("OOPS!!! I'm sorry, but I don't know what that means :-("
                         + " Try todo, deadline, event, list, mark, unmark, or bye lah.");
+            }
+            } catch (NoriException exception) {
+                printResponse(true, exception.getMessage());
             }
         }
         scanner.close();
@@ -171,12 +175,15 @@ public class Nori {
      * @param taskCount the number of tasks currently stored
      * @return the zero-based index, or {@code -1} when the input is invalid
      */
-    private static int getTaskIndex(String input, String command, int taskCount) {
+    private static int getTaskIndex(String input, String command, int taskCount) throws NoriException {
         try {
             int taskIndex = Integer.parseInt(getCommandDetails(input, command)) - 1;
-            return taskIndex >= 0 && taskIndex < taskCount ? taskIndex : -1;
+            if (taskIndex >= 0 && taskIndex < taskCount) {
+                return taskIndex;
+            }
+            throw new NoriException(getTaskNumberError(input, command, taskCount));
         } catch (NumberFormatException exception) {
-            return -1;
+            throw new NoriException(getTaskNumberError(input, command, taskCount));
         }
     }
 
@@ -240,11 +247,10 @@ public class Nori {
      * @param task the task to add
      * @return the updated task count
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task) {
+    private static int addTask(Task[] tasks, int taskCount, Task task) throws NoriException {
         if (taskCount == MAX_TASKS) {
-            printResponse(true, "ARE YOU DONEEEE????? The list already has 100 tasks, which is the limit."
+            throw new NoriException("ARE YOU DONEEEE????? The list already has 100 tasks, which is the limit."
                     + " No task was added; start a new session before adding more lah.");
-            return taskCount;
         }
         tasks[taskCount] = task;
         int newTaskCount = taskCount + 1;
