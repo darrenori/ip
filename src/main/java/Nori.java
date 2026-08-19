@@ -23,6 +23,7 @@ public class Nori {
     private static final String EVENT_TO_SEPARATOR = " /to ";
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
+    private static final String DELETE_COMMAND = "delete";
 
     public static void main(String[] args) {
         System.out.print(BANNER);
@@ -62,6 +63,9 @@ public class Nori {
                     printResponse(true, "OK, I've marked this task as not done yet:",
                             "  " + tasks[taskIndex]);
                 }
+            } else if (isCommand(input, DELETE_COMMAND)) {
+                int taskIndex = getTaskIndex(input, DELETE_COMMAND, taskCount);
+                taskCount = deleteTask(tasks, taskIndex, taskCount);
             } else if (isCommand(input, TODO_COMMAND)) {
                 String description = getCommandDetails(input, TODO_COMMAND);
                 if (description.isEmpty()) {
@@ -134,7 +138,7 @@ public class Nori {
                 }
             } else {
                 throw new NoriException("OOPS!!! I'm sorry, but I don't know what that means :-("
-                        + " Try todo, deadline, event, list, mark, unmark, or bye lah.");
+                        + " Try todo, deadline, event, list, mark, unmark, delete, or bye lah.");
             }
             } catch (NoriException exception) {
                 printResponse(true, exception.getMessage());
@@ -255,6 +259,26 @@ public class Nori {
         tasks[taskCount] = task;
         int newTaskCount = taskCount + 1;
         printResponse(true, "Got it. I've added this task:", "  " + task,
+                "Now you have " + newTaskCount + " tasks in the list.");
+        return newTaskCount;
+    }
+
+    /**
+     * Removes a task, closes the resulting gap in the array, and prints its confirmation.
+     *
+     * @param tasks the task list
+     * @param taskIndex the zero-based index of the task to remove
+     * @param taskCount the number of tasks currently stored
+     * @return the updated task count
+     */
+    private static int deleteTask(Task[] tasks, int taskIndex, int taskCount) {
+        Task deletedTask = tasks[taskIndex];
+        for (int index = taskIndex; index < taskCount - 1; index++) {
+            tasks[index] = tasks[index + 1];
+        }
+        int newTaskCount = taskCount - 1;
+        tasks[newTaskCount] = null;
+        printResponse(true, "Noted. I've removed this task:", "  " + deletedTask,
                 "Now you have " + newTaskCount + " tasks in the list.");
         return newTaskCount;
     }
