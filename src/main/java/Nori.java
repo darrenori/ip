@@ -16,15 +16,9 @@ public class Nori {
             + " | |\\  | |__| | | \\ \\ _| |_ \n"
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
 
-    private static final String TODO_COMMAND = "todo";
-    private static final String DEADLINE_COMMAND = "deadline";
     private static final String DEADLINE_SEPARATOR = " /by ";
-    private static final String EVENT_COMMAND = "event";
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
-    private static final String MARK_COMMAND = "mark";
-    private static final String UNMARK_COMMAND = "unmark";
-    private static final String DELETE_COMMAND = "delete";
 
     public static void main(String[] args) {
         System.out.print(BANNER);
@@ -35,14 +29,15 @@ public class Nori {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine().trim();
-            if (input.equals("bye")) {
+            Command command = Command.fromInput(input);
+            if (command == Command.BYE) {
                 break;
             }
             try {
-            if (input.equals("list")) {
+            if (command == Command.LIST) {
                 printResponse(true, formatTaskList(tasks));
-            } else if (isCommand(input, MARK_COMMAND)) {
-                int taskIndex = getTaskIndex(input, MARK_COMMAND, tasks);
+            } else if (command == Command.MARK) {
+                int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (tasks.get(taskIndex).isDone()) {
                     printResponse(true, "Yo! You've already marked this task.");
                 } else {
@@ -50,8 +45,8 @@ public class Nori {
                     printResponse(true, "Nice! I've marked this task as done:",
                             "  " + tasks.get(taskIndex));
                 }
-            } else if (isCommand(input, UNMARK_COMMAND)) {
-                int taskIndex = getTaskIndex(input, UNMARK_COMMAND, tasks);
+            } else if (command == Command.UNMARK) {
+                int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (!tasks.get(taskIndex).isDone()) {
                     printResponse(true, "Yo! You've already unmarked this task.");
                 } else {
@@ -59,19 +54,19 @@ public class Nori {
                     printResponse(true, "OK, I've marked this task as not done yet:",
                             "  " + tasks.get(taskIndex));
                 }
-            } else if (isCommand(input, DELETE_COMMAND)) {
-                int taskIndex = getTaskIndex(input, DELETE_COMMAND, tasks);
+            } else if (command == Command.DELETE) {
+                int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 deleteTask(tasks, taskIndex);
-            } else if (isCommand(input, TODO_COMMAND)) {
-                String description = getCommandDetails(input, TODO_COMMAND);
+            } else if (command == Command.TODO) {
+                String description = getCommandDetails(input, command.getKeyword());
                 if (description.isEmpty()) {
                     printResponse(true, "OOPS!!! A todo needs a description."
                             + " Try \"todo borrow book\" — I cannot read your mind lah.");
                 } else {
                     addTask(tasks, new Todo(description));
                 }
-            } else if (isCommand(input, DEADLINE_COMMAND)) {
-                String deadlineDetails = getCommandDetails(input, DEADLINE_COMMAND);
+            } else if (command == Command.DEADLINE) {
+                String deadlineDetails = getCommandDetails(input, command.getKeyword());
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
                     printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
@@ -95,8 +90,8 @@ public class Nori {
                         addTask(tasks, new Deadline(description, by));
                     }
                 }
-            } else if (isCommand(input, EVENT_COMMAND)) {
-                String eventDetails = getCommandDetails(input, EVENT_COMMAND);
+            } else if (command == Command.EVENT) {
+                String eventDetails = getCommandDetails(input, command.getKeyword());
                 int fromSeparatorIndex = eventDetails.indexOf(EVENT_FROM_SEPARATOR);
                 int toSeparatorIndex = eventDetails.indexOf(EVENT_TO_SEPARATOR);
                 if (eventDetails.startsWith("/from ")) {
@@ -143,17 +138,6 @@ public class Nori {
         scanner.close();
 
         printResponse(true, "Bye. Hope to see you again soon!");
-    }
-
-    /**
-     * Returns whether the input is a command by itself or followed by command details.
-     *
-     * @param input the complete user input
-     * @param command the command keyword
-     * @return {@code true} if the input starts a command; otherwise, {@code false}
-     */
-    private static boolean isCommand(String input, String command) {
-        return input.equals(command) || input.startsWith(command + " ");
     }
 
     /**
