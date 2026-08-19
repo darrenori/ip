@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -14,7 +16,6 @@ public class Nori {
             + " | |\\  | |__| | | \\ \\ _| |_ \n"
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
 
-    private static final int MAX_TASKS = 100;
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String DEADLINE_SEPARATOR = " /by ";
@@ -29,50 +30,45 @@ public class Nori {
         System.out.print(BANNER);
         printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
 
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
             if (input.equals("bye")) {
                 break;
             }
             try {
             if (input.equals("list")) {
-                printResponse(true, formatTaskList(tasks, taskCount));
+                printResponse(true, formatTaskList(tasks));
             } else if (isCommand(input, MARK_COMMAND)) {
-                int taskIndex = getTaskIndex(input, MARK_COMMAND, taskCount);
-                if (taskIndex == -1) {
-                    printResponse(true, getTaskNumberError(input, MARK_COMMAND, taskCount));
-                } else if (tasks[taskIndex].isDone()) {
+                int taskIndex = getTaskIndex(input, MARK_COMMAND, tasks);
+                if (tasks.get(taskIndex).isDone()) {
                     printResponse(true, "Yo! You've already marked this task.");
                 } else {
-                    tasks[taskIndex].markAsDone();
+                    tasks.get(taskIndex).markAsDone();
                     printResponse(true, "Nice! I've marked this task as done:",
-                            "  " + tasks[taskIndex]);
+                            "  " + tasks.get(taskIndex));
                 }
             } else if (isCommand(input, UNMARK_COMMAND)) {
-                int taskIndex = getTaskIndex(input, UNMARK_COMMAND, taskCount);
-                if (taskIndex == -1) {
-                    printResponse(true, getTaskNumberError(input, UNMARK_COMMAND, taskCount));
-                } else if (!tasks[taskIndex].isDone()) {
+                int taskIndex = getTaskIndex(input, UNMARK_COMMAND, tasks);
+                if (!tasks.get(taskIndex).isDone()) {
                     printResponse(true, "Yo! You've already unmarked this task.");
                 } else {
-                    tasks[taskIndex].markAsNotDone();
+                    tasks.get(taskIndex).markAsNotDone();
                     printResponse(true, "OK, I've marked this task as not done yet:",
-                            "  " + tasks[taskIndex]);
+                            "  " + tasks.get(taskIndex));
                 }
             } else if (isCommand(input, DELETE_COMMAND)) {
-                int taskIndex = getTaskIndex(input, DELETE_COMMAND, taskCount);
-                taskCount = deleteTask(tasks, taskIndex, taskCount);
+                int taskIndex = getTaskIndex(input, DELETE_COMMAND, tasks);
+                deleteTask(tasks, taskIndex);
             } else if (isCommand(input, TODO_COMMAND)) {
                 String description = getCommandDetails(input, TODO_COMMAND);
                 if (description.isEmpty()) {
                     printResponse(true, "OOPS!!! A todo needs a description."
                             + " Try \"todo borrow book\" — I cannot read your mind lah.");
                 } else {
-                    taskCount = addTask(tasks, taskCount, new Todo(description));
+                    addTask(tasks, new Todo(description));
                 }
             } else if (isCommand(input, DEADLINE_COMMAND)) {
                 String deadlineDetails = getCommandDetails(input, DEADLINE_COMMAND);
@@ -96,7 +92,7 @@ public class Nori {
                         printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
                                 + " Don't leave me hanging lah.");
                     } else {
-                        taskCount = addTask(tasks, taskCount, new Deadline(description, by));
+                        addTask(tasks, new Deadline(description, by));
                     }
                 }
             } else if (isCommand(input, EVENT_COMMAND)) {
@@ -133,7 +129,7 @@ public class Nori {
                         printResponse(true, "OOPS!!! \"/to\" needs an end time."
                                 + " Even meetings eventually end, right?");
                     } else {
-                        taskCount = addTask(tasks, taskCount, new Event(description, from, to));
+                        addTask(tasks, new Event(description, from, to));
                     }
                 }
             } else {
@@ -176,18 +172,19 @@ public class Nori {
      *
      * @param input the complete user input
      * @param command the command keyword
-     * @param taskCount the number of tasks currently stored
-     * @return the zero-based index, or {@code -1} when the input is invalid
+     * @param tasks the task list
+     * @return the validated zero-based index
+     * @throws NoriException if the input does not identify a stored task
      */
-    private static int getTaskIndex(String input, String command, int taskCount) throws NoriException {
+    private static int getTaskIndex(String input, String command, List<Task> tasks) throws NoriException {
         try {
             int taskIndex = Integer.parseInt(getCommandDetails(input, command)) - 1;
-            if (taskIndex >= 0 && taskIndex < taskCount) {
+            if (taskIndex >= 0 && taskIndex < tasks.size()) {
                 return taskIndex;
             }
-            throw new NoriException(getTaskNumberError(input, command, taskCount));
+            throw new NoriException(getTaskNumberError(input, command, tasks.size()));
         } catch (NumberFormatException exception) {
-            throw new NoriException(getTaskNumberError(input, command, taskCount));
+            throw new NoriException(getTaskNumberError(input, command, tasks.size()));
         }
     }
 
@@ -244,54 +241,41 @@ public class Nori {
     }
 
     /**
-     * Adds a task to the list and prints its confirmation, unless the list is full.
+     * Adds a task to the list and prints its confirmation.
      *
      * @param tasks the task list
-     * @param taskCount the number of tasks currently stored
      * @param task the task to add
-     * @return the updated task count
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task) throws NoriException {
-        if (taskCount == MAX_TASKS) {
-            throw new NoriException("ARE YOU DONEEEE????? The list already has 100 tasks, which is the limit."
-                    + " No task was added; start a new session before adding more lah.");
-        }
-        tasks[taskCount] = task;
-        int newTaskCount = taskCount + 1;
+    private static void addTask(List<Task> tasks, Task task) {
+        tasks.add(task);
         printResponse(true, "Got it. I've added this task:", "  " + task,
-                "Now you have " + newTaskCount + " tasks in the list.");
-        return newTaskCount;
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
-     * Removes a task, closes the resulting gap in the array, and prints its confirmation.
+     * Removes a task and prints its confirmation.
      *
      * @param tasks the task list
      * @param taskIndex the zero-based index of the task to remove
-     * @param taskCount the number of tasks currently stored
-     * @return the updated task count
      */
-    private static int deleteTask(Task[] tasks, int taskIndex, int taskCount) {
-        Task deletedTask = tasks[taskIndex];
-        for (int index = taskIndex; index < taskCount - 1; index++) {
-            tasks[index] = tasks[index + 1];
-        }
-        int newTaskCount = taskCount - 1;
-        tasks[newTaskCount] = null;
+    private static void deleteTask(List<Task> tasks, int taskIndex) {
+        Task deletedTask = tasks.remove(taskIndex);
         printResponse(true, "Noted. I've removed this task:", "  " + deletedTask,
-                "Now you have " + newTaskCount + " tasks in the list.");
-        return newTaskCount;
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
      * Builds the list heading and numbered task lines (e.g. "1.[X] read book"),
-     * one array element per line, so each can be indented consistently by printResponse.
+     * one list element per line, so each can be indented consistently by printResponse.
      */
-    private static String[] formatTaskList(Task[] tasks, int taskCount) {
-        String[] lines = new String[taskCount + 1];
+    private static String[] formatTaskList(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return new String[] {"Your list is empty. Add something with \"todo borrow book\" lah."};
+        }
+        String[] lines = new String[tasks.size() + 1];
         lines[0] = "Here are the tasks in your list:";
-        for (int i = 0; i < taskCount; i++) {
-            lines[i + 1] = (i + 1) + "." + tasks[i];
+        for (int i = 0; i < tasks.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
         return lines;
     }
