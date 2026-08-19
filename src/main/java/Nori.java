@@ -18,6 +18,9 @@ public class Nori {
     private static final String TODO_COMMAND = "todo ";
     private static final String DEADLINE_COMMAND = "deadline ";
     private static final String DEADLINE_SEPARATOR = " /by ";
+    private static final String EVENT_COMMAND = "event ";
+    private static final String EVENT_FROM_SEPARATOR = " /from ";
+    private static final String EVENT_TO_SEPARATOR = " /to ";
 
     public static void main(String[] args) {
         System.out.print(BANNER);
@@ -64,6 +67,17 @@ public class Nori {
                 String description = deadlineDetails.substring(0, separatorIndex);
                 String by = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length());
                 tasks[taskCount] = new Task(description, by);
+                taskCount++;
+                printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
+                        "Now you have " + taskCount + " tasks in the list.");
+            } else if (input.startsWith(EVENT_COMMAND)) {
+                String eventDetails = input.substring(EVENT_COMMAND.length());
+                int fromSeparatorIndex = eventDetails.indexOf(EVENT_FROM_SEPARATOR);
+                int toSeparatorIndex = eventDetails.indexOf(EVENT_TO_SEPARATOR);
+                String description = eventDetails.substring(0, fromSeparatorIndex);
+                String from = eventDetails.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(), toSeparatorIndex);
+                String to = eventDetails.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length());
+                tasks[taskCount] = new Task(description, from, to);
                 taskCount++;
                 printResponse(true, "Got it. I've added this task:", "  " + tasks[taskCount - 1],
                         "Now you have " + taskCount + " tasks in the list.");
