@@ -14,9 +14,14 @@ public class Nori {
             + " | |\\  | |__| | | \\ \\ _| |_ \n"
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
 
+    private static final int MAX_TASKS = 100;
+
     public static void main(String[] args) {
         System.out.print(BANNER);
         printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
+
+        String[] tasks = new String[MAX_TASKS];
+        int taskCount = 0;
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -24,11 +29,29 @@ public class Nori {
             if (input.equals("bye")) {
                 break;
             }
-            printResponse(true, input);
+            if (input.equals("list")) {
+                printResponse(true, formatTaskList(tasks, taskCount));
+            } else {
+                tasks[taskCount] = input;
+                taskCount++;
+                printResponse(true, "added: " + input);
+            }
         }
         scanner.close();
 
         printResponse(true, "Bye. Hope to see you again soon!");
+    }
+
+    /**
+     * Builds the numbered task list as individual lines (e.g. "1. read book"),
+     * one array element per line, so each can be indented consistently by printResponse.
+     */
+    private static String[] formatTaskList(String[] tasks, int taskCount) {
+        String[] lines = new String[taskCount];
+        for (int i = 0; i < taskCount; i++) {
+            lines[i] = (i + 1) + ". " + tasks[i];
+        }
+        return lines;
     }
 
     /**
