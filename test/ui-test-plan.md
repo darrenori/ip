@@ -11,6 +11,75 @@ From the repository root, with Java 25 active:
 python .codex/skills/test-ui/scripts/run_ui_tests.py test/ui-test-plan.md
 ```
 
+## Test 10: Save every successful task-list change
+
+**Aim:** Verify that task additions, status changes, and deletion still complete normally while exercising each operation that writes the task list to disk.
+
+### Input
+```text
+todo pack bag
+deadline submit report /by Friday
+event team meeting /from Mon 2pm /to 4pm
+mark 2
+delete 1
+unmark 1
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] pack bag
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] submit report (by: Friday)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] team meeting (from: Mon 2pm to: 4pm)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] submit report (by: Friday)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] pack bag
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [D][ ] submit report (by: Friday)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 The runner compares output exactly after normalising line endings, so trailing spaces
 matter: the first banner line genuinely ends in a space. Every case needs both an
 `### Input` and an `### Expected output` block; a case missing either one aborts the

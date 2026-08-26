@@ -42,6 +42,7 @@ public class Nori {
                     printResponse(true, "Yo! You've already marked this task.");
                 } else {
                     tasks.get(taskIndex).markAsDone();
+                    Storage.saveTasks(tasks);
                     printResponse(true, "Nice! I've marked this task as done:",
                             "  " + tasks.get(taskIndex));
                 }
@@ -51,6 +52,7 @@ public class Nori {
                     printResponse(true, "Yo! You've already unmarked this task.");
                 } else {
                     tasks.get(taskIndex).markAsNotDone();
+                    Storage.saveTasks(tasks);
                     printResponse(true, "OK, I've marked this task as not done yet:",
                             "  " + tasks.get(taskIndex));
                 }
@@ -230,8 +232,9 @@ public class Nori {
      * @param tasks the task list
      * @param task the task to add
      */
-    private static void addTask(List<Task> tasks, Task task) {
+    private static void addTask(List<Task> tasks, Task task) throws NoriException {
         tasks.add(task);
+        Storage.saveTasks(tasks);
         printResponse(true, "Got it. I've added this task:", "  " + task,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }
@@ -242,8 +245,9 @@ public class Nori {
      * @param tasks the task list
      * @param taskIndex the zero-based index of the task to remove
      */
-    private static void deleteTask(List<Task> tasks, int taskIndex) {
+    private static void deleteTask(List<Task> tasks, int taskIndex) throws NoriException {
         Task deletedTask = tasks.remove(taskIndex);
+        Storage.saveTasks(tasks);
         printResponse(true, "Noted. I've removed this task:", "  " + deletedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }
