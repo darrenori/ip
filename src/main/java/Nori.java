@@ -95,13 +95,13 @@ public class Nori {
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
                     printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
-                            + " Try \"deadline submit report /by 2/12/2019 1800\".");
+                            + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (deadlineDetails.endsWith("/by")) {
-                    printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
-                            + " Try \"deadline submit report /by 2/12/2019 1800\".");
+                    printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
+                            + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (separatorIndex == -1) {
                     printResponse(true, "OOPS!!! I cannot find the \"/by\" part of that deadline."
-                            + " Use \"deadline submit report /by 2/12/2019 1800\".");
+                            + " Use \"deadline submit report /by 2019-10-15\".");
                 } else {
                     String description = deadlineDetails.substring(0, separatorIndex).trim();
                     String deadlineInput = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
@@ -109,7 +109,7 @@ public class Nori {
                         printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
                                 + " Due for what exactly, boss?");
                     } else if (deadlineInput.isEmpty()) {
-                        printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
+                        printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
                                 + " Don't leave me hanging lah.");
                     } else {
                         addTask(tasks, new Deadline(description, Deadline.parseInput(deadlineInput)));

@@ -18,7 +18,7 @@ python .codex/skills/test-ui/scripts/run_ui_tests.py test/ui-test-plan.md
 ### Input
 ```text
 todo pack bag
-deadline submit report /by 2/12/2019 1800
+deadline submit report /by 2019-12-02
 event team meeting /from Mon 2pm /to 4pm
 mark 2
 delete 1
@@ -49,7 +49,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] submit report (by: Dec 2 2019 6:00 PM)
+       [D][ ] submit report (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -61,7 +61,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] submit report (by: Dec 2 2019 6:00 PM)
+       [D][X] submit report (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -72,7 +72,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      OK, I've marked this task as not done yet:
-       [D][ ] submit report (by: Dec 2 2019 6:00 PM)
+       [D][ ] submit report (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -80,14 +80,14 @@ ____________________________________________________________
     ____________________________________________________________
 ```
 
-## Test 11: Parse valid deadline date-times and reject impossible dates
+## Test 11: Parse valid deadline dates and reject impossible dates
 
-**Aim:** Verify that a deadline due date is parsed and formatted as a date-time, while an impossible calendar date is rejected without being stored.
+**Aim:** Verify that a deadline due date is parsed and formatted, while an impossible calendar date is rejected without being stored.
 
 ### Input
 ```text
-deadline impossible date /by 31/2/2019 1800
-deadline return book /by 2/12/2019 1800
+deadline impossible date /by 2019-02-31
+deadline return book /by 2019-12-02
 list
 bye
 ```
@@ -108,18 +108,18 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot understand "31/2/2019 1800" as a deadline. Use a date and time like "2/12/2019 1800".
+     OOPS!!! I cannot understand "2019-02-31" as a deadline. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Dec 2 2019 6:00 PM)
+       [D][ ] return book (by: Dec 02 2019)
      Now you have 1 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[D][ ] return book (by: Dec 2 2019 6:00 PM)
+     1.[D][ ] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -156,7 +156,7 @@ whole run before any test executes.
 ### Input
 ```text
 todo borrow book
-deadline return book /by 2/12/2019 1800
+deadline return book /by 2019-12-02
 event project meeting /from Mon 2pm /to 4pm
 mark 2
 mark 2
@@ -189,7 +189,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Dec 2 2019 6:00 PM)
+       [D][ ] return book (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -201,7 +201,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: Dec 2 2019 6:00 PM)
+       [D][X] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -210,7 +210,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      OK, I've marked this task as not done yet:
-       [D][ ] return book (by: Dec 2 2019 6:00 PM)
+       [D][ ] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -220,7 +220,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] borrow book
-     2.[D][ ] return book (by: Dec 2 2019 6:00 PM)
+     2.[D][ ] return book (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
@@ -238,7 +238,7 @@ ____________________________________________________________
 ### Input
 ```text
 todo read book
-deadline return book /by 6/6/2019 1800
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 todo join sports club
 todo borrow book
@@ -278,7 +278,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Jun 6 2019 6:00 PM)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -307,7 +307,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: Jun 6 2019 6:00 PM)
+       [D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -318,7 +318,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: Jun 6 2019 6:00 PM)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
      4.[T][X] join sports club
      5.[T][ ] borrow book
@@ -333,7 +333,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: Jun 6 2019 6:00 PM)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[T][X] join sports club
      4.[T][ ] borrow book
     ____________________________________________________________
@@ -355,7 +355,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: Jun 6 2019 6:00 PM)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[T][ ] join sports club
      4.[T][X] borrow book
     ____________________________________________________________
@@ -447,7 +447,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot find the "/by" part of that deadline. Use "deadline submit report /by 2/12/2019 1800".
+     OOPS!!! I cannot find the "/by" part of that deadline. Use "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
@@ -482,7 +482,7 @@ todo finish lab
 mark 2
 mark 1
 deadline /by Friday
-deadline submit report /by 2/12/2019 1800
+deadline submit report /by 2019-12-02
 event project meeting /to 4pm /from Mon 2pm
 event project meeting /from Mon 2pm /to 4pm
 unmark 4
@@ -526,12 +526,12 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a description before "/by". Try "deadline submit report /by 2/12/2019 1800".
+     OOPS!!! A deadline needs a description before "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] submit report (by: Dec 2 2019 6:00 PM)
+       [D][ ] submit report (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -557,7 +557,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] finish lab
-     2.[D][ ] submit report (by: Dec 2 2019 6:00 PM)
+     2.[D][ ] submit report (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
@@ -768,7 +768,7 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a due date or time after "/by". Try "deadline submit report /by 2/12/2019 1800".
+     OOPS!!! A deadline needs a due date after "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________

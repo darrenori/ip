@@ -1,70 +1,66 @@
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 import java.util.Locale;
 
 /**
- * Represents a task that must be completed by a specified date or time.
+ * Represents a task that must be completed by a specified date.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter INPUT_FORMATTER =
-            DateTimeFormatter.ofPattern("d/M/uuuu HHmm", Locale.ENGLISH)
-                    .withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter DISPLAY_FORMATTER =
-            DateTimeFormatter.ofPattern("MMM d uuuu h:mm a", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
-    private final LocalDateTime by;
+    private final LocalDate by;
 
     /**
-     * Creates an incomplete deadline with the given description and due time.
+     * Creates an incomplete deadline with the given description and due date.
      *
      * @param description the deadline description
-     * @param by the due date and time
+     * @param by the due date
      */
-    public Deadline(String description, LocalDateTime by) {
+    public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
 
     /**
-     * Parses a deadline date and time entered in Nori's command format.
+     * Parses a deadline date entered in Nori's command format.
      *
-     * @param input the date and time in {@code d/M/yyyy HHmm} format
-     * @return the parsed date and time
-     * @throws NoriException if the input is not a valid date and time
+     * @param input the date in {@code yyyy-MM-dd} format
+     * @return the parsed date
+     * @throws NoriException if the input is not a valid date
      */
-    public static LocalDateTime parseInput(String input) throws NoriException {
+    public static LocalDate parseInput(String input) throws NoriException {
         try {
-            return LocalDateTime.parse(input, INPUT_FORMATTER);
+            return LocalDate.parse(input);
         } catch (DateTimeParseException exception) {
             throw new NoriException("OOPS!!! I cannot understand \"" + input + "\" as a deadline."
-                    + " Use a date and time like \"2/12/2019 1800\".");
+                    + " Use a date like \"2019-10-15\".");
         }
     }
 
     /**
-     * Rebuilds a deadline from its ISO-8601 storage representation.
+     * Rebuilds a deadline from its ISO-8601 date storage representation.
      *
      * @param description the deadline description
-     * @param storedDateTime the ISO-8601 date-time string from storage
+     * @param storedDate the ISO-8601 date string from storage
      * @return the reconstructed deadline
-     * @throws NoriException if the stored date-time is invalid
+     * @throws NoriException if the stored date is invalid
      */
-    public static Deadline fromStorage(String description, String storedDateTime) throws NoriException {
+    public static Deadline fromStorage(String description, String storedDate) throws NoriException {
         try {
-            return new Deadline(description, LocalDateTime.parse(storedDateTime));
+            return new Deadline(description, LocalDate.parse(storedDate));
         } catch (DateTimeParseException exception) {
             throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
         }
     }
 
     /**
-     * Returns this deadline's ISO-8601 date-time representation for storage.
+     * Returns this deadline's ISO-8601 date representation for storage.
      *
-     * @return the ISO-8601 due date and time
+     * @return the ISO-8601 due date
      */
-    public String getStorageDateTime() {
+    public String getStorageDate() {
         return by.toString();
     }
 

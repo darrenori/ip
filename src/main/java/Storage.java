@@ -105,7 +105,7 @@ public class Storage {
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
             return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description)
-                    + TASK_SEPARATOR + encodeField(deadline.getStorageDateTime());
+                    + TASK_SEPARATOR + encodeField(deadline.getStorageDate());
         }
         if (task instanceof Event) {
             Event event = (Event) task;

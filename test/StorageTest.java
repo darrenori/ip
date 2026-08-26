@@ -17,7 +17,7 @@ public class StorageTest {
     public static void main(String[] args) throws Exception {
         runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
-        runTest("Restores a deadline date and time", StorageTest::loadTasks_deadline_restoresDateTime);
+        runTest("Restores a deadline date", StorageTest::loadTasks_deadline_restoresDate);
         runTest("Recovers corrupted storage from backup", StorageTest::loadTasks_corruptedFile_restoresBackup);
         runTest("Preserves corruption without backup", StorageTest::loadTasks_noBackup_preservesCorruptedFile);
         System.out.println("All storage tests passed.");
@@ -49,13 +49,13 @@ public class StorageTest {
         }
     }
 
-    private static void loadTasks_deadline_restoresDateTime() throws Exception {
+    private static void loadTasks_deadline_restoresDate() throws Exception {
         Path testDirectory = Files.createTempDirectory("nori-storage-test-");
         try {
-            runNori(testDirectory, "deadline return book /by 2/12/2019 1800\nbye\n");
+            runNori(testDirectory, "deadline return book /by 2019-12-02\nbye\n");
             String output = runNori(testDirectory, "list\nbye\n");
 
-            assertContains(output, "1.[D][ ] return book (by: Dec 2 2019 6:00 PM)");
+            assertContains(output, "1.[D][ ] return book (by: Dec 02 2019)");
         } finally {
             deleteDirectory(testDirectory);
         }
