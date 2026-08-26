@@ -51,7 +51,12 @@ public class Nori {
                     printResponse(true, "Yo! You've already marked this task.");
                 } else {
                     tasks.get(taskIndex).markAsDone();
-                    Storage.saveTasks(tasks);
+                    try {
+                        Storage.saveTasks(tasks);
+                    } catch (NoriException exception) {
+                        tasks.get(taskIndex).markAsNotDone();
+                        throw exception;
+                    }
                     printResponse(true, "Nice! I've marked this task as done:",
                             "  " + tasks.get(taskIndex));
                 }
@@ -61,7 +66,12 @@ public class Nori {
                     printResponse(true, "Yo! You've already unmarked this task.");
                 } else {
                     tasks.get(taskIndex).markAsNotDone();
-                    Storage.saveTasks(tasks);
+                    try {
+                        Storage.saveTasks(tasks);
+                    } catch (NoriException exception) {
+                        tasks.get(taskIndex).markAsDone();
+                        throw exception;
+                    }
                     printResponse(true, "OK, I've marked this task as not done yet:",
                             "  " + tasks.get(taskIndex));
                 }
@@ -243,7 +253,12 @@ public class Nori {
      */
     private static void addTask(List<Task> tasks, Task task) throws NoriException {
         tasks.add(task);
-        Storage.saveTasks(tasks);
+        try {
+            Storage.saveTasks(tasks);
+        } catch (NoriException exception) {
+            tasks.remove(tasks.size() - 1);
+            throw exception;
+        }
         printResponse(true, "Got it. I've added this task:", "  " + task,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }
@@ -256,7 +271,12 @@ public class Nori {
      */
     private static void deleteTask(List<Task> tasks, int taskIndex) throws NoriException {
         Task deletedTask = tasks.remove(taskIndex);
-        Storage.saveTasks(tasks);
+        try {
+            Storage.saveTasks(tasks);
+        } catch (NoriException exception) {
+            tasks.add(taskIndex, deletedTask);
+            throw exception;
+        }
         printResponse(true, "Noted. I've removed this task:", "  " + deletedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }

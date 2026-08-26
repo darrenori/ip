@@ -13,7 +13,7 @@ python .codex/skills/test-ui/scripts/run_ui_tests.py test/ui-test-plan.md
 
 ## Test 10: Save every successful task-list change
 
-**Aim:** Verify that task additions, status changes, and deletion still complete normally while exercising each operation that writes the task list to disk.
+**Aim:** Verify that successful task-list changes create the initially missing data directory, save tasks, and preserve normal command responses.
 
 ### Input
 ```text
@@ -91,6 +91,9 @@ whole run before any test executes.
   cannot cover a task list surviving from one application launch to another. Check this
   manually by add tasks in one session, then run `list` in a new session; the stored
   task types and completion states should be restored.
+* **Unavailable storage.** Check manually that an unreadable storage location reports
+  a storage error and leaves the in-memory task list unchanged; this needs filesystem
+  setup that the command-only runner cannot express.
 * **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
   cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
   case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.
