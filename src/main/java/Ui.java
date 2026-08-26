@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * Handles Nori's console output.
  */
@@ -26,6 +28,33 @@ public class Ui {
         "bye",
         "Use yyyy-MM-dd in an event's /from or /to to find it with on."
     };
+    private final Scanner scanner;
+
+    /**
+     * Creates Nori's console user interface.
+     */
+    public Ui() {
+        scanner = new Scanner(System.in);
+    }
+
+    /**
+     * Reads and trims one command from standard input.
+     *
+     * @return the command, or {@code null} if standard input has ended
+     */
+    public String readCommand() {
+        if (!scanner.hasNextLine()) {
+            return null;
+        }
+        return scanner.nextLine().trim();
+    }
+
+    /**
+     * Closes the console input stream.
+     */
+    public void close() {
+        scanner.close();
+    }
 
     /**
      * Displays Nori's banner and greeting.
