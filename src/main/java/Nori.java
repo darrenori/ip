@@ -16,11 +16,11 @@ public class Nori {
 
     public static void main(String[] args) {
         Ui ui = new Ui();
-        List<Task> tasks = new ArrayList<>();
+        TaskList tasks = new TaskList();
         String loadingError = null;
         String loadingNotice = null;
         try {
-            tasks = Storage.loadTasks();
+            tasks = new TaskList(Storage.loadTasks());
             loadingNotice = Storage.getLoadingNotice();
         } catch (NoriException exception) {
             loadingError = exception.getMessage();
@@ -36,13 +36,13 @@ public class Nori {
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
-            Command command = Command.fromInput(input);
+            Command command = Parser.parse(input);
             if (command == Command.BYE) {
                 break;
             }
             try {
             if (command == Command.LIST) {
-                String listDetails = getCommandDetails(input, command.getKeyword());
+                String listDetails = Parser.getCommandDetails(input, command.getKeyword());
                 if (listDetails.isEmpty()) {
                     ui.showResponse(formatTaskList(tasks));
                 } else {
@@ -52,7 +52,7 @@ public class Nori {
             } else if (command == Command.HELP) {
                 ui.showHelp();
             } else if (command == Command.ON) {
-                LocalDate date = parseDate(getCommandDetails(input, command.getKeyword()));
+                LocalDate date = parseDate(Parser.getCommandDetails(input, command.getKeyword()));
                 ui.showResponse(formatTasksOnDate(tasks, date));
             } else if (command == Command.MARK) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
@@ -61,7 +61,7 @@ public class Nori {
                 } else {
                     tasks.get(taskIndex).markAsDone();
                     try {
-                        Storage.saveTasks(tasks);
+                        Storage.saveTasks(tasks.asUnmodifiableList());
                     } catch (NoriException exception) {
                         tasks.get(taskIndex).markAsNotDone();
                         throw exception;
@@ -76,7 +76,7 @@ public class Nori {
                 } else {
                     tasks.get(taskIndex).markAsNotDone();
                     try {
-                        Storage.saveTasks(tasks);
+                        Storage.saveTasks(tasks.asUnmodifiableList());
                     } catch (NoriException exception) {
                         tasks.get(taskIndex).markAsDone();
                         throw exception;
@@ -88,7 +88,7 @@ public class Nori {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 deleteTask(ui, tasks, taskIndex);
             } else if (command == Command.TODO) {
-                String description = getCommandDetails(input, command.getKeyword());
+                String description = Parser.getCommandDetails(input, command.getKeyword());
                 if (description.isEmpty()) {
                     ui.showResponse("OOPS!!! A todo needs a description."
                             + " Try \"todo borrow book\" — I cannot read your mind lah.");
@@ -96,7 +96,7 @@ public class Nori {
                     addTask(ui, tasks, new Todo(description));
                 }
             } else if (command == Command.DEADLINE) {
-                String deadlineDetails = getCommandDetails(input, command.getKeyword());
+                String deadlineDetails = Parser.getCommandDetails(input, command.getKeyword());
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
                     ui.showResponse("OOPS!!! A deadline needs a description before \"/by\"."
@@ -121,7 +121,7 @@ public class Nori {
                     }
                 }
             } else if (command == Command.EVENT) {
-                String eventDetails = getCommandDetails(input, command.getKeyword());
+                String eventDetails = Parser.getCommandDetails(input, command.getKeyword());
                 int fromSeparatorIndex = eventDetails.indexOf(EVENT_FROM_SEPARATOR);
                 int toSeparatorIndex = eventDetails.indexOf(EVENT_TO_SEPARATOR);
                 if (eventDetails.startsWith("/from ")) {
@@ -168,17 +168,6 @@ public class Nori {
         scanner.close();
 
         ui.showResponse("Bye. Hope to see you again soon!");
-    }
-
-    /**
-     * Returns the trimmed text after a command keyword.
-     *
-     * @param input the complete user input
-     * @param command the command keyword
-     * @return the command details, without surrounding whitespace
-     */
-    private static String getCommandDetails(String input, String command) {
-        return input.substring(command.length()).trim();
     }
 
     /**
@@ -264,9 +253,9 @@ public class Nori {
      * @return the validated zero-based index
      * @throws NoriException if the input does not identify a stored task
      */
-    private static int getTaskIndex(String input, String command, List<Task> tasks) throws NoriException {
+    private static int getTaskIndex(String input, String command, TaskList tasks) throws NoriException {
         try {
-            int taskIndex = Integer.parseInt(getCommandDetails(input, command)) - 1;
+            int taskIndex = Integer.parseInt(Parser.getCommandDetails(input, command)) - 1;
             if (taskIndex >= 0 && taskIndex < tasks.size()) {
                 return taskIndex;
             }
@@ -285,7 +274,7 @@ public class Nori {
      * @return a specific corrective error message
      */
     private static String getTaskNumberError(String input, String command, int taskCount) {
-        String taskNumber = getCommandDetails(input, command);
+        String taskNumber = Parser.getCommandDetails(input, command);
         if (taskNumber.isEmpty()) {
             return "OOPS!!! \"" + command + "\" needs a task number. Try \"" + command + " 1\".";
         }
@@ -335,10 +324,10 @@ public class Nori {
      * @param tasks the task list
      * @param task the task to add
      */
-    private static void addTask(Ui ui, List<Task> tasks, Task task) throws NoriException {
+    private static void addTask(Ui ui, TaskList tasks, Task task) throws NoriException {
         tasks.add(task);
         try {
-            Storage.saveTasks(tasks);
+            Storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {
             tasks.remove(tasks.size() - 1);
             throw exception;
@@ -354,10 +343,10 @@ public class Nori {
      * @param tasks the task list
      * @param taskIndex the zero-based index of the task to remove
      */
-    private static void deleteTask(Ui ui, List<Task> tasks, int taskIndex) throws NoriException {
+    private static void deleteTask(Ui ui, TaskList tasks, int taskIndex) throws NoriException {
         Task deletedTask = tasks.remove(taskIndex);
         try {
-            Storage.saveTasks(tasks);
+            Storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {
             tasks.add(taskIndex, deletedTask);
             throw exception;
@@ -370,7 +359,7 @@ public class Nori {
      * Builds the list heading and numbered task lines (e.g. "1.[X] read book"),
      * one list element per line, so each can be indented consistently by {@link Ui}.
      */
-    private static String[] formatTaskList(List<Task> tasks) {
+    private static String[] formatTaskList(TaskList tasks) {
         if (tasks.isEmpty()) {
             return new String[] {"Your list is empty. Add something with \"todo borrow book\" lah."};
         }
@@ -389,7 +378,7 @@ public class Nori {
      * @param date the date to match
      * @return the formatted date-query response lines
      */
-    private static String[] formatTasksOnDate(List<Task> tasks, LocalDate date) {
+    private static String[] formatTasksOnDate(TaskList tasks, LocalDate date) {
         List<String> matchingTasks = new ArrayList<>();
         for (int index = 0; index < tasks.size(); index++) {
             Task task = tasks.get(index);
@@ -417,7 +406,7 @@ public class Nori {
      * @param dateRange the inclusive date range to match
      * @return the formatted date-range response lines
      */
-    private static String[] formatTasksInDateRange(List<Task> tasks, DateRange dateRange) {
+    private static String[] formatTasksInDateRange(TaskList tasks, DateRange dateRange) {
         List<String> matchingTasks = new ArrayList<>();
         for (int index = 0; index < tasks.size(); index++) {
             Task task = tasks.get(index);

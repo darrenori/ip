@@ -33,19 +33,4 @@ public enum Command {
         return keyword;
     }
 
-    /**
-     * Finds the command that starts the given input, respecting command-word boundaries.
-     *
-     * @param input the trimmed user input
-     * @return the matching command, or {@code null} if the input is unrecognised
-     */
-    public static Command fromInput(String input) {
-        for (Command command : values()) {
-            if (input.equals(command.keyword)
-                    || command != BYE && input.startsWith(command.keyword + " ")) {
-                return command;
-            }
-        }
-        return null;
-    }
 }
