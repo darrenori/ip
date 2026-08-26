@@ -16,21 +16,34 @@ import java.util.List;
  */
 public class Storage {
     private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
-    private static final Path PROJECT_ROOT = findProjectRoot();
-    private static final Path STORAGE_DIRECTORY = findStorageDirectory();
-    private static final Path FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt");
-    private static final Path BACKUP_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.bak");
-    private static final Path CORRUPT_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.corrupt");
-    private static final Path LEGACY_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
-            .resolve("java").resolve("data").resolve("nori.txt");
-    private static final Path LEGACY_BACKUP_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
-            .resolve("java").resolve("data").resolve("nori.txt.bak");
+    private final Path projectRoot;
+    private final Path storageDirectory;
+    private final Path filePath;
+    private final Path backupFilePath;
+    private final Path corruptFilePath;
+    private final Path legacyFilePath;
+    private final Path legacyBackupFilePath;
     private static final String FIELD_PREFIX = "b64:";
     private static final String TASK_SEPARATOR = " | ";
     private static final String TEMP_FILE_PREFIX = "nori-";
     private static final String TEMP_FILE_SUFFIX = ".tmp";
-    private static boolean canWriteToStorage = true;
-    private static String loadingNotice;
+    private boolean canWriteToStorage = true;
+    private String loadingNotice;
+
+    /**
+     * Creates storage using the configured or project-root data directory.
+     */
+    public Storage() {
+        projectRoot = findProjectRoot();
+        storageDirectory = findStorageDirectory();
+        filePath = storageDirectory.resolve("nori.txt");
+        backupFilePath = storageDirectory.resolve("nori.txt.bak");
+        corruptFilePath = storageDirectory.resolve("nori.txt.corrupt");
+        legacyFilePath = projectRoot.resolve("src").resolve("main").resolve("java").resolve("data")
+                .resolve("nori.txt");
+        legacyBackupFilePath = projectRoot.resolve("src").resolve("main").resolve("java").resolve("data")
+                .resolve("nori.txt.bak");
+    }
 
     /**
      * Saves every task to the storage file, replacing its previous contents.
@@ -38,7 +51,7 @@ public class Storage {
      * @param tasks the tasks to save
      * @throws NoriException if the tasks cannot be written to disk
      */
-    public static void saveTasks(List<Task> tasks) throws NoriException {
+    public void saveTasks(List<Task> tasks) throws NoriException {
         if (!canWriteToStorage) {
             throw new NoriException("OOPS!!! I won't overwrite saved tasks that could not be read.");
         }
@@ -53,7 +66,7 @@ public class Storage {
 
         Path temporaryFile = null;
         try {
-            Path storageDirectory = FILE_PATH.getParent();
+            Path storageDirectory = filePath.getParent();
             Files.createDirectories(storageDirectory);
             temporaryFile = Files.createTempFile(storageDirectory, TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
             Files.write(temporaryFile, taskLines, StandardCharsets.UTF_8);
@@ -72,15 +85,15 @@ public class Storage {
      * @return the tasks restored from disk
      * @throws NoriException if the storage file cannot be read or contains an invalid task
      */
-    public static List<Task> loadTasks() throws NoriException {
+    public List<Task> loadTasks() throws NoriException {
         loadingNotice = null;
         migrateLegacyStorageIfNeeded();
-        if (Files.notExists(FILE_PATH)) {
+        if (Files.notExists(filePath)) {
             return new ArrayList<>();
         }
 
         try {
-            return readTasks(FILE_PATH);
+            return readTasks(filePath);
         } catch (IOException | SecurityException exception) {
             return recoverFromBackup();
         } catch (NoriException exception) {
@@ -93,7 +106,7 @@ public class Storage {
      *
      * @return the startup notice, or {@code null} when loading completed normally
      */
-    public static String getLoadingNotice() {
+    public String getLoadingNotice() {
         return loadingNotice;
     }
 
@@ -125,12 +138,12 @@ public class Storage {
      *
      * @return the directory that contains Nori's storage files
      */
-    private static Path findStorageDirectory() {
+    private Path findStorageDirectory() {
         String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
         if (configuredDirectory != null && !configuredDirectory.trim().isEmpty()) {
             return Path.of(configuredDirectory).toAbsolutePath().normalize();
         }
-        return PROJECT_ROOT.resolve("data");
+        return projectRoot.resolve("data");
     }
 
     /**
@@ -138,16 +151,16 @@ public class Storage {
      *
      * @throws NoriException if existing legacy data cannot be copied safely
      */
-    private static void migrateLegacyStorageIfNeeded() throws NoriException {
-        if (hasConfiguredStorageDirectory() || Files.exists(FILE_PATH) || Files.notExists(LEGACY_FILE_PATH)) {
+    private void migrateLegacyStorageIfNeeded() throws NoriException {
+        if (hasConfiguredStorageDirectory() || Files.exists(filePath) || Files.notExists(legacyFilePath)) {
             return;
         }
 
         try {
-            Files.createDirectories(FILE_PATH.getParent());
-            Files.copy(LEGACY_FILE_PATH, FILE_PATH);
-            if (Files.isRegularFile(LEGACY_BACKUP_FILE_PATH)) {
-                Files.copy(LEGACY_BACKUP_FILE_PATH, BACKUP_FILE_PATH);
+            Files.createDirectories(filePath.getParent());
+            Files.copy(legacyFilePath, filePath);
+            if (Files.isRegularFile(legacyBackupFilePath)) {
+                Files.copy(legacyBackupFilePath, backupFilePath);
             }
             loadingNotice = "I've imported saved tasks from src/main/java/data to data/nori.txt.";
         } catch (IOException | SecurityException exception) {
@@ -259,16 +272,16 @@ public class Storage {
      * @return the restored tasks
      * @throws NoriException if no valid backup can be used
      */
-    private static List<Task> recoverFromBackup() throws NoriException {
-        if (Files.notExists(BACKUP_FILE_PATH)) {
+    private List<Task> recoverFromBackup() throws NoriException {
+        if (Files.notExists(backupFilePath)) {
             canWriteToStorage = false;
             throw new NoriException("OOPS!!! Your saved tasks are corrupted and no backup is available.");
         }
 
         try {
-            List<Task> backupTasks = readTasks(BACKUP_FILE_PATH);
-            Files.copy(FILE_PATH, CORRUPT_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
-            Files.copy(BACKUP_FILE_PATH, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            List<Task> backupTasks = readTasks(backupFilePath);
+            Files.copy(filePath, corruptFilePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(backupFilePath, filePath, StandardCopyOption.REPLACE_EXISTING);
             loadingNotice = "Your saved tasks were corrupted. I've restored the backup and kept the damaged "
                     + "file as data/nori.txt.corrupt.";
             return backupTasks;
@@ -342,21 +355,21 @@ public class Storage {
      * @param temporaryFile the complete replacement file
      * @throws IOException if the replacement cannot be completed
      */
-    private static void replaceStorageFile(Path temporaryFile) throws IOException {
+    private void replaceStorageFile(Path temporaryFile) throws IOException {
         try {
-            Files.move(temporaryFile, FILE_PATH, StandardCopyOption.ATOMIC_MOVE,
+            Files.move(temporaryFile, filePath, StandardCopyOption.ATOMIC_MOVE,
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (AtomicMoveNotSupportedException exception) {
-            Files.move(temporaryFile, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(temporaryFile, filePath, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
     /**
      * Copies the latest valid storage file as the recovery backup.
      */
-    private static void updateBackupFile() {
+    private void updateBackupFile() {
         try {
-            Files.copy(FILE_PATH, BACKUP_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(filePath, backupFilePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException | SecurityException exception) {
             // A successful main save is still usable when creating its optional recovery backup fails.
         }
@@ -367,7 +380,7 @@ public class Storage {
      *
      * @param temporaryFile the temporary file to remove, if one was created
      */
-    private static void deleteTemporaryFile(Path temporaryFile) {
+    private void deleteTemporaryFile(Path temporaryFile) {
         if (temporaryFile == null) {
             return;
         }

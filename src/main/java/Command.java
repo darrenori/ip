@@ -1,51 +1,23 @@
 /**
- * Represents each command that Nori recognises, together with its user-facing keyword.
+ * Represents one executable user command.
  */
-public enum Command {
-    TODO("todo"),
-    DEADLINE("deadline"),
-    EVENT("event"),
-    LIST("list"),
-    HELP("help"),
-    ON("on"),
-    MARK("mark"),
-    UNMARK("unmark"),
-    DELETE("delete"),
-    BYE("bye");
-
-    private final String keyword;
+public abstract class Command {
+    /**
+     * Performs this command's work.
+     *
+     * @param tasks the stored tasks
+     * @param ui the console user interface
+     * @param storage the persistent task storage
+     * @throws NoriException if the command cannot be completed
+     */
+    public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException;
 
     /**
-     * Creates a command with the keyword entered by the user.
+     * Returns whether this command ends the application.
      *
-     * @param keyword the command keyword
+     * @return {@code true} for an exit command
      */
-    Command(String keyword) {
-        this.keyword = keyword;
-    }
-
-    /**
-     * Returns the keyword that represents this command in user input.
-     *
-     * @return the command keyword
-     */
-    public String getKeyword() {
-        return keyword;
-    }
-
-    /**
-     * Finds the command that starts the given input, respecting command-word boundaries.
-     *
-     * @param input the trimmed user input
-     * @return the matching command, or {@code null} if the input is unrecognised
-     */
-    public static Command fromInput(String input) {
-        for (Command command : values()) {
-            if (input.equals(command.keyword)
-                    || command != BYE && input.startsWith(command.keyword + " ")) {
-                return command;
-            }
-        }
-        return null;
+    public boolean isExit() {
+        return false;
     }
 }
