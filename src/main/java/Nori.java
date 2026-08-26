@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,6 +21,23 @@ public class Nori {
     private static final String DEADLINE_SEPARATOR = " /by ";
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
+    private static final String LIST_FROM_PREFIX = "/from ";
+    private static final String LIST_TO_SEPARATOR = " /to ";
+    private static final String[] HELP_LINES = {
+        "Here are the commands you can use:",
+        "todo <description>",
+        "deadline <description> /by yyyy-MM-dd",
+        "event <description> /from <start> /to <end>",
+        "on yyyy-MM-dd",
+        "list",
+        "list /from yyyy-MM-dd /to yyyy-MM-dd",
+        "mark <task number>",
+        "unmark <task number>",
+        "delete <task number>",
+        "help",
+        "bye",
+        "Use yyyy-MM-dd in an event's /from or /to to find it with on."
+    };
 
     public static void main(String[] args) {
         List<Task> tasks = new ArrayList<>();
@@ -40,7 +59,7 @@ public class Nori {
         }
 
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
             Command command = Command.fromInput(input);
             if (command == Command.BYE) {
@@ -48,7 +67,18 @@ public class Nori {
             }
             try {
             if (command == Command.LIST) {
-                printResponse(true, formatTaskList(tasks));
+                String listDetails = getCommandDetails(input, command.getKeyword());
+                if (listDetails.isEmpty()) {
+                    printResponse(true, formatTaskList(tasks));
+                } else {
+                    DateRange dateRange = parseListDateRange(listDetails);
+                    printResponse(true, formatTasksInDateRange(tasks, dateRange));
+                }
+            } else if (command == Command.HELP) {
+                printResponse(true, HELP_LINES);
+            } else if (command == Command.ON) {
+                LocalDate date = parseDate(getCommandDetails(input, command.getKeyword()));
+                printResponse(true, formatTasksOnDate(tasks, date));
             } else if (command == Command.MARK) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (tasks.get(taskIndex).isDone()) {
@@ -95,24 +125,24 @@ public class Nori {
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
                     printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
-                            + " Try \"deadline submit report /by Friday\".");
+                            + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (deadlineDetails.endsWith("/by")) {
-                    printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
-                            + " Try \"deadline submit report /by Friday\".");
+                    printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
+                            + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (separatorIndex == -1) {
                     printResponse(true, "OOPS!!! I cannot find the \"/by\" part of that deadline."
-                            + " Use \"deadline submit report /by Friday\".");
+                            + " Use \"deadline submit report /by 2019-10-15\".");
                 } else {
                     String description = deadlineDetails.substring(0, separatorIndex).trim();
-                    String by = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
+                    String deadlineInput = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
                     if (description.isEmpty()) {
                         printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
                                 + " Due for what exactly, boss?");
-                    } else if (by.isEmpty()) {
-                        printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
+                    } else if (deadlineInput.isEmpty()) {
+                        printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
                                 + " Don't leave me hanging lah.");
                     } else {
-                        addTask(tasks, new Deadline(description, by));
+                        addTask(tasks, new Deadline(description, Deadline.parseInput(deadlineInput)));
                     }
                 }
             } else if (command == Command.EVENT) {
@@ -154,7 +184,7 @@ public class Nori {
                 }
             } else {
                 throw new NoriException("OOPS!!! I'm sorry, but I don't know what that means :-("
-                        + " Try todo, deadline, event, list, mark, unmark, delete, or bye lah.");
+                        + " Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.");
             }
             } catch (NoriException exception) {
                 printResponse(true, exception.getMessage());
@@ -174,6 +204,80 @@ public class Nori {
      */
     private static String getCommandDetails(String input, String command) {
         return input.substring(command.length()).trim();
+    }
+
+    /**
+     * Parses the ISO-8601 date provided to the {@code on} command.
+     *
+     * @param dateInput the date text after the {@code on} command
+     * @return the parsed date
+     * @throws NoriException if the date is missing or invalid
+     */
+    private static LocalDate parseDate(String dateInput) throws NoriException {
+        if (dateInput.isEmpty()) {
+            throw new NoriException("OOPS!!! \"on\" needs a date. Try \"on 2019-10-15\".");
+        }
+
+        try {
+            return LocalDate.parse(dateInput);
+        } catch (DateTimeParseException exception) {
+            throw new NoriException("OOPS!!! I cannot understand \"" + dateInput + "\" as a date."
+                    + " Use a date like \"2019-10-15\".");
+        }
+    }
+
+    /**
+     * Parses the inclusive date range supplied to the {@code list} command.
+     *
+     * @param listDetails the text after the {@code list} command
+     * @return the parsed inclusive date range
+     * @throws NoriException if the range format, dates, or date order is invalid
+     */
+    private static DateRange parseListDateRange(String listDetails) throws NoriException {
+        if (!listDetails.startsWith(LIST_FROM_PREFIX)) {
+            throw new NoriException("OOPS!!! Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
+        }
+
+        int toSeparatorIndex = listDetails.indexOf(LIST_TO_SEPARATOR);
+        if (toSeparatorIndex == -1) {
+            throw new NoriException("OOPS!!! A date-range list needs \"/to\" and an end date."
+                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+        }
+
+        String fromInput = listDetails.substring(LIST_FROM_PREFIX.length(), toSeparatorIndex).trim();
+        String toInput = listDetails.substring(toSeparatorIndex + LIST_TO_SEPARATOR.length()).trim();
+        if (fromInput.isEmpty()) {
+            throw new NoriException("OOPS!!! \"/from\" needs a start date."
+                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+        }
+        if (toInput.isEmpty()) {
+            throw new NoriException("OOPS!!! \"/to\" needs an end date."
+                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+        }
+
+        LocalDate fromDate = parseListDate(fromInput, "/from");
+        LocalDate toDate = parseListDate(toInput, "/to");
+        if (toDate.isBefore(fromDate)) {
+            throw new NoriException("OOPS!!! The \"/to\" date cannot be before the \"/from\" date.");
+        }
+        return new DateRange(fromDate, toDate);
+    }
+
+    /**
+     * Parses one date from a date-range list command.
+     *
+     * @param dateInput the ISO-8601 date text to parse
+     * @param rangePart the range separator that introduced the date
+     * @return the parsed date
+     * @throws NoriException if the date is invalid
+     */
+    private static LocalDate parseListDate(String dateInput, String rangePart) throws NoriException {
+        try {
+            return LocalDate.parse(dateInput);
+        } catch (DateTimeParseException exception) {
+            throw new NoriException("OOPS!!! I cannot understand \"" + dateInput + "\" as the "
+                    + rangePart + " date. Use a date like \"2019-10-15\".");
+        }
     }
 
     /**
@@ -299,6 +403,119 @@ public class Nori {
             lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
         return lines;
+    }
+
+    /**
+     * Builds the date-query heading and the matching deadline and event task lines.
+     *
+     * @param tasks the task list to search
+     * @param date the date to match
+     * @return the formatted date-query response lines
+     */
+    private static String[] formatTasksOnDate(List<Task> tasks, LocalDate date) {
+        List<String> matchingTasks = new ArrayList<>();
+        for (int index = 0; index < tasks.size(); index++) {
+            Task task = tasks.get(index);
+            if (occursOn(task, date)) {
+                matchingTasks.add((index + 1) + "." + task);
+            }
+        }
+
+        if (matchingTasks.isEmpty()) {
+            return new String[] {"There are no deadlines or events on " + date + "."};
+        }
+
+        String[] lines = new String[matchingTasks.size() + 1];
+        lines[0] = "Here are the deadlines and events on " + date + ":";
+        for (int index = 0; index < matchingTasks.size(); index++) {
+            lines[index + 1] = matchingTasks.get(index);
+        }
+        return lines;
+    }
+
+    /**
+     * Builds the date-range heading and the matching deadline and event task lines.
+     *
+     * @param tasks the task list to search
+     * @param dateRange the inclusive date range to match
+     * @return the formatted date-range response lines
+     */
+    private static String[] formatTasksInDateRange(List<Task> tasks, DateRange dateRange) {
+        List<String> matchingTasks = new ArrayList<>();
+        for (int index = 0; index < tasks.size(); index++) {
+            Task task = tasks.get(index);
+            if (occursInDateRange(task, dateRange)) {
+                matchingTasks.add((index + 1) + "." + task);
+            }
+        }
+
+        if (matchingTasks.isEmpty()) {
+            return new String[] {"There are no deadlines or events from " + dateRange.getFrom()
+                    + " to " + dateRange.getTo() + "."};
+        }
+
+        String[] lines = new String[matchingTasks.size() + 1];
+        lines[0] = "Here are the deadlines and events from " + dateRange.getFrom()
+                + " to " + dateRange.getTo() + ":";
+        for (int index = 0; index < matchingTasks.size(); index++) {
+            lines[index + 1] = matchingTasks.get(index);
+        }
+        return lines;
+    }
+
+    /**
+     * Returns whether a task is a deadline or event occurring on the given date.
+     *
+     * @param task the task to inspect
+     * @param date the date to match
+     * @return {@code true} if the task occurs on {@code date}
+     */
+    private static boolean occursOn(Task task, LocalDate date) {
+        if (task instanceof Deadline) {
+            return ((Deadline) task).occursOn(date);
+        }
+        if (task instanceof Event) {
+            return ((Event) task).occursOn(date);
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether a task is a deadline in, or an event overlapping, a date range.
+     *
+     * @param task the task to inspect
+     * @param dateRange the inclusive date range to match
+     * @return {@code true} if the task occurs within the date range
+     */
+    private static boolean occursInDateRange(Task task, DateRange dateRange) {
+        if (task instanceof Deadline) {
+            return ((Deadline) task).occursInDateRange(dateRange.getFrom(), dateRange.getTo());
+        }
+        if (task instanceof Event) {
+            return ((Event) task).occursInDateRange(dateRange.getFrom(), dateRange.getTo());
+        }
+        return false;
+    }
+
+    /**
+     * Represents an inclusive start and end date for a list query.
+     */
+    private static final class DateRange {
+        private final LocalDate from;
+        private final LocalDate to;
+
+        private DateRange(LocalDate from, LocalDate to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        private LocalDate getFrom() {
+            return from;
+        }
+
+        private LocalDate getTo() {
+            return to;
+        }
     }
 
     /**

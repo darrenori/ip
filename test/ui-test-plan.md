@@ -18,7 +18,7 @@ python .codex/skills/test-ui/scripts/run_ui_tests.py test/ui-test-plan.md
 ### Input
 ```text
 todo pack bag
-deadline submit report /by Friday
+deadline submit report /by 2019-12-02
 event team meeting /from Mon 2pm /to 4pm
 mark 2
 delete 1
@@ -49,7 +49,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] submit report (by: Friday)
+       [D][ ] submit report (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -61,7 +61,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] submit report (by: Friday)
+       [D][X] submit report (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -72,7 +72,262 @@ ____________________________________________________________
 
     ____________________________________________________________
      OK, I've marked this task as not done yet:
-       [D][ ] submit report (by: Friday)
+       [D][ ] submit report (by: Dec 02 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 11: Parse valid deadline dates and reject impossible dates
+
+**Aim:** Verify that a deadline due date is parsed and formatted, while an impossible calendar date is rejected without being stored.
+
+### Input
+```text
+deadline impossible date /by 2019-02-31
+deadline return book /by 2019-12-02
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! I cannot understand "2019-02-31" as a deadline. Use a date like "2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Dec 02 2019)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[D][ ] return book (by: Dec 02 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 12: Find deadlines and dated events on a specific date
+
+**Aim:** Verify that `on` lists matching deadlines and events using their original task numbers, and handles dates with no matches, missing dates, and invalid dates.
+
+### Input
+```text
+deadline submit report /by 2019-10-15
+event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600
+event impossible date /from 2019-02-31 1400 /to 2019-02-31 1500
+on 2019-10-15
+on 2019-10-17
+on
+on 2019-02-31
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] submit report (by: Oct 15 2019)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! I cannot understand "2019-02-31" as an event date. Use a date like "2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events on 2019-10-15:
+     1.[D][ ] submit report (by: Oct 15 2019)
+     2.[E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no deadlines or events on 2019-10-17.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! "on" needs a date. Try "on 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! I cannot understand "2019-02-31" as a date. Use a date like "2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 13: Display command help
+
+**Aim:** Verify that `help` lists every command and documents the date format used by deadline and date-query commands.
+
+### Input
+```text
+help
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Here are the commands you can use:
+     todo <description>
+     deadline <description> /by yyyy-MM-dd
+     event <description> /from <start> /to <end>
+     on yyyy-MM-dd
+     list
+     list /from yyyy-MM-dd /to yyyy-MM-dd
+     mark <task number>
+     unmark <task number>
+     delete <task number>
+     help
+     bye
+     Use yyyy-MM-dd in an event's /from or /to to find it with on.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 14: List deadlines and events in an inclusive date range
+
+**Aim:** Verify that `list /from ... /to ...` includes deadline boundaries and overlapping dated events,
+while excluding todos and non-matching tasks. It must also reject empty, reversed, and malformed ranges.
+
+### Input
+```text
+todo excluded task
+deadline first day /by 2019-01-01
+deadline after range /by 2021-01-02
+event long project /from 2018-12-01 0900 /to 2021-02-01 1700
+event old meeting /from 2018-12-31 0900 /to 2018-12-31 1200
+list /from 2019-01-01 /to 2021-01-01
+list /from 2022-01-01 /to 2022-01-02
+list /from 2021-01-02 /to 2021-01-01
+list /from 2019-01-01
+list unexpected details
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] excluded task
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] first day (by: Jan 01 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] after range (by: Jan 02 2021)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] old meeting (from: 2018-12-31 0900 to: 2018-12-31 1200)
+     Now you have 5 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events from 2019-01-01 to 2021-01-01:
+     2.[D][ ] first day (by: Jan 01 2019)
+     4.[E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no deadlines or events from 2022-01-01 to 2022-01-02.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! The "/to" date cannot be before the "/from" date.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! A date-range list needs "/to" and an end date. Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! Use either "list" or "list /from 2019-01-01 /to 2021-01-01".
     ____________________________________________________________
 
     ____________________________________________________________
@@ -96,9 +351,8 @@ whole run before any test executes.
   setup that the command-only runner cannot express.
 * **Corrupt-file recovery.** Automated coverage is in `StorageTest`; it verifies that
   malformed data is preserved as `data/nori.txt.corrupt` and restored from the backup.
-* **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
-  cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
-  case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.
+* **Input ending without `bye`.** This path is covered in `StorageTest`, because the UI
+  runner always supplies a final `bye` and therefore cannot express end-of-input.
 * **A capacity limit.** The task list is an unbounded `ArrayList`, so there is no
   full-list message left to test.
 
@@ -109,7 +363,7 @@ whole run before any test executes.
 ### Input
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2019-12-02
 event project meeting /from Mon 2pm /to 4pm
 mark 2
 mark 2
@@ -142,7 +396,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Sunday)
+       [D][ ] return book (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -154,7 +408,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: Sunday)
+       [D][X] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -163,7 +417,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      OK, I've marked this task as not done yet:
-       [D][ ] return book (by: Sunday)
+       [D][ ] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -173,7 +427,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] borrow book
-     2.[D][ ] return book (by: Sunday)
+     2.[D][ ] return book (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
@@ -191,7 +445,7 @@ ____________________________________________________________
 ### Input
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 todo join sports club
 todo borrow book
@@ -231,7 +485,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -260,7 +514,7 @@ ____________________________________________________________
 
     ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: June 6th)
+       [D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -271,7 +525,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: June 6th)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
      4.[T][X] join sports club
      5.[T][ ] borrow book
@@ -286,7 +540,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: June 6th)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[T][X] join sports club
      4.[T][ ] borrow book
     ____________________________________________________________
@@ -308,7 +562,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: June 6th)
+     2.[D][X] return book (by: Jun 06 2019)
      3.[T][ ] join sports club
      4.[T][X] borrow book
     ____________________________________________________________
@@ -400,7 +654,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot find the "/by" part of that deadline. Use "deadline submit report /by Friday".
+     OOPS!!! I cannot find the "/by" part of that deadline. Use "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
@@ -416,7 +670,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -435,7 +689,7 @@ todo finish lab
 mark 2
 mark 1
 deadline /by Friday
-deadline submit report /by Friday
+deadline submit report /by 2019-12-02
 event project meeting /to 4pm /from Mon 2pm
 event project meeting /from Mon 2pm /to 4pm
 unmark 4
@@ -479,12 +733,12 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a description before "/by". Try "deadline submit report /by Friday".
+     OOPS!!! A deadline needs a description before "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] submit report (by: Friday)
+       [D][ ] submit report (by: Dec 02 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
@@ -510,7 +764,7 @@ ____________________________________________________________
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] finish lab
-     2.[D][ ] submit report (by: Friday)
+     2.[D][ ] submit report (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
@@ -721,7 +975,7 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a due date or time after "/by". Try "deadline submit report /by Friday".
+     OOPS!!! A deadline needs a due date after "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
@@ -779,23 +1033,23 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________

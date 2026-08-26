@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -12,9 +15,16 @@ import java.util.List;
  * Stores Nori's tasks on the local disk.
  */
 public class Storage {
-    private static final Path FILE_PATH = Path.of("data", "nori.txt");
-    private static final Path BACKUP_FILE_PATH = Path.of("data", "nori.txt.bak");
-    private static final Path CORRUPT_FILE_PATH = Path.of("data", "nori.txt.corrupt");
+    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
+    private static final Path PROJECT_ROOT = findProjectRoot();
+    private static final Path STORAGE_DIRECTORY = findStorageDirectory();
+    private static final Path FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt");
+    private static final Path BACKUP_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.bak");
+    private static final Path CORRUPT_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.corrupt");
+    private static final Path LEGACY_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
+            .resolve("java").resolve("data").resolve("nori.txt");
+    private static final Path LEGACY_BACKUP_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
+            .resolve("java").resolve("data").resolve("nori.txt.bak");
     private static final String FIELD_PREFIX = "b64:";
     private static final String TASK_SEPARATOR = " | ";
     private static final String TEMP_FILE_PREFIX = "nori-";
@@ -64,6 +74,7 @@ public class Storage {
      */
     public static List<Task> loadTasks() throws NoriException {
         loadingNotice = null;
+        migrateLegacyStorageIfNeeded();
         if (Files.notExists(FILE_PATH)) {
             return new ArrayList<>();
         }
@@ -87,6 +98,74 @@ public class Storage {
     }
 
     /**
+     * Locates the project root so storage remains independent of the directory used to launch Nori.
+     *
+     * @return the project root, or the current directory when no project source marker is found
+     */
+    private static Path findProjectRoot() {
+        Path currentDirectory = Path.of("").toAbsolutePath().normalize();
+        for (Path candidate = currentDirectory; candidate != null; candidate = candidate.getParent()) {
+            try {
+                Path sourceFile = candidate.resolve("src").resolve("main").resolve("java").resolve("Nori.java");
+                if (Files.isRegularFile(sourceFile)) {
+                    return candidate;
+                }
+            } catch (SecurityException exception) {
+                break;
+            }
+        }
+        return currentDirectory;
+    }
+
+    /**
+     * Returns the configured storage directory or the normal project-root data directory.
+     *
+     * The {@code nori.storage.dir} property exists for isolated automated test launches.
+     * Normal application launches do not set it and therefore retain project-root storage.
+     *
+     * @return the directory that contains Nori's storage files
+     */
+    private static Path findStorageDirectory() {
+        String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
+        if (configuredDirectory != null && !configuredDirectory.trim().isEmpty()) {
+            return Path.of(configuredDirectory).toAbsolutePath().normalize();
+        }
+        return PROJECT_ROOT.resolve("data");
+    }
+
+    /**
+     * Copies legacy data created from {@code src/main/java} to the canonical project-root location.
+     *
+     * @throws NoriException if existing legacy data cannot be copied safely
+     */
+    private static void migrateLegacyStorageIfNeeded() throws NoriException {
+        if (hasConfiguredStorageDirectory() || Files.exists(FILE_PATH) || Files.notExists(LEGACY_FILE_PATH)) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(FILE_PATH.getParent());
+            Files.copy(LEGACY_FILE_PATH, FILE_PATH);
+            if (Files.isRegularFile(LEGACY_BACKUP_FILE_PATH)) {
+                Files.copy(LEGACY_BACKUP_FILE_PATH, BACKUP_FILE_PATH);
+            }
+            loadingNotice = "I've imported saved tasks from src/main/java/data to data/nori.txt.";
+        } catch (IOException | SecurityException exception) {
+            throw new NoriException("OOPS!!! I couldn't import saved tasks from src/main/java/data.");
+        }
+    }
+
+    /**
+     * Returns whether this launch has explicitly selected an isolated storage directory.
+     *
+     * @return {@code true} when the test-storage property is set to nonblank text
+     */
+    private static boolean hasConfiguredStorageDirectory() {
+        String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
+        return configuredDirectory != null && !configuredDirectory.trim().isEmpty();
+    }
+
+    /**
      * Formats one task as a line in the storage file.
      *
      * @param task the task to format
@@ -105,7 +184,7 @@ public class Storage {
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
             return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description)
-                    + TASK_SEPARATOR + encodeField(deadline.by);
+                    + TASK_SEPARATOR + encodeField(deadline.getStorageDate());
         }
         if (task instanceof Event) {
             Event event = (Event) task;
@@ -132,7 +211,7 @@ public class Storage {
         if (taskParts[0].equals("T") && taskParts.length == 3) {
             task = new Todo(decodeField(taskParts[2]));
         } else if (taskParts[0].equals("D") && taskParts.length == 4) {
-            task = new Deadline(decodeField(taskParts[2]), decodeField(taskParts[3]));
+            task = Deadline.fromStorage(decodeField(taskParts[2]), decodeField(taskParts[3]));
         } else if (taskParts[0].equals("E") && taskParts.length == 5) {
             task = new Event(decodeField(taskParts[2]), decodeField(taskParts[3]), decodeField(taskParts[4]));
         } else {
@@ -210,7 +289,7 @@ public class Storage {
             return false;
         }
         if (task instanceof Deadline) {
-            return !((Deadline) task).by.isEmpty();
+            return true;
         }
         if (task instanceof Event) {
             Event event = (Event) task;
@@ -247,8 +326,12 @@ public class Storage {
 
         try {
             byte[] encodedBytes = Base64.getDecoder().decode(storedField.substring(FIELD_PREFIX.length()));
-            return new String(encodedBytes, StandardCharsets.UTF_8);
-        } catch (IllegalArgumentException exception) {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(encodedBytes))
+                    .toString();
+        } catch (IllegalArgumentException | CharacterCodingException exception) {
             throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
         }
     }
