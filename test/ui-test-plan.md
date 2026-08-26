@@ -11,6 +11,75 @@ From the repository root, with Java 25 active:
 python .codex/skills/test-ui/scripts/run_ui_tests.py test/ui-test-plan.md
 ```
 
+## Test 10: Save every successful task-list change
+
+**Aim:** Verify that successful task-list changes create the initially missing data directory, save tasks, and preserve normal command responses.
+
+### Input
+```text
+todo pack bag
+deadline submit report /by Friday
+event team meeting /from Mon 2pm /to 4pm
+mark 2
+delete 1
+unmark 1
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] pack bag
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] submit report (by: Friday)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] team meeting (from: Mon 2pm to: 4pm)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] submit report (by: Friday)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] pack bag
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [D][ ] submit report (by: Friday)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 The runner compares output exactly after normalising line endings, so trailing spaces
 matter: the first banner line genuinely ends in a space. Every case needs both an
 `### Input` and an `### Expected output` block; a case missing either one aborts the
@@ -18,6 +87,15 @@ whole run before any test executes.
 
 ## Known gaps
 
+* **Startup loading.** The runner isolates every test session's data directory, so it
+  cannot cover a task list surviving from one application launch to another. Check this
+  manually by add tasks in one session, then run `list` in a new session; the stored
+  task types and completion states should be restored.
+* **Unavailable storage.** Check manually that an unreadable storage location reports
+  a storage error and leaves the in-memory task list unchanged; this needs filesystem
+  setup that the command-only runner cannot express.
+* **Corrupt-file recovery.** Automated coverage is in `StorageTest`; it verifies that
+  malformed data is preserved as `data/nori.txt.corrupt` and restored from the backup.
 * **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
   cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
   case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.
