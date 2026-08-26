@@ -8,38 +8,14 @@ import java.util.Scanner;
  * Entry point for the Nori chatbot.
  */
 public class Nori {
-    private static final String INDENT = "    ";
-    private static final String DIVIDER_LINE = "____________________________________________________________";
-    private static final String DIVIDER = INDENT + DIVIDER_LINE;
-    private static final String BANNER = "  _   _  ____  _____  _____ \n"
-            + " | \\ | |/ __ \\|  __ \\|_   _|\n"
-            + " |  \\| | |  | | |__) | | |  \n"
-            + " | . ` | |  | |  _  /  | |  \n"
-            + " | |\\  | |__| | | \\ \\ _| |_ \n"
-            + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
-
     private static final String DEADLINE_SEPARATOR = " /by ";
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
     private static final String LIST_FROM_PREFIX = "/from ";
     private static final String LIST_TO_SEPARATOR = " /to ";
-    private static final String[] HELP_LINES = {
-        "Here are the commands you can use:",
-        "todo <description>",
-        "deadline <description> /by yyyy-MM-dd",
-        "event <description> /from <start> /to <end>",
-        "on yyyy-MM-dd",
-        "list",
-        "list /from yyyy-MM-dd /to yyyy-MM-dd",
-        "mark <task number>",
-        "unmark <task number>",
-        "delete <task number>",
-        "help",
-        "bye",
-        "Use yyyy-MM-dd in an event's /from or /to to find it with on."
-    };
 
     public static void main(String[] args) {
+        Ui ui = new Ui();
         List<Task> tasks = new ArrayList<>();
         String loadingError = null;
         String loadingNotice = null;
@@ -50,12 +26,11 @@ public class Nori {
             loadingError = exception.getMessage();
         }
 
-        System.out.print(BANNER);
-        printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
+        ui.showWelcome();
         if (loadingError != null) {
-            printResponse(true, loadingError);
+            ui.showLoadingError(loadingError);
         } else if (loadingNotice != null) {
-            printResponse(true, loadingNotice);
+            ui.showLoadingNotice(loadingNotice);
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -69,20 +44,20 @@ public class Nori {
             if (command == Command.LIST) {
                 String listDetails = getCommandDetails(input, command.getKeyword());
                 if (listDetails.isEmpty()) {
-                    printResponse(true, formatTaskList(tasks));
+                    ui.showResponse(formatTaskList(tasks));
                 } else {
                     DateRange dateRange = parseListDateRange(listDetails);
-                    printResponse(true, formatTasksInDateRange(tasks, dateRange));
+                    ui.showResponse(formatTasksInDateRange(tasks, dateRange));
                 }
             } else if (command == Command.HELP) {
-                printResponse(true, HELP_LINES);
+                ui.showHelp();
             } else if (command == Command.ON) {
                 LocalDate date = parseDate(getCommandDetails(input, command.getKeyword()));
-                printResponse(true, formatTasksOnDate(tasks, date));
+                ui.showResponse(formatTasksOnDate(tasks, date));
             } else if (command == Command.MARK) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (tasks.get(taskIndex).isDone()) {
-                    printResponse(true, "Yo! You've already marked this task.");
+                    ui.showResponse("Yo! You've already marked this task.");
                 } else {
                     tasks.get(taskIndex).markAsDone();
                     try {
@@ -91,13 +66,13 @@ public class Nori {
                         tasks.get(taskIndex).markAsNotDone();
                         throw exception;
                     }
-                    printResponse(true, "Nice! I've marked this task as done:",
+                    ui.showResponse("Nice! I've marked this task as done:",
                             "  " + tasks.get(taskIndex));
                 }
             } else if (command == Command.UNMARK) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (!tasks.get(taskIndex).isDone()) {
-                    printResponse(true, "Yo! You've already unmarked this task.");
+                    ui.showResponse("Yo! You've already unmarked this task.");
                 } else {
                     tasks.get(taskIndex).markAsNotDone();
                     try {
@@ -106,43 +81,43 @@ public class Nori {
                         tasks.get(taskIndex).markAsDone();
                         throw exception;
                     }
-                    printResponse(true, "OK, I've marked this task as not done yet:",
+                    ui.showResponse("OK, I've marked this task as not done yet:",
                             "  " + tasks.get(taskIndex));
                 }
             } else if (command == Command.DELETE) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
-                deleteTask(tasks, taskIndex);
+                deleteTask(ui, tasks, taskIndex);
             } else if (command == Command.TODO) {
                 String description = getCommandDetails(input, command.getKeyword());
                 if (description.isEmpty()) {
-                    printResponse(true, "OOPS!!! A todo needs a description."
+                    ui.showResponse("OOPS!!! A todo needs a description."
                             + " Try \"todo borrow book\" — I cannot read your mind lah.");
                 } else {
-                    addTask(tasks, new Todo(description));
+                    addTask(ui, tasks, new Todo(description));
                 }
             } else if (command == Command.DEADLINE) {
                 String deadlineDetails = getCommandDetails(input, command.getKeyword());
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
-                    printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
+                    ui.showResponse("OOPS!!! A deadline needs a description before \"/by\"."
                             + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (deadlineDetails.endsWith("/by")) {
-                    printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
+                    ui.showResponse("OOPS!!! A deadline needs a due date after \"/by\"."
                             + " Try \"deadline submit report /by 2019-10-15\".");
                 } else if (separatorIndex == -1) {
-                    printResponse(true, "OOPS!!! I cannot find the \"/by\" part of that deadline."
+                    ui.showResponse("OOPS!!! I cannot find the \"/by\" part of that deadline."
                             + " Use \"deadline submit report /by 2019-10-15\".");
                 } else {
                     String description = deadlineDetails.substring(0, separatorIndex).trim();
                     String deadlineInput = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
                     if (description.isEmpty()) {
-                        printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
+                        ui.showResponse("OOPS!!! A deadline needs a description before \"/by\"."
                                 + " Due for what exactly, boss?");
                     } else if (deadlineInput.isEmpty()) {
-                        printResponse(true, "OOPS!!! A deadline needs a due date after \"/by\"."
+                        ui.showResponse("OOPS!!! A deadline needs a due date after \"/by\"."
                                 + " Don't leave me hanging lah.");
                     } else {
-                        addTask(tasks, new Deadline(description, Deadline.parseInput(deadlineInput)));
+                        addTask(ui, tasks, new Deadline(description, Deadline.parseInput(deadlineInput)));
                     }
                 }
             } else if (command == Command.EVENT) {
@@ -150,19 +125,19 @@ public class Nori {
                 int fromSeparatorIndex = eventDetails.indexOf(EVENT_FROM_SEPARATOR);
                 int toSeparatorIndex = eventDetails.indexOf(EVENT_TO_SEPARATOR);
                 if (eventDetails.startsWith("/from ")) {
-                    printResponse(true, "OOPS!!! An event needs a description before \"/from\"."
+                    ui.showResponse("OOPS!!! An event needs a description before \"/from\"."
                             + " Try \"event team meeting /from Mon 2pm /to 4pm\".");
                 } else if (fromSeparatorIndex == -1 && toSeparatorIndex == -1) {
-                    printResponse(true, "OOPS!!! An event needs both \"/from\" and \"/to\"."
+                    ui.showResponse("OOPS!!! An event needs both \"/from\" and \"/to\"."
                             + " Use \"event team meeting /from Mon 2pm /to 4pm\".");
                 } else if (fromSeparatorIndex == -1) {
-                    printResponse(true, "OOPS!!! An event is missing \"/from\" and its start time."
+                    ui.showResponse("OOPS!!! An event is missing \"/from\" and its start time."
                             + " Put \"/from\" before \"/to\", can?");
                 } else if (toSeparatorIndex == -1) {
-                    printResponse(true, "OOPS!!! An event is missing \"/to\" and its end time."
+                    ui.showResponse("OOPS!!! An event is missing \"/to\" and its end time."
                             + " I need to know when you escape the meeting leh.");
                 } else if (toSeparatorIndex < fromSeparatorIndex) {
-                    printResponse(true, "OOPS!!! Put \"/from\" before \"/to\"."
+                    ui.showResponse("OOPS!!! Put \"/from\" before \"/to\"."
                             + " Time flows forward, not backwards, sia.");
                 } else {
                     String description = eventDetails.substring(0, fromSeparatorIndex).trim();
@@ -170,16 +145,16 @@ public class Nori {
                             toSeparatorIndex).trim();
                     String to = eventDetails.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
                     if (description.isEmpty()) {
-                        printResponse(true, "OOPS!!! An event needs a description before \"/from\"."
+                        ui.showResponse("OOPS!!! An event needs a description before \"/from\"."
                                 + " Meeting with who, your imaginary friend ah?");
                     } else if (from.isEmpty()) {
-                        printResponse(true, "OOPS!!! \"/from\" needs a start time."
+                        ui.showResponse("OOPS!!! \"/from\" needs a start time."
                                 + " I cannot schedule an event that starts in the void leh.");
                     } else if (to.isEmpty()) {
-                        printResponse(true, "OOPS!!! \"/to\" needs an end time."
+                        ui.showResponse("OOPS!!! \"/to\" needs an end time."
                                 + " Even meetings eventually end, right?");
                     } else {
-                        addTask(tasks, new Event(description, from, to));
+                        addTask(ui, tasks, new Event(description, from, to));
                     }
                 }
             } else {
@@ -187,12 +162,12 @@ public class Nori {
                         + " Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.");
             }
             } catch (NoriException exception) {
-                printResponse(true, exception.getMessage());
+                ui.showResponse(exception.getMessage());
             }
         }
         scanner.close();
 
-        printResponse(true, "Bye. Hope to see you again soon!");
+        ui.showResponse("Bye. Hope to see you again soon!");
     }
 
     /**
@@ -356,10 +331,11 @@ public class Nori {
     /**
      * Adds a task to the list and prints its confirmation.
      *
+     * @param ui the console interface used to show the confirmation
      * @param tasks the task list
      * @param task the task to add
      */
-    private static void addTask(List<Task> tasks, Task task) throws NoriException {
+    private static void addTask(Ui ui, List<Task> tasks, Task task) throws NoriException {
         tasks.add(task);
         try {
             Storage.saveTasks(tasks);
@@ -367,17 +343,18 @@ public class Nori {
             tasks.remove(tasks.size() - 1);
             throw exception;
         }
-        printResponse(true, "Got it. I've added this task:", "  " + task,
+        ui.showResponse("Got it. I've added this task:", "  " + task,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
      * Removes a task and prints its confirmation.
      *
+     * @param ui the console interface used to show the confirmation
      * @param tasks the task list
      * @param taskIndex the zero-based index of the task to remove
      */
-    private static void deleteTask(List<Task> tasks, int taskIndex) throws NoriException {
+    private static void deleteTask(Ui ui, List<Task> tasks, int taskIndex) throws NoriException {
         Task deletedTask = tasks.remove(taskIndex);
         try {
             Storage.saveTasks(tasks);
@@ -385,13 +362,13 @@ public class Nori {
             tasks.add(taskIndex, deletedTask);
             throw exception;
         }
-        printResponse(true, "Noted. I've removed this task:", "  " + deletedTask,
+        ui.showResponse("Noted. I've removed this task:", "  " + deletedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
      * Builds the list heading and numbered task lines (e.g. "1.[X] read book"),
-     * one list element per line, so each can be indented consistently by printResponse.
+     * one list element per line, so each can be indented consistently by {@link Ui}.
      */
     private static String[] formatTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
@@ -518,19 +495,4 @@ public class Nori {
         }
     }
 
-    /**
-     * Prints one or more lines wrapped between dividers, followed by a blank line
-     * separating it from the next block. The greeting is flush-left (no indent);
-     * every response after that is indented to line up under the banner.
-     */
-    private static void printResponse(boolean indent, String... lines) {
-        String divider = indent ? DIVIDER : DIVIDER_LINE;
-        String prefix = indent ? INDENT + " " : "";
-        System.out.println(divider);
-        for (String line : lines) {
-            System.out.println(prefix + line);
-        }
-        System.out.println(divider);
-        System.out.println();
-    }
 }
