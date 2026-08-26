@@ -95,24 +95,24 @@ public class Nori {
                 int separatorIndex = deadlineDetails.indexOf(DEADLINE_SEPARATOR);
                 if (deadlineDetails.startsWith("/by ")) {
                     printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
-                            + " Try \"deadline submit report /by Friday\".");
+                            + " Try \"deadline submit report /by 2/12/2019 1800\".");
                 } else if (deadlineDetails.endsWith("/by")) {
                     printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
-                            + " Try \"deadline submit report /by Friday\".");
+                            + " Try \"deadline submit report /by 2/12/2019 1800\".");
                 } else if (separatorIndex == -1) {
                     printResponse(true, "OOPS!!! I cannot find the \"/by\" part of that deadline."
-                            + " Use \"deadline submit report /by Friday\".");
+                            + " Use \"deadline submit report /by 2/12/2019 1800\".");
                 } else {
                     String description = deadlineDetails.substring(0, separatorIndex).trim();
-                    String by = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
+                    String deadlineInput = deadlineDetails.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
                     if (description.isEmpty()) {
                         printResponse(true, "OOPS!!! A deadline needs a description before \"/by\"."
                                 + " Due for what exactly, boss?");
-                    } else if (by.isEmpty()) {
+                    } else if (deadlineInput.isEmpty()) {
                         printResponse(true, "OOPS!!! A deadline needs a due date or time after \"/by\"."
                                 + " Don't leave me hanging lah.");
                     } else {
-                        addTask(tasks, new Deadline(description, by));
+                        addTask(tasks, new Deadline(description, Deadline.parseInput(deadlineInput)));
                     }
                 }
             } else if (command == Command.EVENT) {

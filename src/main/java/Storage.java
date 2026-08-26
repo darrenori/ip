@@ -105,7 +105,7 @@ public class Storage {
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
             return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description)
-                    + TASK_SEPARATOR + encodeField(deadline.by);
+                    + TASK_SEPARATOR + encodeField(deadline.getStorageDateTime());
         }
         if (task instanceof Event) {
             Event event = (Event) task;
@@ -132,7 +132,7 @@ public class Storage {
         if (taskParts[0].equals("T") && taskParts.length == 3) {
             task = new Todo(decodeField(taskParts[2]));
         } else if (taskParts[0].equals("D") && taskParts.length == 4) {
-            task = new Deadline(decodeField(taskParts[2]), decodeField(taskParts[3]));
+            task = Deadline.fromStorage(decodeField(taskParts[2]), decodeField(taskParts[3]));
         } else if (taskParts[0].equals("E") && taskParts.length == 5) {
             task = new Event(decodeField(taskParts[2]), decodeField(taskParts[3]), decodeField(taskParts[4]));
         } else {
@@ -210,7 +210,7 @@ public class Storage {
             return false;
         }
         if (task instanceof Deadline) {
-            return !((Deadline) task).by.isEmpty();
+            return true;
         }
         if (task instanceof Event) {
             Event event = (Event) task;

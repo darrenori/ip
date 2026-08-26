@@ -17,6 +17,7 @@ public class StorageTest {
     public static void main(String[] args) throws Exception {
         runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
+        runTest("Restores a deadline date and time", StorageTest::loadTasks_deadline_restoresDateTime);
         runTest("Recovers corrupted storage from backup", StorageTest::loadTasks_corruptedFile_restoresBackup);
         runTest("Preserves corruption without backup", StorageTest::loadTasks_noBackup_preservesCorruptedFile);
         System.out.println("All storage tests passed.");
@@ -43,6 +44,18 @@ public class StorageTest {
             String output = runNori(testDirectory, "list\nbye\n");
 
             assertContains(output, "1.[T][X] revise | annotate notes");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void loadTasks_deadline_restoresDateTime() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-storage-test-");
+        try {
+            runNori(testDirectory, "deadline return book /by 2/12/2019 1800\nbye\n");
+            String output = runNori(testDirectory, "list\nbye\n");
+
+            assertContains(output, "1.[D][ ] return book (by: Dec 2 2019 6:00 PM)");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -94,7 +107,7 @@ public class StorageTest {
     }
 
     private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"), "Nori")
+        Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();
@@ -107,6 +120,15 @@ public class StorageTest {
             throw new AssertionError("Nori exited with status " + exitCode + ":\n" + output);
         }
         return output;
+    }
+
+    /**
+     * Returns the test classpath as an absolute path so child Nori processes can use it from a temporary directory.
+     *
+     * @return the absolute classpath for the compiled test classes
+     */
+    private static String getAbsoluteClassPath() {
+        return Path.of(System.getProperty("java.class.path")).toAbsolutePath().toString();
     }
 
     private static void deleteDirectory(Path directory) throws IOException {
