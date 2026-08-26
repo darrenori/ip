@@ -42,7 +42,7 @@ public class Nori {
         }
 
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
             Command command = Command.fromInput(input);
             if (command == Command.BYE) {

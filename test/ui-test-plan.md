@@ -135,6 +135,7 @@ ____________________________________________________________
 ```text
 deadline submit report /by 2019-10-15
 event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600
+event impossible date /from 2019-02-31 1400 /to 2019-02-31 1500
 on 2019-10-15
 on 2019-10-17
 on
@@ -167,6 +168,10 @@ ____________________________________________________________
      Got it. I've added this task:
        [E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
      Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! I cannot understand "2019-02-31" as an event date. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
@@ -208,9 +213,8 @@ whole run before any test executes.
   setup that the command-only runner cannot express.
 * **Corrupt-file recovery.** Automated coverage is in `StorageTest`; it verifies that
   malformed data is preserved as `data/nori.txt.corrupt` and restored from the backup.
-* **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
-  cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
-  case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.
+* **Input ending without `bye`.** This path is covered in `StorageTest`, because the UI
+  runner always supplies a final `bye` and therefore cannot express end-of-input.
 * **A capacity limit.** The task list is an unbounded `ArrayList`, so there is no
   full-list message left to test.
 

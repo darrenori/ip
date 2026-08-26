@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -247,8 +250,12 @@ public class Storage {
 
         try {
             byte[] encodedBytes = Base64.getDecoder().decode(storedField.substring(FIELD_PREFIX.length()));
-            return new String(encodedBytes, StandardCharsets.UTF_8);
-        } catch (IllegalArgumentException exception) {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(encodedBytes))
+                    .toString();
+        } catch (IllegalArgumentException | CharacterCodingException exception) {
             throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
         }
     }

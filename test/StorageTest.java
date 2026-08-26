@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
- * Runs automated end-to-end tests for Nori's disk storage behavior from the root test folder.
+ * Runs automated end-to-end tests for Nori's disk storage and input behavior from the root test folder.
  */
 public class StorageTest {
     private static final String DATA_DIRECTORY = "data";
@@ -18,7 +18,10 @@ public class StorageTest {
         runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
         runTest("Restores a deadline date", StorageTest::loadTasks_deadline_restoresDate);
+        runTest("Handles end of input", StorageTest::endOfInput_exitsCleanly);
         runTest("Recovers corrupted storage from backup", StorageTest::loadTasks_corruptedFile_restoresBackup);
+        runTest("Recovers malformed UTF-8 storage from backup", StorageTest::loadTasks_malformedUtf8_restoresBackup);
+        runTest("Recovers an invalid event date from backup", StorageTest::loadTasks_invalidEventDate_restoresBackup);
         runTest("Preserves corruption without backup", StorageTest::loadTasks_noBackup_preservesCorruptedFile);
         System.out.println("All storage tests passed.");
     }
@@ -56,6 +59,18 @@ public class StorageTest {
             String output = runNori(testDirectory, "list\nbye\n");
 
             assertContains(output, "1.[D][ ] return book (by: Dec 02 2019)");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void endOfInput_exitsCleanly() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-storage-test-");
+        try {
+            String output = runNori(testDirectory, "todo end cleanly\n");
+
+            assertContains(output, "[T][ ] end cleanly");
+            assertContains(output, "Bye. Hope to see you again soon!");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -120,6 +135,46 @@ public class StorageTest {
             throw new AssertionError("Nori exited with status " + exitCode + ":\n" + output);
         }
         return output;
+    }
+
+    private static void loadTasks_malformedUtf8_restoresBackup() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-storage-test-");
+        try {
+            runNori(testDirectory, "todo restore valid text\nbye\n");
+
+            Path dataDirectory = testDirectory.resolve(DATA_DIRECTORY);
+            Path storageFile = dataDirectory.resolve(STORAGE_FILE);
+            String corruptContent = "T | 0 | b64:/w==";
+            Files.writeString(storageFile, corruptContent, StandardCharsets.UTF_8);
+
+            String output = runNori(testDirectory, "list\nbye\n");
+
+            assertContains(output, "Your saved tasks were corrupted. I've restored the backup");
+            assertContains(output, "1.[T][ ] restore valid text");
+            assertEquals(corruptContent, Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void loadTasks_invalidEventDate_restoresBackup() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-storage-test-");
+        try {
+            runNori(testDirectory, "todo keep this task\nbye\n");
+
+            Path dataDirectory = testDirectory.resolve(DATA_DIRECTORY);
+            Path storageFile = dataDirectory.resolve(STORAGE_FILE);
+            String corruptContent = "E | 0 | invalid event | 2019-02-31 1400 | 2019-02-31 1500";
+            Files.writeString(storageFile, corruptContent, StandardCharsets.UTF_8);
+
+            String output = runNori(testDirectory, "list\nbye\n");
+
+            assertContains(output, "Your saved tasks were corrupted. I've restored the backup");
+            assertContains(output, "1.[T][ ] keep this task");
+            assertEquals(corruptContent, Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
+        } finally {
+            deleteDirectory(testDirectory);
+        }
     }
 
     /**
