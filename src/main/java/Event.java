@@ -40,6 +40,31 @@ public class Event extends Task {
     }
 
     /**
+     * Returns whether this event overlaps the inclusive date range.
+     *
+     * An event with dates in both its start and end details is treated as a date interval.
+     * An event with a date in only one detail is treated as occurring on that date.
+     *
+     * @param rangeStart the earliest date in the range
+     * @param rangeEnd the latest date in the range
+     * @return {@code true} if this event occurs in the range
+     */
+    public boolean occursInDateRange(LocalDate rangeStart, LocalDate rangeEnd) {
+        LocalDate eventStart = findDate(from);
+        LocalDate eventEnd = findDate(to);
+        if (eventStart != null && eventEnd != null) {
+            return !eventStart.isAfter(rangeEnd) && !eventEnd.isBefore(rangeStart);
+        }
+        if (eventStart != null) {
+            return !eventStart.isBefore(rangeStart) && !eventStart.isAfter(rangeEnd);
+        }
+        if (eventEnd != null) {
+            return !eventEnd.isBefore(rangeStart) && !eventEnd.isAfter(rangeEnd);
+        }
+        return false;
+    }
+
+    /**
      * Validates every date-like value in an event detail.
      *
      * @param eventDetail the start or end detail to validate
@@ -85,6 +110,28 @@ public class Event extends Task {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the first ISO-8601 date in an event detail, if any.
+     *
+     * @param eventDetail the start or end detail to inspect
+     * @return the first valid date, or {@code null} when the detail has no date
+     */
+    private static LocalDate findDate(String eventDetail) {
+        if (eventDetail == null) {
+            return null;
+        }
+
+        Matcher matcher = DATE_PATTERN.matcher(eventDetail);
+        if (!matcher.find()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(matcher.group());
+        } catch (DateTimeParseException exception) {
+            return null;
+        }
     }
 
     @Override

@@ -18,7 +18,9 @@ public class NoriTest {
     public static void main(String[] args) throws Exception {
         runTest("Completes a mixed task workflow", NoriTest::mixedTaskWorkflow_updatesListAndStatuses);
         runTest("Rejects malformed input without adding tasks", NoriTest::malformedCommands_leaveTaskListEmpty);
+        runTest("Shows command help", NoriTest::helpCommand_listsSupportedCommands);
         runTest("Finds deadlines and events on a date", NoriTest::onCommand_matchesDeadlineAndEventDates);
+        runTest("Lists deadlines and events in a date range", NoriTest::listCommand_matchesDateRange);
         runTest("Persists every task type and completion state", NoriTest::savedTasks_restoreAcrossLaunches);
         System.out.println("All Nori regression tests passed.");
     }
@@ -68,6 +70,21 @@ public class NoriTest {
         }
     }
 
+    private static void helpCommand_listsSupportedCommands() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-regression-test-");
+        try {
+            String output = runNori(testDirectory, "help\nbye\n");
+
+            assertContains(output, "Here are the commands you can use:");
+            assertContains(output, "deadline <description> /by yyyy-MM-dd");
+            assertContains(output, "on yyyy-MM-dd");
+            assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
+            assertContains(output, "Use yyyy-MM-dd in an event's /from or /to to find it with on.");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
     private static void onCommand_matchesDeadlineAndEventDates() throws Exception {
         Path testDirectory = Files.createTempDirectory("nori-regression-test-");
         try {
@@ -85,6 +102,45 @@ public class NoriTest {
             assertContains(matchingTasks, "4.[E][ ] overnight session (from: 2024-02-29 2300 to: 2024-03-01 0100)");
             assertNotContains(matchingTasks, "unrelated task");
             assertContains(output, "There are no deadlines or events on 2024-03-02.");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void listCommand_matchesDateRange() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-regression-test-");
+        try {
+            String output = runNori(testDirectory, "todo unrelated task\n"
+                    + "deadline early deadline /by 2018-12-31\n"
+                    + "deadline first day /by 2019-01-01\n"
+                    + "deadline last day /by 2021-01-01\n"
+                    + "deadline late deadline /by 2021-01-02\n"
+                    + "event long project /from 2018-12-01 0900 /to 2021-02-01 1700\n"
+                    + "event leap-day workshop /from 2020-02-29 0900 /to 2020-02-29 1200\n"
+                    + "event old meeting /from 2017-12-31 0900 /to 2017-12-31 1200\n"
+                    + "event undated meeting /from Monday 0900 /to 1200\n"
+                    + "list /from 2019-01-01 /to 2021-01-01\n"
+                    + "list /from 2022-01-01 /to 2022-01-02\n"
+                    + "list /from 2021-01-02 /to 2021-01-01\n"
+                    + "list /from 2019-01-01\n"
+                    + "list unexpected details\n"
+                    + "bye\n");
+
+            String matchingTasks = getSectionAfter(output,
+                    "Here are the deadlines and events from 2019-01-01 to 2021-01-01:");
+            assertContains(matchingTasks, "3.[D][ ] first day (by: Jan 01 2019)");
+            assertContains(matchingTasks, "4.[D][ ] last day (by: Jan 01 2021)");
+            assertContains(matchingTasks, "6.[E][ ] long project");
+            assertContains(matchingTasks, "7.[E][ ] leap-day workshop");
+            assertNotContains(matchingTasks, "unrelated task");
+            assertNotContains(matchingTasks, "early deadline");
+            assertNotContains(matchingTasks, "late deadline");
+            assertNotContains(matchingTasks, "old meeting");
+            assertNotContains(matchingTasks, "undated meeting");
+            assertContains(output, "There are no deadlines or events from 2022-01-01 to 2022-01-02.");
+            assertContains(output, "The \"/to\" date cannot be before the \"/from\" date.");
+            assertContains(output, "A date-range list needs \"/to\" and an end date.");
+            assertContains(output, "Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -128,7 +184,9 @@ public class NoriTest {
      * @throws InterruptedException if the current thread is interrupted while Nori is running
      */
     private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "Nori")
+        Path storageDirectory = workingDirectory.resolve("data").toAbsolutePath();
+        Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory,
+                "-cp", getAbsoluteClassPath(), "Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();

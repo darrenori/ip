@@ -15,9 +15,16 @@ import java.util.List;
  * Stores Nori's tasks on the local disk.
  */
 public class Storage {
-    private static final Path FILE_PATH = Path.of("data", "nori.txt");
-    private static final Path BACKUP_FILE_PATH = Path.of("data", "nori.txt.bak");
-    private static final Path CORRUPT_FILE_PATH = Path.of("data", "nori.txt.corrupt");
+    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
+    private static final Path PROJECT_ROOT = findProjectRoot();
+    private static final Path STORAGE_DIRECTORY = findStorageDirectory();
+    private static final Path FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt");
+    private static final Path BACKUP_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.bak");
+    private static final Path CORRUPT_FILE_PATH = STORAGE_DIRECTORY.resolve("nori.txt.corrupt");
+    private static final Path LEGACY_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
+            .resolve("java").resolve("data").resolve("nori.txt");
+    private static final Path LEGACY_BACKUP_FILE_PATH = PROJECT_ROOT.resolve("src").resolve("main")
+            .resolve("java").resolve("data").resolve("nori.txt.bak");
     private static final String FIELD_PREFIX = "b64:";
     private static final String TASK_SEPARATOR = " | ";
     private static final String TEMP_FILE_PREFIX = "nori-";
@@ -67,6 +74,7 @@ public class Storage {
      */
     public static List<Task> loadTasks() throws NoriException {
         loadingNotice = null;
+        migrateLegacyStorageIfNeeded();
         if (Files.notExists(FILE_PATH)) {
             return new ArrayList<>();
         }
@@ -87,6 +95,74 @@ public class Storage {
      */
     public static String getLoadingNotice() {
         return loadingNotice;
+    }
+
+    /**
+     * Locates the project root so storage remains independent of the directory used to launch Nori.
+     *
+     * @return the project root, or the current directory when no project source marker is found
+     */
+    private static Path findProjectRoot() {
+        Path currentDirectory = Path.of("").toAbsolutePath().normalize();
+        for (Path candidate = currentDirectory; candidate != null; candidate = candidate.getParent()) {
+            try {
+                Path sourceFile = candidate.resolve("src").resolve("main").resolve("java").resolve("Nori.java");
+                if (Files.isRegularFile(sourceFile)) {
+                    return candidate;
+                }
+            } catch (SecurityException exception) {
+                break;
+            }
+        }
+        return currentDirectory;
+    }
+
+    /**
+     * Returns the configured storage directory or the normal project-root data directory.
+     *
+     * The {@code nori.storage.dir} property exists for isolated automated test launches.
+     * Normal application launches do not set it and therefore retain project-root storage.
+     *
+     * @return the directory that contains Nori's storage files
+     */
+    private static Path findStorageDirectory() {
+        String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
+        if (configuredDirectory != null && !configuredDirectory.trim().isEmpty()) {
+            return Path.of(configuredDirectory).toAbsolutePath().normalize();
+        }
+        return PROJECT_ROOT.resolve("data");
+    }
+
+    /**
+     * Copies legacy data created from {@code src/main/java} to the canonical project-root location.
+     *
+     * @throws NoriException if existing legacy data cannot be copied safely
+     */
+    private static void migrateLegacyStorageIfNeeded() throws NoriException {
+        if (hasConfiguredStorageDirectory() || Files.exists(FILE_PATH) || Files.notExists(LEGACY_FILE_PATH)) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(FILE_PATH.getParent());
+            Files.copy(LEGACY_FILE_PATH, FILE_PATH);
+            if (Files.isRegularFile(LEGACY_BACKUP_FILE_PATH)) {
+                Files.copy(LEGACY_BACKUP_FILE_PATH, BACKUP_FILE_PATH);
+            }
+            loadingNotice = "I've imported saved tasks from src/main/java/data to data/nori.txt.";
+        } catch (IOException | SecurityException exception) {
+            throw new NoriException("OOPS!!! I couldn't import saved tasks from src/main/java/data.");
+        }
+    }
+
+    /**
+     * Returns whether this launch has explicitly selected an isolated storage directory.
+     *
+     * @return {@code true} when the test-storage property is set to nonblank text
+     */
+    private static boolean hasConfiguredStorageDirectory() {
+        String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
+        return configuredDirectory != null && !configuredDirectory.trim().isEmpty();
     }
 
     /**

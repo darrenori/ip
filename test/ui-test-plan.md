@@ -197,6 +197,144 @@ ____________________________________________________________
     ____________________________________________________________
 ```
 
+## Test 13: Display command help
+
+**Aim:** Verify that `help` lists every command and documents the date format used by deadline and date-query commands.
+
+### Input
+```text
+help
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Here are the commands you can use:
+     todo <description>
+     deadline <description> /by yyyy-MM-dd
+     event <description> /from <start> /to <end>
+     on yyyy-MM-dd
+     list
+     list /from yyyy-MM-dd /to yyyy-MM-dd
+     mark <task number>
+     unmark <task number>
+     delete <task number>
+     help
+     bye
+     Use yyyy-MM-dd in an event's /from or /to to find it with on.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 14: List deadlines and events in an inclusive date range
+
+**Aim:** Verify that `list /from ... /to ...` includes deadline boundaries and overlapping dated events,
+while excluding todos and non-matching tasks. It must also reject empty, reversed, and malformed ranges.
+
+### Input
+```text
+todo excluded task
+deadline first day /by 2019-01-01
+deadline after range /by 2021-01-02
+event long project /from 2018-12-01 0900 /to 2021-02-01 1700
+event old meeting /from 2018-12-31 0900 /to 2018-12-31 1200
+list /from 2019-01-01 /to 2021-01-01
+list /from 2022-01-01 /to 2022-01-02
+list /from 2021-01-02 /to 2021-01-01
+list /from 2019-01-01
+list unexpected details
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] excluded task
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] first day (by: Jan 01 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] after range (by: Jan 02 2021)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] old meeting (from: 2018-12-31 0900 to: 2018-12-31 1200)
+     Now you have 5 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events from 2019-01-01 to 2021-01-01:
+     2.[D][ ] first day (by: Jan 01 2019)
+     4.[E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no deadlines or events from 2022-01-01 to 2022-01-02.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! The "/to" date cannot be before the "/from" date.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! A date-range list needs "/to" and an end date. Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! Use either "list" or "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 The runner compares output exactly after normalising line endings, so trailing spaces
 matter: the first banner line genuinely ends in a space. Every case needs both an
 `### Input` and an `### Expected output` block; a case missing either one aborts the
@@ -532,7 +670,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -895,23 +1033,23 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________

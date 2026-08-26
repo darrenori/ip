@@ -74,6 +74,17 @@ public class Deadline extends Task {
         return by.equals(date);
     }
 
+    /**
+     * Returns whether this deadline is due in the inclusive date range.
+     *
+     * @param from the earliest date in the range
+     * @param to the latest date in the range
+     * @return {@code true} if this deadline is due in the range
+     */
+    public boolean occursInDateRange(LocalDate from, LocalDate to) {
+        return !by.isBefore(from) && !by.isAfter(to);
+    }
+
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMATTER) + ")";

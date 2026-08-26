@@ -18,6 +18,8 @@ public class StorageTest {
         runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
         runTest("Restores a deadline date", StorageTest::loadTasks_deadline_restoresDate);
+        runTest("Uses project-root storage from source directories", StorageTest::storagePath_usesProjectRoot);
+        runTest("Keeps test storage isolated inside a project", StorageTest::storageOverride_isolatesInProjectLaunch);
         runTest("Handles end of input", StorageTest::endOfInput_exitsCleanly);
         runTest("Recovers corrupted storage from backup", StorageTest::loadTasks_corruptedFile_restoresBackup);
         runTest("Recovers malformed UTF-8 storage from backup", StorageTest::loadTasks_malformedUtf8_restoresBackup);
@@ -61,6 +63,52 @@ public class StorageTest {
             assertContains(output, "1.[D][ ] return book (by: Dec 02 2019)");
         } finally {
             deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void storagePath_usesProjectRoot() throws Exception {
+        Path projectDirectory = Files.createTempDirectory("nori-project-root-test-");
+        try {
+            Path sourceDirectory = Files.createDirectories(projectDirectory.resolve("src").resolve("main")
+                    .resolve("java"));
+            Files.createFile(sourceDirectory.resolve("Nori.java"));
+            Path legacyDataDirectory = Files.createDirectories(sourceDirectory.resolve(DATA_DIRECTORY));
+            Files.writeString(legacyDataDirectory.resolve(STORAGE_FILE), "T | 0 | legacy task", StandardCharsets.UTF_8);
+
+            String sourceOutput = runNoriUsingProjectStorage(sourceDirectory, "list\nbye\n");
+            String rootOutput = runNoriUsingProjectStorage(projectDirectory, "list\nbye\n");
+
+            assertContains(sourceOutput, "I've imported saved tasks from src/main/java/data");
+            assertContains(sourceOutput, "1.[T][ ] legacy task");
+            assertContains(rootOutput, "1.[T][ ] legacy task");
+            assertTrue(Files.isRegularFile(projectDirectory.resolve(DATA_DIRECTORY).resolve(STORAGE_FILE)),
+                    "Expected migrated storage in the project-root data directory.");
+        } finally {
+            deleteDirectory(projectDirectory);
+        }
+    }
+
+    private static void storageOverride_isolatesInProjectLaunch() throws Exception {
+        Path projectDirectory = Files.createTempDirectory("nori-isolated-project-test-");
+        Path isolatedStorageDirectory = Files.createTempDirectory("nori-isolated-storage-test-");
+        try {
+            Path sourceDirectory = Files.createDirectories(projectDirectory.resolve("src").resolve("main")
+                    .resolve("java"));
+            Files.createFile(sourceDirectory.resolve("Nori.java"));
+            Path projectDataDirectory = Files.createDirectories(projectDirectory.resolve(DATA_DIRECTORY));
+            Path projectStorageFile = projectDataDirectory.resolve(STORAGE_FILE);
+            String protectedContent = "T | 0 | protected saved task";
+            Files.writeString(projectStorageFile, protectedContent, StandardCharsets.UTF_8);
+
+            String output = runNori(sourceDirectory, isolatedStorageDirectory, "todo isolated test task\nbye\n");
+
+            assertContains(output, "Now you have 1 tasks in the list.");
+            assertEquals(protectedContent, Files.readString(projectStorageFile, StandardCharsets.UTF_8));
+            assertContains(Files.readString(isolatedStorageDirectory.resolve(STORAGE_FILE), StandardCharsets.UTF_8),
+                    "b64:aXNvbGF0ZWQgdGVzdCB0YXNr");
+        } finally {
+            deleteDirectory(projectDirectory);
+            deleteDirectory(isolatedStorageDirectory);
         }
     }
 
@@ -122,6 +170,29 @@ public class StorageTest {
     }
 
     private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
+        return runNori(workingDirectory, workingDirectory.resolve(DATA_DIRECTORY), input);
+    }
+
+    private static String runNori(Path workingDirectory, Path storageDirectory, String input)
+            throws IOException, InterruptedException {
+        Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
+                "-cp", getAbsoluteClassPath(), "Nori")
+                .directory(workingDirectory.toFile())
+                .redirectErrorStream(true)
+                .start();
+        process.getOutputStream().write(input.getBytes(StandardCharsets.UTF_8));
+        process.getOutputStream().close();
+
+        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new AssertionError("Nori exited with status " + exitCode + ":\n" + output);
+        }
+        return output;
+    }
+
+    private static String runNoriUsingProjectStorage(Path workingDirectory, String input)
+            throws IOException, InterruptedException {
         Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
