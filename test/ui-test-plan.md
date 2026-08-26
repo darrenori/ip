@@ -94,6 +94,8 @@ whole run before any test executes.
 * **Unavailable storage.** Check manually that an unreadable storage location reports
   a storage error and leaves the in-memory task list unchanged; this needs filesystem
   setup that the command-only runner cannot express.
+* **Corrupt-file recovery.** Automated coverage is in `StorageTest`; it verifies that
+  malformed data is preserved as `data/nori.txt.corrupt` and restored from the backup.
 * **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
   cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
   case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.

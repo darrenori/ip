@@ -23,8 +23,10 @@ public class Nori {
     public static void main(String[] args) {
         List<Task> tasks = new ArrayList<>();
         String loadingError = null;
+        String loadingNotice = null;
         try {
             tasks = Storage.loadTasks();
+            loadingNotice = Storage.getLoadingNotice();
         } catch (NoriException exception) {
             loadingError = exception.getMessage();
         }
@@ -33,6 +35,8 @@ public class Nori {
         printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
         if (loadingError != null) {
             printResponse(true, loadingError);
+        } else if (loadingNotice != null) {
+            printResponse(true, loadingNotice);
         }
 
         Scanner scanner = new Scanner(System.in);

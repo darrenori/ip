@@ -13,11 +13,14 @@ import java.util.List;
  */
 public class Storage {
     private static final Path FILE_PATH = Path.of("data", "nori.txt");
+    private static final Path BACKUP_FILE_PATH = Path.of("data", "nori.txt.bak");
+    private static final Path CORRUPT_FILE_PATH = Path.of("data", "nori.txt.corrupt");
     private static final String FIELD_PREFIX = "b64:";
     private static final String TASK_SEPARATOR = " | ";
     private static final String TEMP_FILE_PREFIX = "nori-";
     private static final String TEMP_FILE_SUFFIX = ".tmp";
     private static boolean canWriteToStorage = true;
+    private static String loadingNotice;
 
     /**
      * Saves every task to the storage file, replacing its previous contents.
@@ -45,6 +48,7 @@ public class Storage {
             temporaryFile = Files.createTempFile(storageDirectory, TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
             Files.write(temporaryFile, taskLines, StandardCharsets.UTF_8);
             replaceStorageFile(temporaryFile);
+            updateBackupFile();
         } catch (IOException | SecurityException exception) {
             throw new NoriException("OOPS!!! I couldn't save your tasks to disk.");
         } finally {
@@ -59,23 +63,27 @@ public class Storage {
      * @throws NoriException if the storage file cannot be read or contains an invalid task
      */
     public static List<Task> loadTasks() throws NoriException {
+        loadingNotice = null;
         if (Files.notExists(FILE_PATH)) {
             return new ArrayList<>();
         }
 
         try {
-            List<Task> tasks = new ArrayList<>();
-            for (String taskLine : Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8)) {
-                tasks.add(parseTask(taskLine));
-            }
-            return tasks;
+            return readTasks(FILE_PATH);
         } catch (IOException | SecurityException exception) {
-            canWriteToStorage = false;
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+            return recoverFromBackup();
         } catch (NoriException exception) {
-            canWriteToStorage = false;
-            throw exception;
+            return recoverFromBackup();
         }
+    }
+
+    /**
+     * Returns a startup notice generated while loading storage, if any.
+     *
+     * @return the startup notice, or {@code null} when loading completed normally
+     */
+    public static String getLoadingNotice() {
+        return loadingNotice;
     }
 
     /**
@@ -151,6 +159,47 @@ public class Storage {
     }
 
     /**
+     * Reads and parses every task from a storage file.
+     *
+     * @param filePath the file to read
+     * @return the parsed tasks
+     * @throws IOException if the file cannot be read
+     * @throws NoriException if a stored task is invalid
+     */
+    private static List<Task> readTasks(Path filePath) throws IOException, NoriException {
+        List<Task> tasks = new ArrayList<>();
+        for (String taskLine : Files.readAllLines(filePath, StandardCharsets.UTF_8)) {
+            tasks.add(parseTask(taskLine));
+        }
+        return tasks;
+    }
+
+    /**
+     * Restores tasks from the backup file after the main storage file cannot be read.
+     *
+     * @return the restored tasks
+     * @throws NoriException if no valid backup can be used
+     */
+    private static List<Task> recoverFromBackup() throws NoriException {
+        if (Files.notExists(BACKUP_FILE_PATH)) {
+            canWriteToStorage = false;
+            throw new NoriException("OOPS!!! Your saved tasks are corrupted and no backup is available.");
+        }
+
+        try {
+            List<Task> backupTasks = readTasks(BACKUP_FILE_PATH);
+            Files.copy(FILE_PATH, CORRUPT_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(BACKUP_FILE_PATH, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            loadingNotice = "Your saved tasks were corrupted. I've restored the backup and kept the damaged "
+                    + "file as data/nori.txt.corrupt.";
+            return backupTasks;
+        } catch (IOException | SecurityException | NoriException exception) {
+            canWriteToStorage = false;
+            throw new NoriException("OOPS!!! Your saved tasks are corrupted and the backup could not be restored.");
+        }
+    }
+
+    /**
      * Returns whether a restored task contains every detail required by its type.
      *
      * @param task the restored task
@@ -216,6 +265,17 @@ public class Storage {
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (AtomicMoveNotSupportedException exception) {
             Files.move(temporaryFile, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * Copies the latest valid storage file as the recovery backup.
+     */
+    private static void updateBackupFile() {
+        try {
+            Files.copy(FILE_PATH, BACKUP_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException | SecurityException exception) {
+            // A successful main save is still usable when creating its optional recovery backup fails.
         }
     }
 
