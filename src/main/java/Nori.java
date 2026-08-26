@@ -21,10 +21,19 @@ public class Nori {
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     public static void main(String[] args) {
+        List<Task> tasks = new ArrayList<>();
+        String loadingError = null;
+        try {
+            tasks = Storage.loadTasks();
+        } catch (NoriException exception) {
+            loadingError = exception.getMessage();
+        }
+
         System.out.print(BANNER);
         printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
-
-        List<Task> tasks = new ArrayList<>();
+        if (loadingError != null) {
+            printResponse(true, loadingError);
+        }
 
         Scanner scanner = new Scanner(System.in);
         while (true) {

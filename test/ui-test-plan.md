@@ -87,6 +87,10 @@ whole run before any test executes.
 
 ## Known gaps
 
+* **Startup loading.** The runner isolates every test session's data directory, so it
+  cannot cover a task list surviving from one application launch to another. Check this
+  manually by add tasks in one session, then run `list` in a new session; the stored
+  task types and completion states should be restored.
 * **Input ending without `bye`.** The program treats end-of-input as `bye` and exits
   cleanly, but the runner always supplies a `bye`, so this path cannot be expressed as a
   case here. Check it manually with `printf 'todo a\n' | java -cp _temp/ui-test-classes Nori`.
