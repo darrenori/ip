@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -49,6 +51,9 @@ public class Nori {
             try {
             if (command == Command.LIST) {
                 printResponse(true, formatTaskList(tasks));
+            } else if (command == Command.ON) {
+                LocalDate date = parseDate(getCommandDetails(input, command.getKeyword()));
+                printResponse(true, formatTasksOnDate(tasks, date));
             } else if (command == Command.MARK) {
                 int taskIndex = getTaskIndex(input, command.getKeyword(), tasks);
                 if (tasks.get(taskIndex).isDone()) {
@@ -154,7 +159,7 @@ public class Nori {
                 }
             } else {
                 throw new NoriException("OOPS!!! I'm sorry, but I don't know what that means :-("
-                        + " Try todo, deadline, event, list, mark, unmark, delete, or bye lah.");
+                        + " Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.");
             }
             } catch (NoriException exception) {
                 printResponse(true, exception.getMessage());
@@ -174,6 +179,26 @@ public class Nori {
      */
     private static String getCommandDetails(String input, String command) {
         return input.substring(command.length()).trim();
+    }
+
+    /**
+     * Parses the ISO-8601 date provided to the {@code on} command.
+     *
+     * @param dateInput the date text after the {@code on} command
+     * @return the parsed date
+     * @throws NoriException if the date is missing or invalid
+     */
+    private static LocalDate parseDate(String dateInput) throws NoriException {
+        if (dateInput.isEmpty()) {
+            throw new NoriException("OOPS!!! \"on\" needs a date. Try \"on 2019-10-15\".");
+        }
+
+        try {
+            return LocalDate.parse(dateInput);
+        } catch (DateTimeParseException exception) {
+            throw new NoriException("OOPS!!! I cannot understand \"" + dateInput + "\" as a date."
+                    + " Use a date like \"2019-10-15\".");
+        }
     }
 
     /**
@@ -299,6 +324,51 @@ public class Nori {
             lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
         return lines;
+    }
+
+    /**
+     * Builds the date-query heading and the matching deadline and event task lines.
+     *
+     * @param tasks the task list to search
+     * @param date the date to match
+     * @return the formatted date-query response lines
+     */
+    private static String[] formatTasksOnDate(List<Task> tasks, LocalDate date) {
+        List<String> matchingTasks = new ArrayList<>();
+        for (int index = 0; index < tasks.size(); index++) {
+            Task task = tasks.get(index);
+            if (occursOn(task, date)) {
+                matchingTasks.add((index + 1) + "." + task);
+            }
+        }
+
+        if (matchingTasks.isEmpty()) {
+            return new String[] {"There are no deadlines or events on " + date + "."};
+        }
+
+        String[] lines = new String[matchingTasks.size() + 1];
+        lines[0] = "Here are the deadlines and events on " + date + ":";
+        for (int index = 0; index < matchingTasks.size(); index++) {
+            lines[index + 1] = matchingTasks.get(index);
+        }
+        return lines;
+    }
+
+    /**
+     * Returns whether a task is a deadline or event occurring on the given date.
+     *
+     * @param task the task to inspect
+     * @param date the date to match
+     * @return {@code true} if the task occurs on {@code date}
+     */
+    private static boolean occursOn(Task task, LocalDate date) {
+        if (task instanceof Deadline) {
+            return ((Deadline) task).occursOn(date);
+        }
+        if (task instanceof Event) {
+            return ((Event) task).occursOn(date);
+        }
+        return false;
     }
 
     /**

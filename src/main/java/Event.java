@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * Represents a task that starts and ends at specified dates or times.
  */
@@ -16,6 +18,17 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    /**
+     * Returns whether the event's start or end details explicitly contain the given ISO-8601 date.
+     *
+     * @param date the date to find in this event's start or end details
+     * @return {@code true} if the event explicitly includes {@code date}
+     */
+    public boolean occursOn(LocalDate date) {
+        String dateText = date.toString();
+        return from.contains(dateText) || to.contains(dateText);
     }
 
     @Override

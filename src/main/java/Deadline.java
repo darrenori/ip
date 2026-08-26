@@ -64,6 +64,16 @@ public class Deadline extends Task {
         return by.toString();
     }
 
+    /**
+     * Returns whether this deadline is due on the given date.
+     *
+     * @param date the date to compare with this deadline
+     * @return {@code true} if this deadline is due on {@code date}
+     */
+    public boolean occursOn(LocalDate date) {
+        return by.equals(date);
+    }
+
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMATTER) + ")";

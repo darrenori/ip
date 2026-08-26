@@ -127,6 +127,71 @@ ____________________________________________________________
     ____________________________________________________________
 ```
 
+## Test 12: Find deadlines and dated events on a specific date
+
+**Aim:** Verify that `on` lists matching deadlines and events using their original task numbers, and handles dates with no matches, missing dates, and invalid dates.
+
+### Input
+```text
+deadline submit report /by 2019-10-15
+event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600
+on 2019-10-15
+on 2019-10-17
+on
+on 2019-02-31
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] submit report (by: Oct 15 2019)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events on 2019-10-15:
+     1.[D][ ] submit report (by: Oct 15 2019)
+     2.[E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no deadlines or events on 2019-10-17.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! "on" needs a date. Try "on 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! I cannot understand "2019-02-31" as a date. Use a date like "2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 The runner compares output exactly after normalising line endings, so trailing spaces
 matter: the first banner line genuinely ends in a space. Every case needs both an
 `### Input` and an `### Expected output` block; a case missing either one aborts the
@@ -463,7 +528,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -826,23 +891,23 @@ What can I do for you?
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, list, mark, unmark, delete, or bye lah.
+     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, or bye lah.
     ____________________________________________________________
 
     ____________________________________________________________
