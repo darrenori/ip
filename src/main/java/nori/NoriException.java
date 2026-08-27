@@ -1,3 +1,5 @@
+package nori;
+
 /**
  * Represents an error caused by an invalid Nori command or task operation.
  */

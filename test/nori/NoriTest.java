@@ -1,3 +1,5 @@
+package nori;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -186,7 +188,7 @@ public class NoriTest {
     private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
         Path storageDirectory = workingDirectory.resolve("data").toAbsolutePath();
         Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory,
-                "-cp", getAbsoluteClassPath(), "Nori")
+                "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();

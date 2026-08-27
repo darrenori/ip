@@ -1,3 +1,5 @@
+package nori.command;
+
 /**
  * Identifies the words that begin Nori commands.
  */

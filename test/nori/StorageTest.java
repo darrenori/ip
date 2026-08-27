@@ -1,3 +1,5 @@
+package nori;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,6 +16,12 @@ public class StorageTest {
     private static final String BACKUP_FILE = "nori.txt.bak";
     private static final String CORRUPT_FILE = "nori.txt.corrupt";
 
+    /**
+     * Runs every storage regression test.
+     *
+     * @param args ignored command-line arguments
+     * @throws Exception if a test cannot create its isolated environment or Nori cannot run
+     */
     public static void main(String[] args) throws Exception {
         runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
@@ -71,7 +79,8 @@ public class StorageTest {
         try {
             Path sourceDirectory = Files.createDirectories(projectDirectory.resolve("src").resolve("main")
                     .resolve("java"));
-            Files.createFile(sourceDirectory.resolve("Nori.java"));
+            Path packageDirectory = Files.createDirectories(sourceDirectory.resolve("nori"));
+            Files.createFile(packageDirectory.resolve("Nori.java"));
             Path legacyDataDirectory = Files.createDirectories(sourceDirectory.resolve(DATA_DIRECTORY));
             Files.writeString(legacyDataDirectory.resolve(STORAGE_FILE), "T | 0 | legacy task", StandardCharsets.UTF_8);
 
@@ -94,7 +103,8 @@ public class StorageTest {
         try {
             Path sourceDirectory = Files.createDirectories(projectDirectory.resolve("src").resolve("main")
                     .resolve("java"));
-            Files.createFile(sourceDirectory.resolve("Nori.java"));
+            Path packageDirectory = Files.createDirectories(sourceDirectory.resolve("nori"));
+            Files.createFile(packageDirectory.resolve("Nori.java"));
             Path projectDataDirectory = Files.createDirectories(projectDirectory.resolve(DATA_DIRECTORY));
             Path projectStorageFile = projectDataDirectory.resolve(STORAGE_FILE);
             String protectedContent = "T | 0 | protected saved task";
@@ -176,7 +186,7 @@ public class StorageTest {
     private static String runNori(Path workingDirectory, Path storageDirectory, String input)
             throws IOException, InterruptedException {
         Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
-                "-cp", getAbsoluteClassPath(), "Nori")
+                "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();
@@ -193,7 +203,7 @@ public class StorageTest {
 
     private static String runNoriUsingProjectStorage(Path workingDirectory, String input)
             throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "Nori")
+        Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();

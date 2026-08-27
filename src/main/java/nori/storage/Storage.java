@@ -1,3 +1,5 @@
+package nori.storage;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -10,6 +12,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+import nori.NoriException;
+import nori.task.Deadline;
+import nori.task.Event;
+import nori.task.Task;
+import nori.task.Todo;
 
 /**
  * Stores Nori's tasks on the local disk.
@@ -119,7 +127,8 @@ public class Storage {
         Path currentDirectory = Path.of("").toAbsolutePath().normalize();
         for (Path candidate = currentDirectory; candidate != null; candidate = candidate.getParent()) {
             try {
-                Path sourceFile = candidate.resolve("src").resolve("main").resolve("java").resolve("Nori.java");
+                Path sourceFile = candidate.resolve("src").resolve("main").resolve("java")
+                        .resolve("nori").resolve("Nori.java");
                 if (Files.isRegularFile(sourceFile)) {
                     return candidate;
                 }
@@ -192,17 +201,17 @@ public class Storage {
 
         String status = task.isDone() ? "1" : "0";
         if (task instanceof Todo) {
-            return "T" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description);
+            return "T" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription());
         }
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
-            return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description)
+            return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription())
                     + TASK_SEPARATOR + encodeField(deadline.getStorageDate());
         }
         if (task instanceof Event) {
             Event event = (Event) task;
-            return "E" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.description)
-                    + TASK_SEPARATOR + encodeField(event.from) + TASK_SEPARATOR + encodeField(event.to);
+            return "E" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription())
+                    + TASK_SEPARATOR + encodeField(event.getFrom()) + TASK_SEPARATOR + encodeField(event.getTo());
         }
         throw new NoriException("OOPS!!! I couldn't save an unsupported task type.");
     }
@@ -298,7 +307,7 @@ public class Storage {
      * @return {@code true} if every required task field is nonempty
      */
     private static boolean hasTaskDetails(Task task) {
-        if (task.description.isEmpty()) {
+        if (task.getDescription().isEmpty()) {
             return false;
         }
         if (task instanceof Deadline) {
@@ -306,7 +315,7 @@ public class Storage {
         }
         if (task instanceof Event) {
             Event event = (Event) task;
-            return !event.from.isEmpty() && !event.to.isEmpty();
+            return !event.getFrom().isEmpty() && !event.getTo().isEmpty();
         }
         return true;
     }
