@@ -57,6 +57,12 @@ handing the work back to the user.
 
 ## Git
 
+All commit messages in this project must follow the SE-EDU Git convention
+(<https://se-education.org/guides/conventions/git.html>).
+
+Invoke the project-specific `seedu-git-standard` skill before proposing or
+writing any commit message. This is mandatory for all future commits.
+
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
