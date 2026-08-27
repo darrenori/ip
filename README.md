@@ -51,3 +51,6 @@ To run the packaged application independently:
 
 Nori creates its `data` folder beside the JAR when it first saves a task. See the
 [SE-EDU guide to working with JAR files](https://se-education.org/guides/tutorials/jar.html) for additional context.
+
+For the maintainer workflow, including isolated verification and attaching the binary to GitHub, see
+[Releasing Nori](docs/releasing.md).
