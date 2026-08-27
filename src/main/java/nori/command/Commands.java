@@ -106,6 +106,10 @@ class ListCommand extends InputCommand {
  * Displays Nori's supported commands.
  */
 class HelpCommand extends Command {
+    /** Creates a help command. */
+    HelpCommand() {
+    }
+
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
@@ -408,6 +412,10 @@ class EventCommand extends InputCommand {
  * Ends Nori's command loop.
  */
 class ExitCommand extends Command {
+    /** Creates an exit command. */
+    ExitCommand() {
+    }
+
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
@@ -425,6 +433,10 @@ class ExitCommand extends Command {
  * Reports input that does not begin with a recognized command.
  */
 class UnknownCommand extends Command {
+    /** Creates a command that reports unrecognized input. */
+    UnknownCommand() {
+    }
+
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
