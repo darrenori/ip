@@ -225,8 +225,8 @@ public class TaskList {
         List<String> matchingTasks = new ArrayList<>();
         for (int index = 0; index < size(); index++) {
             Task task = get(index);
-            boolean matches = date != null ? occursOn(task, date) : occursInDateRange(task, dateRange);
-            if (matches) {
+            boolean isMatch = date != null ? occursOn(task, date) : occursInDateRange(task, dateRange);
+            if (isMatch) {
                 matchingTasks.add((index + 1) + "." + task);
             }
         }
