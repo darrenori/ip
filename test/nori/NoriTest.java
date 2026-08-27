@@ -27,6 +27,7 @@ public class NoriTest {
         runTest("Shows command help", NoriTest::helpCommand_listsSupportedCommands);
         runTest("Finds deadlines and events on a date", NoriTest::onCommand_matchesDeadlineAndEventDates);
         runTest("Lists deadlines and events in a date range", NoriTest::listCommand_matchesDateRange);
+        runTest("Finds tasks by description keyword", NoriTest::findCommand_matchesTaskDescriptions);
         runTest("Persists every task type and completion state", NoriTest::savedTasks_restoreAcrossLaunches);
         System.out.println("All Nori regression tests passed.");
     }
@@ -85,6 +86,7 @@ public class NoriTest {
             assertContains(output, "deadline <description> /by yyyy-MM-dd");
             assertContains(output, "on yyyy-MM-dd");
             assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
+            assertContains(output, "find <keyword>");
             assertContains(output, "Use yyyy-MM-dd in an event's /from or /to to find it with on.");
         } finally {
             deleteDirectory(testDirectory);
@@ -172,6 +174,39 @@ public class NoriTest {
             assertContains(output, "3.[E][X] celebration (from: 2024-12-31 2000 to: 2025-01-01 0100)");
             assertContains(output, "Here are the deadlines and events on 2025-01-01:");
             assertContains(output, "3.[E][X] celebration");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void findCommand_matchesTaskDescriptions() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-regression-test-");
+        try {
+            String output = runNori(testDirectory, "todo read book\n"
+                    + "deadline return book /by 2019-06-06\n"
+                    + "event book fair /from 2019-06-06 1000 /to 2019-06-06 1800\n"
+                    + "todo Buy Milk\n"
+                    + "mark 1\n"
+                    + "find bicycle\n"
+                    + "find milk\n"
+                    + "find BOOK\n"
+                    + "find\n"
+                    + "bye\n");
+
+            // The final search is "find BOOK", so this is that search's section.
+            // An upper-case keyword matching lower-case descriptions proves the
+            // keyword side is case folded.
+            String matchingTasks = getSectionAfter(output, "Here are the matching tasks in your list:");
+            assertContains(matchingTasks, "1.[T][X] read book");
+            assertContains(matchingTasks, "2.[D][ ] return book (by: Jun 06 2019)");
+            assertContains(matchingTasks, "3.[E][ ] book fair");
+            assertNotContains(matchingTasks, "Buy Milk");
+
+            // "find milk" matching "Buy Milk" proves the description side is case
+            // folded too, and that a match keeps its number from the full list.
+            assertContains(output, "4.[T][ ] Buy Milk");
+            assertContains(output, "There are no matching tasks in your list.");
+            assertContains(output, "OOPS!!! \"find\" needs a keyword.");
         } finally {
             deleteDirectory(testDirectory);
         }

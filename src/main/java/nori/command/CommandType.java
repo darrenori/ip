@@ -16,6 +16,8 @@ public enum CommandType {
     HELP("help"),
     /** Shows the deadlines and events falling on one date. */
     ON("on"),
+    /** Shows the tasks whose descriptions contain a keyword. */
+    FIND("find"),
     /** Marks a task as done. */
     MARK("mark"),
     /** Marks a task as not done. */

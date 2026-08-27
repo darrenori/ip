@@ -38,6 +38,8 @@ public final class Commands {
             return new HelpCommand();
         case ON:
             return new OnCommand(details);
+        case FIND:
+            return new FindCommand(details);
         case MARK:
             return new MarkCommand(details);
         case UNMARK:
@@ -134,6 +136,31 @@ class OnCommand extends InputCommand {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         ui.showResponse(tasks.getTasksOnDateDisplayLines(Parser.parseDate(details)));
+    }
+}
+
+/**
+ * Displays tasks whose descriptions contain a keyword.
+ */
+class FindCommand extends InputCommand {
+    /**
+     * Creates a keyword-search command.
+     *
+     * @param details the keyword after the {@code find} keyword
+     */
+    FindCommand(String details) {
+        super(details);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void execute(TaskList tasks, Ui ui, Storage storage) {
+        if (details.isEmpty()) {
+            ui.showResponse("OOPS!!! \"find\" needs a keyword."
+                    + " Try \"find book\" — searching for nothing finds everything lah.");
+            return;
+        }
+        ui.showResponse(tasks.getTasksMatchingKeywordDisplayLines(details));
     }
 }
 
