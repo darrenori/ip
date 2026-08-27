@@ -1068,3 +1068,90 @@ ____________________________________________________________
      Bye. Hope to see you again soon!
     ____________________________________________________________
 ```
+
+## Test 15: Find tasks by description keyword
+
+**Aim:** Verify that find matches a keyword anywhere in a task description, ignores case, keeps each task's number from the full list, reports when nothing matches, and rejects a search with no keyword.
+
+### Input
+```text
+todo read book
+deadline return book /by 2019-06-06
+event book fair /from 2019-06-06 1000 /to 2019-06-06 1800
+todo Buy Milk
+mark 1
+find bicycle
+find milk
+find BOOK
+find
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Jun 06 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] Buy Milk
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no matching tasks in your list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     4.[T][ ] Buy Milk
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: Jun 06 2019)
+     3.[E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! "find" needs a keyword. Try "find book" — searching for nothing finds everything lah.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
