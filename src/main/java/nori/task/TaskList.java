@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import nori.NoriException;
 
@@ -137,6 +138,26 @@ public class TaskList {
     }
 
     /**
+     * Returns task lines whose descriptions contain a keyword.
+     *
+     * The search ignores case and matches anywhere in the description, so
+     * {@code book} finds both "read book" and "Bookshop trip". Only the
+     * description is searched; a deadline's date and an event's start and end
+     * details are not. Matching lines keep their numbers from the full list, so
+     * a number shown here can be used directly with mark, unmark or delete.
+     *
+     * @param keyword the text to search for in task descriptions
+     * @return the keyword-search response lines
+     */
+    public String[] getTasksMatchingKeywordDisplayLines(String keyword) {
+        List<String> matchingTasks = getTasksContainingKeyword(keyword);
+        if (matchingTasks.isEmpty()) {
+            return new String[] {"There are no matching tasks in your list."};
+        }
+        return prependHeading("Here are the matching tasks in your list:", matchingTasks);
+    }
+
+    /**
      * Returns the number of tasks in the list.
      *
      * @return the task count
@@ -227,6 +248,28 @@ public class TaskList {
             Task task = get(index);
             boolean matches = date != null ? occursOn(task, date) : occursInDateRange(task, dateRange);
             if (matches) {
+                matchingTasks.add((index + 1) + "." + task);
+            }
+        }
+        return matchingTasks;
+    }
+
+    /**
+     * Finds numbered task lines whose descriptions contain a keyword.
+     *
+     * Case folding uses {@link Locale#ROOT} so a search behaves the same way
+     * whatever locale the machine running Nori is set to.
+     *
+     * @param keyword the text to search for in task descriptions
+     * @return the matching numbered task lines
+     */
+    private List<String> getTasksContainingKeyword(String keyword) {
+        String foldedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<String> matchingTasks = new ArrayList<>();
+        for (int index = 0; index < size(); index++) {
+            Task task = get(index);
+            boolean isMatch = task.getDescription().toLowerCase(Locale.ROOT).contains(foldedKeyword);
+            if (isMatch) {
                 matchingTasks.add((index + 1) + "." + task);
             }
         }
