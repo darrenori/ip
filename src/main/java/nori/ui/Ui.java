@@ -1,3 +1,5 @@
+package nori.ui;
+
 import java.util.Scanner;
 
 /**

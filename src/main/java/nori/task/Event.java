@@ -1,7 +1,11 @@
+package nori.task;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import nori.NoriException;
 
 /**
  * Represents a task that starts and ends at specified dates or times.
@@ -10,8 +14,8 @@ public class Event extends Task {
     private static final Pattern DATE_PATTERN =
             Pattern.compile("(?<![0-9])\\d{4}-\\d{1,2}-\\d{1,2}(?![0-9])");
 
-    protected String from;
-    protected String to;
+    private final String from;
+    private final String to;
 
     /**
      * Creates an incomplete event with the given description, start, and end times.
@@ -27,6 +31,24 @@ public class Event extends Task {
         validateDates(to);
         this.from = from;
         this.to = to;
+    }
+
+    /**
+     * Returns the event's start details as entered by the user.
+     *
+     * @return the event start details
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    /**
+     * Returns the event's end details as entered by the user.
+     *
+     * @return the event end details
+     */
+    public String getTo() {
+        return to;
     }
 
     /**

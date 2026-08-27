@@ -1,7 +1,11 @@
+package nori.task;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+
+import nori.NoriException;
 
 /**
  * Represents a task that must be completed by a specified date.

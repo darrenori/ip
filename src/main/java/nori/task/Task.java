@@ -1,9 +1,11 @@
+package nori.task;
+
 /**
  * Represents the common state and behaviour shared by every task type in Nori.
  */
 public abstract class Task {
-    protected String description;
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     /**
      * Creates a task that has not yet been completed.
@@ -32,6 +34,15 @@ public abstract class Task {
      */
     public boolean isDone() {
         return isDone;
+    }
+
+    /**
+     * Returns this task's description.
+     *
+     * @return the task description
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**
