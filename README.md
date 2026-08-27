@@ -24,3 +24,33 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Building the executable JAR
+
+Nori uses the Shadow plugin to create a fat JAR containing the application and its runtime dependencies. Ensure that
+Java 25 is active, then run the appropriate command from the project root:
+
+```powershell
+.\gradlew.bat clean shadowJar
+```
+
+On macOS or Linux, run:
+
+```bash
+./gradlew clean shadowJar
+```
+
+`clean` removes stale build output, while `shadowJar` creates `build/libs/Nori.jar`. The `build` directory is ignored
+by Git because the JAR can be regenerated from the source code.
+
+To run the packaged application independently:
+
+1. Copy `build/libs/Nori.jar` into an empty folder.
+2. Open a command window in that folder.
+3. Run `java -jar "Nori.jar"`.
+
+Nori creates its `data` folder beside the JAR when it first saves a task. See the
+[SE-EDU guide to working with JAR files](https://se-education.org/guides/tutorials/jar.html) for additional context.
+
+For the maintainer workflow, including isolated verification and attaching the binary to GitHub, see
+[Releasing Nori](docs/releasing.md).

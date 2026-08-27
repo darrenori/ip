@@ -86,7 +86,8 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'nori.jar'
+    archiveFileName = 'Nori.jar'
+    mergeServiceFiles()
 }
 
 run {
