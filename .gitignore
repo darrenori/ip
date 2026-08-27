@@ -24,3 +24,4 @@ text-ui-test/EXPECTED-UNIX.TXT
 
 # Nori runtime task data
 /data/
+.vscode
