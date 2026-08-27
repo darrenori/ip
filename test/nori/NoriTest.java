@@ -22,7 +22,8 @@ public class NoriTest {
      */
     public static void main(String[] args) throws Exception {
         runTest("Completes a mixed task workflow", NoriTest::mixedTaskWorkflow_updatesListAndStatuses);
-        runTest("Rejects malformed input without adding tasks", NoriTest::malformedCommands_leaveTaskListEmpty);
+        runTest("Rejects malformed input without adding tasks",
+                NoriTest::malformedCommands_leaveTaskListEmpty);
         runTest("Shows command help", NoriTest::helpCommand_listsSupportedCommands);
         runTest("Finds deadlines and events on a date", NoriTest::onCommand_matchesDeadlineAndEventDates);
         runTest("Lists deadlines and events in a date range", NoriTest::listCommand_matchesDateRange);
@@ -101,10 +102,12 @@ public class NoriTest {
                     + "on 2024-03-02\n"
                     + "bye\n");
 
-            String matchingTasks = getSectionAfter(output, "Here are the deadlines and events on 2024-03-01:");
+            String matchingTasks = getSectionAfter(output,
+                    "Here are the deadlines and events on 2024-03-01:");
             assertContains(matchingTasks, "2.[D][ ] submit work (by: Mar 01 2024)");
             assertContains(matchingTasks, "3.[E][ ] workshop (from: 2024-03-01 0900 to: 2024-03-01 1100)");
-            assertContains(matchingTasks, "4.[E][ ] overnight session (from: 2024-02-29 2300 to: 2024-03-01 0100)");
+            assertContains(matchingTasks,
+                    "4.[E][ ] overnight session (from: 2024-02-29 2300 to: 2024-03-01 0100)");
             assertNotContains(matchingTasks, "unrelated task");
             assertContains(output, "There are no deadlines or events on 2024-03-02.");
         } finally {
@@ -188,7 +191,8 @@ public class NoriTest {
      * @throws IOException if the child process cannot be started or communicated with
      * @throws InterruptedException if the current thread is interrupted while Nori is running
      */
-    private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
+    private static String runNori(Path workingDirectory, String input)
+            throws IOException, InterruptedException {
         Path storageDirectory = workingDirectory.resolve("data").toAbsolutePath();
         Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory,
                 "-cp", getAbsoluteClassPath(), "nori.Nori")
@@ -271,7 +275,8 @@ public class NoriTest {
 
     private static void assertNotContains(String actual, String unexpected) {
         if (actual.contains(unexpected)) {
-            throw new AssertionError("Expected output not to contain \"" + unexpected + "\" but was:\n" + actual);
+            throw new AssertionError("Expected output not to contain \"" + unexpected + "\" but was:\n"
+                    + actual);
         }
     }
 

@@ -26,16 +26,23 @@ public class StorageTest {
      * @throws Exception if a test cannot create its isolated environment or Nori cannot run
      */
     public static void main(String[] args) throws Exception {
-        runTest("Creates missing data directory", StorageTest::saveTasks_missingDirectory_createsStorageFiles);
+        runTest("Creates missing data directory",
+                StorageTest::saveTasks_missingDirectory_createsStorageFiles);
         runTest("Restores delimiter-containing task", StorageTest::loadTasks_encodedField_restoresTask);
         runTest("Restores a deadline date", StorageTest::loadTasks_deadline_restoresDate);
-        runTest("Uses project-root storage from source directories", StorageTest::storagePath_usesProjectRoot);
-        runTest("Keeps test storage isolated inside a project", StorageTest::storageOverride_isolatesInProjectLaunch);
+        runTest("Uses project-root storage from source directories",
+                StorageTest::storagePath_usesProjectRoot);
+        runTest("Keeps test storage isolated inside a project",
+                StorageTest::storageOverride_isolatesInProjectLaunch);
         runTest("Handles end of input", StorageTest::endOfInput_exitsCleanly);
-        runTest("Recovers corrupted storage from backup", StorageTest::loadTasks_corruptedFile_restoresBackup);
-        runTest("Recovers malformed UTF-8 storage from backup", StorageTest::loadTasks_malformedUtf8_restoresBackup);
-        runTest("Recovers an invalid event date from backup", StorageTest::loadTasks_invalidEventDate_restoresBackup);
-        runTest("Preserves corruption without backup", StorageTest::loadTasks_noBackup_preservesCorruptedFile);
+        runTest("Recovers corrupted storage from backup",
+                StorageTest::loadTasks_corruptedFile_restoresBackup);
+        runTest("Recovers malformed UTF-8 storage from backup",
+                StorageTest::loadTasks_malformedUtf8_restoresBackup);
+        runTest("Recovers an invalid event date from backup",
+                StorageTest::loadTasks_invalidEventDate_restoresBackup);
+        runTest("Preserves corruption without backup",
+                StorageTest::loadTasks_noBackup_preservesCorruptedFile);
         runTest("Preserves corruption when the backup is unreadable",
                 StorageTest::loadTasks_corruptBackup_preservesCorruptedFile);
         System.out.println("All storage tests passed.");
@@ -48,8 +55,10 @@ public class StorageTest {
 
             Path dataDirectory = testDirectory.resolve(DATA_DIRECTORY);
             assertTrue(Files.isDirectory(dataDirectory), "Expected the data directory to be created.");
-            assertTrue(Files.isRegularFile(dataDirectory.resolve(STORAGE_FILE)), "Expected nori.txt to exist.");
-            assertTrue(Files.isRegularFile(dataDirectory.resolve(BACKUP_FILE)), "Expected nori.txt.bak to exist.");
+            assertTrue(Files.isRegularFile(dataDirectory.resolve(STORAGE_FILE)),
+                    "Expected nori.txt to exist.");
+            assertTrue(Files.isRegularFile(dataDirectory.resolve(BACKUP_FILE)),
+                    "Expected nori.txt.bak to exist.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -87,7 +96,8 @@ public class StorageTest {
             Path packageDirectory = Files.createDirectories(sourceDirectory.resolve("nori"));
             Files.createFile(packageDirectory.resolve("Nori.java"));
             Path legacyDataDirectory = Files.createDirectories(sourceDirectory.resolve(DATA_DIRECTORY));
-            Files.writeString(legacyDataDirectory.resolve(STORAGE_FILE), "T | 0 | legacy task", StandardCharsets.UTF_8);
+            Files.writeString(legacyDataDirectory.resolve(STORAGE_FILE),
+                    "T | 0 | legacy task", StandardCharsets.UTF_8);
 
             String sourceOutput = runNoriUsingProjectStorage(sourceDirectory, "list\nbye\n");
             String rootOutput = runNoriUsingProjectStorage(projectDirectory, "list\nbye\n");
@@ -115,11 +125,13 @@ public class StorageTest {
             String protectedContent = "T | 0 | protected saved task";
             Files.writeString(projectStorageFile, protectedContent, StandardCharsets.UTF_8);
 
-            String output = runNori(sourceDirectory, isolatedStorageDirectory, "todo isolated test task\nbye\n");
+            String output = runNori(sourceDirectory, isolatedStorageDirectory,
+                    "todo isolated test task\nbye\n");
 
             assertContains(output, "Now you have 1 tasks in the list.");
             assertEquals(protectedContent, Files.readString(projectStorageFile, StandardCharsets.UTF_8));
-            assertContains(Files.readString(isolatedStorageDirectory.resolve(STORAGE_FILE), StandardCharsets.UTF_8),
+            assertContains(Files.readString(isolatedStorageDirectory.resolve(STORAGE_FILE),
+                    StandardCharsets.UTF_8),
                     "b64:aXNvbGF0ZWQgdGVzdCB0YXNr");
         } finally {
             deleteDirectory(projectDirectory);
@@ -153,8 +165,10 @@ public class StorageTest {
 
             assertContains(output, "Your saved tasks were corrupted. I've restored the backup");
             assertContains(output, "1.[T][ ] recover this task");
-            assertEquals(corruptContent, Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
-            assertContains(Files.readString(storageFile, StandardCharsets.UTF_8), "b64:cmVjb3ZlciB0aGlzIHRhc2s=");
+            assertEquals(corruptContent,
+                    Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
+            assertContains(Files.readString(storageFile, StandardCharsets.UTF_8),
+                    "b64:cmVjb3ZlciB0aGlzIHRhc2s=");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -204,13 +218,15 @@ public class StorageTest {
         System.out.println("PASS: " + testName);
     }
 
-    private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
+    private static String runNori(Path workingDirectory, String input)
+            throws IOException, InterruptedException {
         return runNori(workingDirectory, workingDirectory.resolve(DATA_DIRECTORY), input);
     }
 
     private static String runNori(Path workingDirectory, Path storageDirectory, String input)
             throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
+        Process process = new ProcessBuilder("java",
+                "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
                 "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
@@ -257,7 +273,8 @@ public class StorageTest {
 
             assertContains(output, "Your saved tasks were corrupted. I've restored the backup");
             assertContains(output, "1.[T][ ] restore valid text");
-            assertEquals(corruptContent, Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
+            assertEquals(corruptContent,
+                    Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -277,14 +294,16 @@ public class StorageTest {
 
             assertContains(output, "Your saved tasks were corrupted. I've restored the backup");
             assertContains(output, "1.[T][ ] keep this task");
-            assertEquals(corruptContent, Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
+            assertEquals(corruptContent,
+                    Files.readString(dataDirectory.resolve(CORRUPT_FILE), StandardCharsets.UTF_8));
         } finally {
             deleteDirectory(testDirectory);
         }
     }
 
     /**
-     * Returns the test classpath as an absolute path so child Nori processes can use it from a temporary directory.
+     * Returns the test classpath as an absolute path, so a child Nori process
+     * can use it from a temporary directory.
      *
      * @return the absolute classpath for the compiled test classes
      */
