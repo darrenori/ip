@@ -6,15 +6,20 @@ import java.util.Scanner;
  * Handles Nori's console output.
  */
 public class Ui {
+    /** Leading spaces that align a response under the banner. */
     private static final String INDENT = "    ";
+    /** The unindented rule drawn above and below a response. */
     private static final String DIVIDER_LINE = "____________________________________________________________";
+    /** The indented form of {@link #DIVIDER_LINE}. */
     private static final String DIVIDER = INDENT + DIVIDER_LINE;
+    /** The ASCII-art wordmark shown once at startup. */
     private static final String BANNER = "  _   _  ____  _____  _____ \n"
             + " | \\ | |/ __ \\|  __ \\|_   _|\n"
             + " |  \\| | |  | | |__) | | |  \n"
             + " | . ` | |  | |  _  /  | |  \n"
             + " | |\\  | |__| | | \\ \\ _| |_ \n"
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
+    /** The command summary shown by the help command. */
     private static final String[] HELP_LINES = {
         "Here are the commands you can use:",
         "todo <description>",
@@ -30,6 +35,7 @@ public class Ui {
         "bye",
         "Use yyyy-MM-dd in an event's /from or /to to find it with on."
     };
+    /** Reads command lines from standard input. */
     private final Scanner scanner;
 
     /**

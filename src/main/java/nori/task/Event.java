@@ -11,10 +11,13 @@ import nori.NoriException;
  * Represents a task that starts and ends at specified dates or times.
  */
 public class Event extends Task {
+    /** Finds date-like text in an event detail, ignoring digits that are part of a longer run. */
     private static final Pattern DATE_PATTERN =
             Pattern.compile("(?<![0-9])\\d{4}-\\d{1,2}-\\d{1,2}(?![0-9])");
 
+    /** Start details, kept exactly as the user typed them. */
     private final String from;
+    /** End details, kept exactly as the user typed them. */
     private final String to;
 
     /**

@@ -11,6 +11,7 @@ import nori.NoriException;
  * Stores tasks and performs operations on their task numbers and date queries.
  */
 public class TaskList {
+    /** The tasks, in the order the user added them. */
     private final List<Task> tasks;
 
     /**

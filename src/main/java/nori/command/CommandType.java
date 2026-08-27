@@ -25,6 +25,7 @@ public enum CommandType {
     /** Ends the session. */
     BYE("bye");
 
+    /** The word the user types to select this command. */
     private final String keyword;
 
     /**

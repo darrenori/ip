@@ -4,7 +4,9 @@ package nori.task;
  * Represents the common state and behaviour shared by every task type in Nori.
  */
 public abstract class Task {
+    /** What the task is, as the user described it. */
     private final String description;
+    /** Whether the task has been completed. */
     private boolean isDone;
 
     /**

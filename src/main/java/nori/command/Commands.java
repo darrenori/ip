@@ -284,6 +284,7 @@ class TodoCommand extends InputCommand {
  * Adds a deadline task.
  */
 class DeadlineCommand extends InputCommand {
+    /** Separates a deadline description from its due date. */
     private static final String DEADLINE_SEPARATOR = " /by ";
 
     /**
@@ -341,7 +342,9 @@ class DeadlineCommand extends InputCommand {
  * Adds an event task.
  */
 class EventCommand extends InputCommand {
+    /** Separates an event description from its start details. */
     private static final String EVENT_FROM_SEPARATOR = " /from ";
+    /** Separates an event start from its end details. */
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
     /**
