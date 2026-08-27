@@ -25,3 +25,6 @@ text-ui-test/EXPECTED-UNIX.TXT
 # Nori runtime task data
 /data/
 .vscode
+
+# Claude Code local files (skills stay on disk, not in the repo)
+/.claude/
