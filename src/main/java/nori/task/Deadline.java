@@ -11,9 +11,11 @@ import nori.NoriException;
  * Represents a task that must be completed by a specified date.
  */
 public class Deadline extends Task {
+    /** Renders the due date for display, as in {@code Feb 29 2024}. */
     private static final DateTimeFormatter DISPLAY_FORMATTER =
             DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
+    /** The date this deadline is due on. */
     private final LocalDate by;
 
     /**
@@ -89,6 +91,11 @@ public class Deadline extends Task {
         return !by.isBefore(from) && !by.isAfter(to);
     }
 
+    /**
+     * Returns this deadline with its {@code [D]} type icon and readable due date.
+     *
+     * @return this deadline rendered as {@code [D][<status>] <description> (by: MMM dd uuuu)}
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMATTER) + ")";

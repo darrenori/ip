@@ -23,19 +23,33 @@ import nori.task.Todo;
  * Stores Nori's tasks on the local disk.
  */
 public class Storage {
+    /** System property that redirects storage into an isolated directory for tests. */
     private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
+    /** Project root, so storage does not depend on the launch directory. */
     private final Path projectRoot;
+    /** Directory holding every storage file for this launch. */
     private final Path storageDirectory;
+    /** Main storage file that holds the current task list. */
     private final Path filePath;
+    /** Copy of the last storage file that was read successfully. */
     private final Path backupFilePath;
+    /** Where an unreadable storage file is kept after a backup recovery. */
     private final Path corruptFilePath;
+    /** Storage file location used before data moved to the project root. */
     private final Path legacyFilePath;
+    /** Backup file location matching {@link #legacyFilePath}. */
     private final Path legacyBackupFilePath;
+    /** Marks a stored field as Base64-encoded, distinguishing it from the older plain-text format. */
     private static final String FIELD_PREFIX = "b64:";
+    /** Separates the fields of one stored task line. */
     private static final String TASK_SEPARATOR = " | ";
+    /** Prefix of the temporary file a save is written to before replacing the storage file. */
     private static final String TEMP_FILE_PREFIX = "nori-";
+    /** Suffix of that temporary save file. */
     private static final String TEMP_FILE_SUFFIX = ".tmp";
+    /** False once storage is known to be unreadable, so a save cannot overwrite unrecovered tasks. */
     private boolean canWriteToStorage = true;
+    /** Message about migration or recovery to show after startup, if any. */
     private String loadingNotice;
 
     /**

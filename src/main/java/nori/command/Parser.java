@@ -10,8 +10,14 @@ import nori.task.DateRange;
  * Interprets raw user input and creates the corresponding executable command.
  */
 public class Parser {
+    /** Introduces the start date of a date-range list. */
     private static final String LIST_FROM_PREFIX = "/from ";
+    /** Separates the start and end dates of a date-range list. */
     private static final String LIST_TO_SEPARATOR = " /to ";
+
+    /** Prevents instantiation of this stateless parser. */
+    private Parser() {
+    }
 
     /**
      * Creates an executable command from trimmed user input.

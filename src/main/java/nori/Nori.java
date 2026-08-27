@@ -10,10 +10,15 @@ import nori.ui.Ui;
  * Coordinates Nori's user interface, task list, command parser, and storage.
  */
 public class Nori {
+    /** Reads and writes the saved task list. */
     private final Storage storage;
+    /** The tasks for this session, restored from storage at startup. */
     private final TaskList tasks;
+    /** Reads commands from and writes responses to the console. */
     private final Ui ui;
+    /** Why the saved tasks could not be loaded, or {@code null} if they were. */
     private final String loadingError;
+    /** A migration or recovery message to show at startup, if any. */
     private final String loadingNotice;
 
     /**

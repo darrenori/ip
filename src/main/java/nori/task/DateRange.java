@@ -6,7 +6,9 @@ import java.time.LocalDate;
  * Represents an inclusive date range for a task query.
  */
 public class DateRange {
+    /** Inclusive first date of the range. */
     private final LocalDate from;
+    /** Inclusive last date of the range. */
     private final LocalDate to;
 
     /**
