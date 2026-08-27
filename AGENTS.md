@@ -35,6 +35,13 @@ After each code update, complete both steps before handing the work back to the 
 1. Review `test/ui-test-plan.md` and update it when the change affects UI behaviour, coverage, inputs, or expected output. Do not rewrite expected output merely to conceal a regression.
 2. Invoke the project-specific `$test-ui` skill to run the UI test plan. If a case fails, report its recorded input plus expected and actual output; the skill stops the test session at the first failure.
 
+## JUnit testing after code changes
+
+Maintain JUnit tests for approximately the top 50% of methods by testing value. Prioritize complex, core, and
+critical business logic over trivial accessors and boilerplate. After every code change, review the affected JUnit
+tests and update or extend them as needed to continue meeting this target. Run the complete JUnit test suite before
+handing the work back to the user.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
