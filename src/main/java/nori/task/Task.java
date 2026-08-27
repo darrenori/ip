@@ -54,6 +54,11 @@ public abstract class Task {
         return isDone ? "X" : " ";
     }
 
+    /**
+     * Returns this task's status icon and description, as shown in a task list.
+     *
+     * @return this task rendered as {@code [<status>] <description>}
+     */
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;

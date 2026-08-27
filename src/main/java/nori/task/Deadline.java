@@ -89,6 +89,11 @@ public class Deadline extends Task {
         return !by.isBefore(from) && !by.isAfter(to);
     }
 
+    /**
+     * Returns this deadline with its {@code [D]} type icon and readable due date.
+     *
+     * @return this deadline rendered as {@code [D][<status>] <description> (by: MMM dd uuuu)}
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMATTER) + ")";

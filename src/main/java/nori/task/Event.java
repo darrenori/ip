@@ -156,6 +156,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns this event with its {@code [E]} type icon and its start and end details.
+     *
+     * @return this event rendered as {@code [E][<status>] <description> (from: <from> to: <to>)}
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";

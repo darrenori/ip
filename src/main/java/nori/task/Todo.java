@@ -14,6 +14,11 @@ public class Todo extends Task {
         super(description);
     }
 
+    /**
+     * Returns this to-do prefixed with its {@code [T]} type icon.
+     *
+     * @return this to-do rendered as {@code [T][<status>] <description>}
+     */
     @Override
     public String toString() {
         return "[T]" + super.toString();
