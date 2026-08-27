@@ -174,6 +174,12 @@ public class NoriTest {
         }
     }
 
+    /**
+     * Runs one test case and reports it as passed, letting a failure stop the suite.
+     *
+     * @param testName the name to report for this test
+     * @param testCase the test to run
+     */
     private static void runTest(String testName, NoriTestCase testCase) throws Exception {
         testCase.run();
         System.out.println("PASS: " + testName);
@@ -255,6 +261,11 @@ public class NoriTest {
         }
     }
 
+    /**
+     * Deletes one file or directory while cleaning up a test directory.
+     *
+     * @param path the path to delete
+     */
     private static void deletePath(Path path) {
         try {
             Files.delete(path);
@@ -263,12 +274,24 @@ public class NoriTest {
         }
     }
 
+    /**
+     * Fails the current test unless the actual text contains the expected text.
+     *
+     * @param actual the text to inspect
+     * @param expected the text that must be present
+     */
     private static void assertContains(String actual, String expected) {
         if (!actual.contains(expected)) {
             throw new AssertionError("Expected output to contain \"" + expected + "\" but was:\n" + actual);
         }
     }
 
+    /**
+     * Fails the current test if the actual text contains the unexpected text.
+     *
+     * @param actual the text to inspect
+     * @param unexpected the text that must be absent
+     */
     private static void assertNotContains(String actual, String unexpected) {
         if (actual.contains(unexpected)) {
             throw new AssertionError("Expected output not to contain \"" + unexpected + "\" but was:\n" + actual);
@@ -280,6 +303,11 @@ public class NoriTest {
      */
     @FunctionalInterface
     private interface NoriTestCase {
+        /**
+         * Runs this test case.
+         *
+         * @throws Exception if the test fails or its environment cannot be prepared
+         */
         void run() throws Exception;
     }
 }

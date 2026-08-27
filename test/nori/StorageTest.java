@@ -177,15 +177,40 @@ public class StorageTest {
         }
     }
 
+    /**
+     * Runs one test case and reports it as passed, letting a failure stop the suite.
+     *
+     * @param testName the name to report for this test
+     * @param testCase the test to run
+     */
     private static void runTest(String testName, StorageTestCase testCase) throws Exception {
         testCase.run();
         System.out.println("PASS: " + testName);
     }
 
+    /**
+     * Runs Nori in the given directory with one complete standard-input session.
+     *
+     * @param workingDirectory the isolated working directory for this Nori launch
+     * @param input the standard-input content to send to Nori
+     * @return Nori's complete console output
+     * @throws IOException if the child process cannot be started or communicated with
+     * @throws InterruptedException if the current thread is interrupted while Nori is running
+     */
     private static String runNori(Path workingDirectory, String input) throws IOException, InterruptedException {
         return runNori(workingDirectory, workingDirectory.resolve(DATA_DIRECTORY), input);
     }
 
+    /**
+     * Runs Nori with its storage redirected to an explicit directory.
+     *
+     * @param workingDirectory the isolated working directory for this Nori launch
+     * @param storageDirectory the directory Nori must store its tasks in
+     * @param input the standard-input content to send to Nori
+     * @return Nori's complete console output
+     * @throws IOException if the child process cannot be started or communicated with
+     * @throws InterruptedException if the current thread is interrupted while Nori is running
+     */
     private static String runNori(Path workingDirectory, Path storageDirectory, String input)
             throws IOException, InterruptedException {
         Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
@@ -204,6 +229,15 @@ public class StorageTest {
         return output;
     }
 
+    /**
+     * Runs Nori without the storage override, so it selects its own project-root storage.
+     *
+     * @param workingDirectory the isolated working directory for this Nori launch
+     * @param input the standard-input content to send to Nori
+     * @return Nori's complete console output
+     * @throws IOException if the child process cannot be started or communicated with
+     * @throws InterruptedException if the current thread is interrupted while Nori is running
+     */
     private static String runNoriUsingProjectStorage(Path workingDirectory, String input)
             throws IOException, InterruptedException {
         Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "nori.Nori")
@@ -273,12 +307,23 @@ public class StorageTest {
                 .collect(Collectors.joining(File.pathSeparator));
     }
 
+    /**
+     * Deletes an isolated test directory and all of its contents.
+     *
+     * @param directory the directory to delete
+     * @throws IOException if the directory tree cannot be read
+     */
     private static void deleteDirectory(Path directory) throws IOException {
         try (Stream<Path> paths = Files.walk(directory)) {
             paths.sorted(Comparator.reverseOrder()).forEach(StorageTest::deletePath);
         }
     }
 
+    /**
+     * Deletes one file or directory while cleaning up a test directory.
+     *
+     * @param path the path to delete
+     */
     private static void deletePath(Path path) {
         try {
             Files.delete(path);
@@ -287,18 +332,36 @@ public class StorageTest {
         }
     }
 
+    /**
+     * Fails the current test unless the actual text contains the expected text.
+     *
+     * @param actual the text to inspect
+     * @param expected the text that must be present
+     */
     private static void assertContains(String actual, String expected) {
         if (!actual.contains(expected)) {
             throw new AssertionError("Expected output to contain \"" + expected + "\" but was:\n" + actual);
         }
     }
 
+    /**
+     * Fails the current test unless the actual text equals the expected text.
+     *
+     * @param expected the required text
+     * @param actual the text produced by the code under test
+     */
     private static void assertEquals(String expected, String actual) {
         if (!expected.equals(actual)) {
             throw new AssertionError("Expected \"" + expected + "\" but was \"" + actual + "\".");
         }
     }
 
+    /**
+     * Fails the current test unless the condition holds.
+     *
+     * @param condition the condition that must hold
+     * @param message the failure message to report
+     */
     private static void assertTrue(boolean condition, String message) {
         if (!condition) {
             throw new AssertionError(message);
@@ -310,6 +373,11 @@ public class StorageTest {
      */
     @FunctionalInterface
     private interface StorageTestCase {
+        /**
+         * Runs this test case.
+         *
+         * @throws Exception if the test fails or its environment cannot be prepared
+         */
         void run() throws Exception;
     }
 }
