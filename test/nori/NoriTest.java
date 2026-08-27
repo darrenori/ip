@@ -1,10 +1,13 @@
 package nori;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -234,7 +237,10 @@ public class NoriTest {
      * @return the absolute classpath for the compiled test classes
      */
     private static String getAbsoluteClassPath() {
-        return Path.of(System.getProperty("java.class.path")).toAbsolutePath().toString();
+        String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
+        return Arrays.stream(classPathEntries)
+                .map(entry -> Path.of(entry).toAbsolutePath().toString())
+                .collect(Collectors.joining(File.pathSeparator));
     }
 
     /**
