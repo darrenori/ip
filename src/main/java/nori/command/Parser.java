@@ -13,6 +13,10 @@ public class Parser {
     private static final String LIST_FROM_PREFIX = "/from ";
     private static final String LIST_TO_SEPARATOR = " /to ";
 
+    /** Prevents instantiation of this stateless parser. */
+    private Parser() {
+    }
+
     /**
      * Creates an executable command from trimmed user input.
      *

@@ -9,6 +9,10 @@ import nori.ui.Ui;
  * Represents one executable user command.
  */
 public abstract class Command {
+    /** Creates a command for a subclass to give behaviour to. */
+    protected Command() {
+    }
+
     /**
      * Performs this command's work.
      *
