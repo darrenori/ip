@@ -36,8 +36,45 @@ test {
     }
 }
 
+sourceSets {
+    regressionTest {
+        java.srcDir 'test'
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    regressionTestImplementation.extendsFrom testImplementation
+    regressionTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+tasks.register('noriRegressionTest', JavaExec) {
+    group = 'verification'
+    description = 'Runs Nori command and persistence regression tests.'
+    classpath = sourceSets.regressionTest.runtimeClasspath
+    mainClass = 'nori.NoriTest'
+}
+
+tasks.register('storageRegressionTest', JavaExec) {
+    group = 'verification'
+    description = 'Runs Nori storage and recovery regression tests.'
+    classpath = sourceSets.regressionTest.runtimeClasspath
+    mainClass = 'nori.StorageTest'
+}
+
+tasks.register('regressionTest') {
+    group = 'verification'
+    description = 'Runs all non-JUnit regression test suites.'
+    dependsOn noriRegressionTest, storageRegressionTest
+}
+
+check {
+    dependsOn regressionTest
+}
+
 application {
-    mainClass = 'seedu.duke.Duke'
+    mainClass = 'nori.Nori'
 }
 
 jar {
@@ -48,7 +85,7 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'nori.jar'
 }
 
 run {
