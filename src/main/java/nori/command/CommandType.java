@@ -10,6 +10,7 @@ public enum CommandType {
     LIST("list"),
     HELP("help"),
     ON("on"),
+    FIND("find"),
     MARK("mark"),
     UNMARK("unmark"),
     DELETE("delete"),

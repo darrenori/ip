@@ -24,6 +24,7 @@ public class ParserTest {
         assertInstanceOf(ListCommand.class, Parser.parse("list"));
         assertInstanceOf(HelpCommand.class, Parser.parse("help"));
         assertInstanceOf(OnCommand.class, Parser.parse("on 2019-10-15"));
+        assertInstanceOf(FindCommand.class, Parser.parse("find book"));
         assertInstanceOf(MarkCommand.class, Parser.parse("mark 1"));
         assertInstanceOf(UnmarkCommand.class, Parser.parse("unmark 1"));
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 1"));
@@ -50,6 +51,32 @@ public class ParserTest {
     @Test
     public void parse_emptyInput_returnsUnknownCommand() {
         assertInstanceOf(UnknownCommand.class, Parser.parse(""));
+    }
+
+    @Test
+    public void parse_findWithKeyword_keepsKeywordAsDetails() {
+        FindCommand command = assertInstanceOf(FindCommand.class, Parser.parse("find book"));
+
+        assertEquals("book", command.details);
+    }
+
+    @Test
+    public void parse_findWithMultiWordKeyword_keepsWholePhrase() {
+        FindCommand command = assertInstanceOf(FindCommand.class, Parser.parse("find return book"));
+
+        assertEquals("return book", command.details);
+    }
+
+    @Test
+    public void parse_bareFind_returnsFindCommandWithEmptyDetails() {
+        FindCommand command = assertInstanceOf(FindCommand.class, Parser.parse("find"));
+
+        assertEquals("", command.details);
+    }
+
+    @Test
+    public void parse_findPrefix_returnsUnknownCommand() {
+        assertInstanceOf(UnknownCommand.class, Parser.parse("finder book"));
     }
 
     @Test
