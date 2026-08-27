@@ -92,8 +92,10 @@ public class Parser {
      */
     private static CommandType findCommandType(String input) {
         for (CommandType commandType : CommandType.values()) {
-            if (input.equals(commandType.getKeyword())
-                    || commandType != CommandType.BYE && input.startsWith(commandType.getKeyword() + " ")) {
+            String keyword = commandType.getKeyword();
+            boolean isExactMatch = input.equals(keyword);
+            boolean isPrefixMatch = commandType != CommandType.BYE && input.startsWith(keyword + " ");
+            if (isExactMatch || isPrefixMatch) {
                 return commandType;
             }
         }
