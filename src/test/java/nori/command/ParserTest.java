@@ -53,6 +53,25 @@ public class ParserTest {
     }
 
     @Test
+    public void parse_keywordWithoutSeparatingSpace_returnsUnknownCommand() {
+        assertInstanceOf(UnknownCommand.class, Parser.parse("mark1"));
+        assertInstanceOf(UnknownCommand.class, Parser.parse("listing"));
+    }
+
+    @Test
+    public void parse_nonByeKeywordWithDetails_returnsMatchingCommand() {
+        assertInstanceOf(HelpCommand.class, Parser.parse("help me"));
+        assertInstanceOf(ListCommand.class, Parser.parse("list /from 2019-01-01 /to 2021-01-01"));
+    }
+
+    @Test
+    public void parse_keywordOnly_returnsCommandWithEmptyDetails() {
+        ListCommand command = assertInstanceOf(ListCommand.class, Parser.parse("list"));
+
+        assertEquals("", command.details);
+    }
+
+    @Test
     public void parseDate_validDate_returnsParsedDate() throws NoriException {
         assertEquals(LocalDate.of(2019, 10, 15), Parser.parseDate("2019-10-15"));
     }

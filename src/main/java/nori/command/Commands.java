@@ -323,7 +323,8 @@ class DeadlineCommand extends InputCommand {
      * @param separatorIndex the position of the {@code /by} separator
      * @throws NoriException if the deadline cannot be parsed or saved
      */
-    private void addDeadline(TaskList tasks, Ui ui, Storage storage, int separatorIndex) throws NoriException {
+    private void addDeadline(TaskList tasks, Ui ui, Storage storage, int separatorIndex)
+            throws NoriException {
         String description = details.substring(0, separatorIndex).trim();
         String deadlineInput = details.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
@@ -333,7 +334,8 @@ class DeadlineCommand extends InputCommand {
             ui.showResponse("OOPS!!! A deadline needs a due date after \"/by\"."
                     + " Don't leave me hanging lah.");
         } else {
-            TodoCommand.addTask(tasks, ui, storage, new Deadline(description, Deadline.parseInput(deadlineInput)));
+            TodoCommand.addTask(tasks, ui, storage,
+                    new Deadline(description, Deadline.parseInput(deadlineInput)));
         }
     }
 }
@@ -394,7 +396,8 @@ class EventCommand extends InputCommand {
     private void addEvent(TaskList tasks, Ui ui, Storage storage, int fromSeparatorIndex,
             int toSeparatorIndex) throws NoriException {
         String description = details.substring(0, fromSeparatorIndex).trim();
-        String from = details.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(), toSeparatorIndex).trim();
+        String from = details.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(),
+                toSeparatorIndex).trim();
         String to = details.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
             ui.showResponse("OOPS!!! An event needs a description before \"/from\"."
