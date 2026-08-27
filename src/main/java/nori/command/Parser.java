@@ -57,7 +57,8 @@ public class Parser {
      */
     public static DateRange parseListDateRange(String listDetails) throws NoriException {
         if (!listDetails.startsWith(LIST_FROM_PREFIX)) {
-            throw new NoriException("OOPS!!! Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
+            throw new NoriException("OOPS!!! Use either \"list\" or"
+                    + " \"list /from 2019-01-01 /to 2021-01-01\".");
         }
         int toSeparatorIndex = listDetails.indexOf(LIST_TO_SEPARATOR);
         if (toSeparatorIndex == -1) {

@@ -36,6 +36,8 @@ public class StorageTest {
         runTest("Recovers malformed UTF-8 storage from backup", StorageTest::loadTasks_malformedUtf8_restoresBackup);
         runTest("Recovers an invalid event date from backup", StorageTest::loadTasks_invalidEventDate_restoresBackup);
         runTest("Preserves corruption without backup", StorageTest::loadTasks_noBackup_preservesCorruptedFile);
+        runTest("Preserves corruption when the backup is unreadable",
+                StorageTest::loadTasks_corruptBackup_preservesCorruptedFile);
         System.out.println("All storage tests passed.");
     }
 
@@ -172,6 +174,26 @@ public class StorageTest {
             assertEquals(corruptContent, Files.readString(storageFile, StandardCharsets.UTF_8));
             assertTrue(Files.notExists(dataDirectory.resolve(CORRUPT_FILE)),
                     "Expected no corrupt copy without a recoverable backup.");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void loadTasks_corruptBackup_preservesCorruptedFile() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-storage-test-");
+        try {
+            Path dataDirectory = Files.createDirectory(testDirectory.resolve(DATA_DIRECTORY));
+            Path storageFile = dataDirectory.resolve(STORAGE_FILE);
+            Path backupFile = dataDirectory.resolve(BACKUP_FILE);
+            String corruptContent = "T | invalid-status | corrupted task";
+            Files.writeString(storageFile, corruptContent, StandardCharsets.UTF_8);
+            Files.writeString(backupFile, "D | 0 | broken backup", StandardCharsets.UTF_8);
+
+            String output = runNori(testDirectory, "list\nbye\n");
+
+            assertContains(output,
+                    "Your saved tasks are corrupted and the backup could not be restored.");
+            assertEquals(corruptContent, Files.readString(storageFile, StandardCharsets.UTF_8));
         } finally {
             deleteDirectory(testDirectory);
         }

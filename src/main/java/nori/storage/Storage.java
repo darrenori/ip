@@ -211,7 +211,8 @@ public class Storage {
         if (task instanceof Event) {
             Event event = (Event) task;
             return "E" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription())
-                    + TASK_SEPARATOR + encodeField(event.getFrom()) + TASK_SEPARATOR + encodeField(event.getTo());
+                    + TASK_SEPARATOR + encodeField(event.getFrom())
+                    + TASK_SEPARATOR + encodeField(event.getTo());
         }
         throw new NoriException("OOPS!!! I couldn't save an unsupported task type.");
     }
@@ -296,7 +297,8 @@ public class Storage {
             return backupTasks;
         } catch (IOException | SecurityException | NoriException exception) {
             canWriteToStorage = false;
-            throw new NoriException("OOPS!!! Your saved tasks are corrupted and the backup could not be restored.");
+            throw new NoriException("OOPS!!! Your saved tasks are corrupted"
+                    + " and the backup could not be restored.");
         }
     }
 
