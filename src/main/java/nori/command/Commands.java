@@ -13,6 +13,7 @@ import nori.ui.Ui;
  * Creates concrete commands from their recognized types and details.
  */
 public final class Commands {
+    /** Prevents instantiation of this command factory. */
     private Commands() {
     }
 
@@ -64,6 +65,7 @@ public final class Commands {
  * Provides common input storage for commands entered with trailing details.
  */
 abstract class InputCommand extends Command {
+    /** The trimmed text the user typed after the command keyword. */
     protected final String details;
 
     /**
@@ -80,6 +82,11 @@ abstract class InputCommand extends Command {
  * Displays the complete task list or tasks in a date range.
  */
 class ListCommand extends InputCommand {
+    /**
+     * Creates a list command.
+     *
+     * @param details the optional date range after the {@code list} keyword
+     */
     ListCommand(String details) {
         super(details);
     }
@@ -110,6 +117,11 @@ class HelpCommand extends Command {
  * Displays tasks that occur on a specified date.
  */
 class OnCommand extends InputCommand {
+    /**
+     * Creates a date-query command.
+     *
+     * @param details the date after the {@code on} keyword
+     */
     OnCommand(String details) {
         super(details);
     }
@@ -125,6 +137,11 @@ class OnCommand extends InputCommand {
  * Marks a task as complete.
  */
 class MarkCommand extends InputCommand {
+    /**
+     * Creates a command that completes a task.
+     *
+     * @param details the task number after the {@code mark} keyword
+     */
     MarkCommand(String details) {
         super(details);
     }
@@ -154,6 +171,11 @@ class MarkCommand extends InputCommand {
  * Marks a task as incomplete.
  */
 class UnmarkCommand extends InputCommand {
+    /**
+     * Creates a command that reopens a task.
+     *
+     * @param details the task number after the {@code unmark} keyword
+     */
     UnmarkCommand(String details) {
         super(details);
     }
@@ -183,6 +205,11 @@ class UnmarkCommand extends InputCommand {
  * Removes a task from the list.
  */
 class DeleteCommand extends InputCommand {
+    /**
+     * Creates a command that removes a task.
+     *
+     * @param details the task number after the {@code delete} keyword
+     */
     DeleteCommand(String details) {
         super(details);
     }
@@ -207,6 +234,11 @@ class DeleteCommand extends InputCommand {
  * Adds a todo task.
  */
 class TodoCommand extends InputCommand {
+    /**
+     * Creates a command that adds a todo.
+     *
+     * @param details the description after the {@code todo} keyword
+     */
     TodoCommand(String details) {
         super(details);
     }
@@ -250,6 +282,11 @@ class TodoCommand extends InputCommand {
 class DeadlineCommand extends InputCommand {
     private static final String DEADLINE_SEPARATOR = " /by ";
 
+    /**
+     * Creates a command that adds a deadline.
+     *
+     * @param details the description and due date after the {@code deadline} keyword
+     */
     DeadlineCommand(String details) {
         super(details);
     }
@@ -303,6 +340,11 @@ class EventCommand extends InputCommand {
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     private static final String EVENT_TO_SEPARATOR = " /to ";
 
+    /**
+     * Creates a command that adds an event.
+     *
+     * @param details the description, start, and end after the {@code event} keyword
+     */
     EventCommand(String details) {
         super(details);
     }
