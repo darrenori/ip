@@ -230,6 +230,7 @@ ____________________________________________________________
      on yyyy-MM-dd
      list
      list /from yyyy-MM-dd /to yyyy-MM-dd
+     find <keyword>
      mark <task number>
      unmark <task number>
      delete <task number>

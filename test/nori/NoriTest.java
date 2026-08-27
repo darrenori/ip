@@ -84,6 +84,7 @@ public class NoriTest {
             assertContains(output, "deadline <description> /by yyyy-MM-dd");
             assertContains(output, "on yyyy-MM-dd");
             assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
+            assertContains(output, "find <keyword>");
             assertContains(output, "Use yyyy-MM-dd in an event's /from or /to to find it with on.");
         } finally {
             deleteDirectory(testDirectory);
