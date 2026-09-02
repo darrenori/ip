@@ -32,6 +32,7 @@ public class Event extends Task {
         super(description);
         validateDates(from);
         validateDates(to);
+        validateDateOrder(from, to);
         this.from = from;
         this.to = to;
     }
@@ -61,7 +62,12 @@ public class Event extends Task {
      * @return {@code true} if the event explicitly includes {@code date}
      */
     public boolean occursOn(LocalDate date) {
-        return containsDate(from, date) || containsDate(to, date);
+        LocalDate eventStart = findDate(from);
+        LocalDate eventEnd = findDate(to);
+        if (eventStart != null && eventEnd != null) {
+            return !date.isBefore(eventStart) && !date.isAfter(eventEnd);
+        }
+        return date.equals(eventStart) || date.equals(eventEnd);
     }
 
     /**
@@ -113,28 +119,22 @@ public class Event extends Task {
     }
 
     /**
-     * Returns whether an event detail contains the requested valid ISO-8601 date.
+     * Rejects a dated event whose end date is before its start date.
      *
-     * @param eventDetail the start or end detail to inspect
-     * @param date the date to find
-     * @return {@code true} if the detail contains {@code date}
+     * Events may still use free-form times or provide a date on only one side.
+     * Those forms have insufficient date information for an ordering check and
+     * remain valid.
+     *
+     * @param from the event's start details
+     * @param to the event's end details
+     * @throws NoriException if both details contain dates in reverse order
      */
-    private static boolean containsDate(String eventDetail, LocalDate date) {
-        if (eventDetail == null) {
-            return false;
+    private static void validateDateOrder(String from, String to) throws NoriException {
+        LocalDate eventStart = findDate(from);
+        LocalDate eventEnd = findDate(to);
+        if (eventStart != null && eventEnd != null && eventEnd.isBefore(eventStart)) {
+            throw new NoriException("OOPS!!! An event cannot end before it starts.");
         }
-
-        Matcher matcher = DATE_PATTERN.matcher(eventDetail);
-        while (matcher.find()) {
-            try {
-                if (LocalDate.parse(matcher.group()).equals(date)) {
-                    return true;
-                }
-            } catch (DateTimeParseException exception) {
-                // Invalid event dates are rejected when events are created or restored.
-            }
-        }
-        return false;
     }
 
     /**
