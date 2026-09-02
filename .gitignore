@@ -26,5 +26,8 @@ text-ui-test/EXPECTED-UNIX.TXT
 /data/
 .vscode
 
+# Local visual reference images
+/pingu/
+
 # Claude Code local files (skills stay on disk, not in the repo)
 /.claude/

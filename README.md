@@ -1,6 +1,17 @@
-# Nori project template
+# Nori
 
-This is a project template for a greenfield Java project. Given below are instructions on how to use it.
+Nori is a desktop task companion with a JavaFX chat interface and a retained console interface for automated testing.
+
+## Running Nori
+
+Ensure that JDK 25 is active, then run the application from the project root:
+
+```powershell
+.\gradlew.bat run
+```
+
+On macOS or Linux, run `./gradlew run`. Enter commands in the composer at the bottom of the window and press Enter or
+select **Send**. Type `help` to see the available commands and `bye` to close the application.
 
 ## Setting up in Intellij
 
@@ -13,15 +24,11 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/nori/Nori.java` file, right-click it, and choose `Run Nori.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
-   ```
-     _   _  ____  _____  _____ 
-    | \ | |/ __ \|  __ \|_   _|
-    |  \| | |  | | |__) | | |  
-    | . ` | |  | |  _  /  | |  
-    | |\  | |__| | | \ \ _| |_ 
-    |_| \_|\____/|_|  \_\_____|
-   ```
+1. After that, run the Gradle `run` task or locate `src/main/java/nori/Launcher.java`, right-click it, and choose
+   `Run Launcher.main()` (if the code editor is showing compile errors, try restarting the IDE).
+
+The separate `Launcher` class is the application entry point recommended by the SE-EDU JavaFX tutorial. The original
+`nori.Nori` entry point still launches the console UI when text-based testing or debugging is more convenient.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
 

@@ -1,0 +1,185 @@
+.app-root {
+    -fx-background-color: linear-gradient(to bottom, #eaf7fb 0%, #f7fbfc 48%, #eef6f7 100%);
+    -fx-font-family: "System";
+}
+
+.app-header {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: transparent transparent #dcebed transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(28, 52, 65, 0.08), 18, 0.2, 0, 5);
+}
+
+.brand-name {
+    -fx-font-size: 21px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #172a3a;
+}
+
+.brand-tagline {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7f88;
+}
+
+.status-pill {
+    -fx-background-color: #edf8f2;
+    -fx-background-radius: 999px;
+    -fx-padding: 8px 12px;
+}
+
+.status-dot {
+    -fx-font-size: 11px;
+    -fx-text-fill: #41a875;
+}
+
+.status-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #36755a;
+}
+
+.conversation-scroll,
+.conversation-scroll > .viewport,
+.dialog-container {
+    -fx-background-color: transparent;
+}
+
+.conversation-shell {
+    -fx-background-image: url("../images/pingu-background.png");
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}
+
+.conversation-scroll > .viewport {
+    -fx-background-color: rgba(235, 247, 250, 0.58);
+}
+
+.conversation-scroll {
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.conversation-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 9px;
+}
+
+.conversation-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(76, 107, 120, 0.24);
+    -fx-background-radius: 999px;
+}
+
+.conversation-scroll .scroll-bar:vertical .increment-button,
+.conversation-scroll .scroll-bar:vertical .decrement-button {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+}
+
+.dialog-row {
+    -fx-padding: 2px 4px;
+}
+
+.speaker-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #71858e;
+}
+
+.message-bubble {
+    -fx-font-size: 14px;
+    -fx-line-spacing: 3px;
+    -fx-padding: 13px 16px;
+}
+
+.nori-bubble {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5px 18px 18px 18px;
+    -fx-border-color: #dce9eb;
+    -fx-border-radius: 5px 18px 18px 18px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(29, 55, 68, 0.09), 15, 0.16, 0, 4);
+    -fx-text-fill: #243b48;
+}
+
+.user-bubble {
+    -fx-background-color: linear-gradient(to bottom right, #243b4a, #172a3a);
+    -fx-background-radius: 18px 5px 18px 18px;
+    -fx-effect: dropshadow(gaussian, rgba(17, 37, 51, 0.18), 15, 0.18, 0, 4);
+    -fx-text-fill: #ffffff;
+}
+
+.composer-shell {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-border-color: #dcebed transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(28, 52, 65, 0.08), 18, 0.18, 0, -4);
+}
+
+.composer-bar {
+    -fx-background-color: #f5f9fa;
+    -fx-background-radius: 16px;
+    -fx-border-color: #d8e6e9;
+    -fx-border-radius: 16px;
+    -fx-padding: 6px;
+}
+
+.command-input {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 12px;
+    -fx-prompt-text-fill: #91a2aa;
+    -fx-text-fill: #203744;
+}
+
+.command-input:focused {
+    -fx-background-color: transparent;
+}
+
+.send-button {
+    -fx-background-color: #ee5f6c;
+    -fx-background-radius: 12px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-padding: 11px 17px;
+    -fx-text-fill: #ffffff;
+}
+
+.send-button:hover {
+    -fx-background-color: #dc4e5b;
+}
+
+.send-button:pressed {
+    -fx-background-color: #c94350;
+    -fx-translate-y: 1px;
+}
+
+.send-button:disabled {
+    -fx-opacity: 0.5;
+}
+
+.composer-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: #82949c;
+}
+
+.bot-avatar-border {
+    -fx-fill: transparent;
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(28, 52, 65, 0.24), 8, 0.15, 0, 2);
+}
+
+.user-avatar-background {
+    -fx-fill: #dceff4;
+    -fx-stroke: #bed9e0;
+    -fx-stroke-width: 1px;
+}
+
+.user-avatar-text {
+    -fx-font-size: 9px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #31596a;
+}

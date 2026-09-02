@@ -10,6 +10,9 @@ import nori.ui.Ui;
  * Coordinates Nori's user interface, task list, command parser, and storage.
  */
 public class Nori {
+    /** The final response shown when a user ends a Nori session. */
+    private static final String GOODBYE_MESSAGE = "Bye. Hope to see you again soon!";
+
     /** Reads and writes the saved task list. */
     private final Storage storage;
     /** The tasks for this session, restored from storage at startup. */
@@ -25,7 +28,16 @@ public class Nori {
      * Creates Nori with its standard console user interface and disk storage.
      */
     public Nori() {
-        ui = new Ui();
+        this(new Ui());
+    }
+
+    /**
+     * Creates Nori with a supplied user interface and standard disk storage.
+     *
+     * @param ui the user interface that receives command responses
+     */
+    public Nori(Ui ui) {
+        this.ui = ui;
         storage = new Storage();
 
         TaskList loadedTasks;
@@ -50,20 +62,47 @@ public class Nori {
         ui.showWelcome();
         showLoadingMessage();
 
+        boolean isExitRequested = false;
         String input;
         while ((input = ui.readCommand()) != null) {
-            try {
-                Command command = Parser.parse(input);
-                command.execute(tasks, ui, storage);
-                if (command.isExit()) {
-                    break;
-                }
-            } catch (NoriException exception) {
-                ui.showResponse(exception.getMessage());
+            if (executeCommand(input)) {
+                isExitRequested = true;
+                break;
             }
         }
-        ui.showResponse("Bye. Hope to see you again soon!");
+        if (!isExitRequested) {
+            ui.showResponse(GOODBYE_MESSAGE);
+        }
         ui.close();
+    }
+
+    /**
+     * Executes one command and sends its response to the configured user interface.
+     *
+     * @param input the command entered by the user
+     * @return {@code true} when the command requests that Nori exits
+     */
+    public boolean executeCommand(String input) {
+        try {
+            Command command = Parser.parse(input);
+            command.execute(tasks, ui, storage);
+            if (command.isExit()) {
+                ui.showResponse(GOODBYE_MESSAGE);
+                return true;
+            }
+        } catch (NoriException exception) {
+            ui.showResponse(exception.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Returns the notice or error produced while loading saved tasks.
+     *
+     * @return the loading message, or {@code null} when loading was uneventful
+     */
+    public String getLoadingMessage() {
+        return loadingError != null ? loadingError : loadingNotice;
     }
 
     /**
