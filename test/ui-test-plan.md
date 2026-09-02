@@ -80,6 +80,122 @@ ____________________________________________________________
     ____________________________________________________________
 ```
 
+## Test 16: Handle multi-day and reversed dated events
+
+**Aim:** Verify that an event appears on every date it spans and that an event ending before it starts is rejected without changing the saved list.
+
+**Covers:** Inclusive event-date matching, chronological validation, and state preservation after rejected input.
+
+### Input
+```text
+event conference /from 2026-09-01 /to 2026-09-03
+on 2026-09-01
+on 2026-09-02
+on 2026-09-03
+on 2026-09-04
+event backwards /from 2026-09-03 /to 2026-09-01
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] conference (from: 2026-09-01 to: 2026-09-03)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events on 2026-09-01:
+     1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events on 2026-09-02:
+     1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines and events on 2026-09-03:
+     1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There are no deadlines or events on 2026-09-04.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OOPS!!! An event cannot end before it starts.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test 17: Preserve hostile-looking task text literally
+
+**Aim:** Verify that markup, path traversal text, shell operators, and the storage delimiter remain inert user data rather than being interpreted or corrupting storage.
+
+**Covers:** Literal output handling and delimiter-safe storage encoding.
+
+### Input
+```text
+todo <script>alert('x')</script> | ../data & command
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Hello! I'm Nori.
+What can I do for you?
+____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] <script>alert('x')</script> | ../data & command
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] <script>alert('x')</script> | ../data & command
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 ## Test 11: Parse valid deadline dates and reject impossible dates
 
 **Aim:** Verify that a deadline due date is parsed and formatted, while an impossible calendar date is rejected without being stored.
@@ -343,6 +459,9 @@ whole run before any test executes.
 
 ## Known gaps
 
+* **JavaFX interactions.** The command-and-output runner exercises the retained console UI. For the graphical UI,
+  manually verify that the window opens, both Enter and the Send button submit commands, long conversations scroll to
+  the latest message, task-changing commands persist normally, and `bye` shows the farewell before closing the window.
 * **Startup loading.** The runner isolates every test session's data directory, so it
   cannot cover a task list surviving from one application launch to another. Check this
   manually by add tasks in one session, then run `list` in a new session; the stored
