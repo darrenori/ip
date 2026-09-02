@@ -2,10 +2,9 @@ package nori.task;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +14,35 @@ import nori.NoriException;
  * Tests the task list's keyword search and its display lines.
  */
 public class TaskListTest {
+
+    @Test
+    public void constructor_varargs_preservesArgumentOrder() {
+        Task firstTask = new Todo("first");
+        Task secondTask = new Todo("second");
+
+        TaskList tasks = new TaskList(firstTask, secondTask);
+
+        assertSame(firstTask, tasks.get(0));
+        assertSame(secondTask, tasks.get(1));
+    }
+
+    @Test
+    public void constructor_varargs_copiesCallerArray() {
+        Task originalTask = new Todo("original");
+        Task[] suppliedTasks = {originalTask};
+        TaskList tasks = new TaskList(suppliedTasks);
+
+        suppliedTasks[0] = new Todo("replacement");
+
+        assertSame(originalTask, tasks.get(0));
+    }
+
+    @Test
+    public void constructor_emptyVarargs_createsEmptyList() {
+        TaskList tasks = new TaskList(new Task[0]);
+
+        assertEquals(0, tasks.size());
+    }
 
     @Test
     public void getTasksMatchingKeywordDisplayLines_singleMatch_returnsHeadingAndTask() throws NoriException {
@@ -116,12 +144,11 @@ public class TaskListTest {
     private static TaskList buildSampleList() throws NoriException {
         Task readBook = new Todo("read book");
         readBook.markAsDone();
-        List<Task> tasks = Arrays.asList(
+        return new TaskList(
                 readBook,
                 new Deadline("return book", LocalDate.of(2019, 6, 6)),
                 new Event("book fair", "2019-06-06 1000", "2019-06-06 1800"),
                 new Todo("Bookshop errand"),
                 new Todo("buy milk"));
-        return new TaskList(tasks);
     }
 }
