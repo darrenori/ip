@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import nori.NoriException;
 
@@ -253,15 +254,12 @@ public class TaskList {
      * @return the matching numbered task lines.
      */
     private List<String> getMatchingTasks(LocalDate date, DateRange dateRange) {
-        List<String> matchingTasks = new ArrayList<>();
-        for (int index = 0; index < size(); index++) {
-            Task task = get(index);
-            boolean isMatch = date != null ? occursOn(task, date) : occursInDateRange(task, dateRange);
-            if (isMatch) {
-                matchingTasks.add((index + 1) + "." + task);
-            }
-        }
-        return matchingTasks;
+        return IntStream.range(0, size())
+                .filter(index -> date != null
+                        ? occursOn(get(index), date)
+                        : occursInDateRange(get(index), dateRange))
+                .mapToObj(this::getNumberedTask)
+                .toList();
     }
 
     /**
@@ -275,15 +273,21 @@ public class TaskList {
      */
     private List<String> getTasksContainingKeyword(String keyword) {
         String foldedKeyword = keyword.toLowerCase(Locale.ROOT);
-        List<String> matchingTasks = new ArrayList<>();
-        for (int index = 0; index < size(); index++) {
-            Task task = get(index);
-            boolean isMatch = task.getDescription().toLowerCase(Locale.ROOT).contains(foldedKeyword);
-            if (isMatch) {
-                matchingTasks.add((index + 1) + "." + task);
-            }
-        }
-        return matchingTasks;
+        return IntStream.range(0, size())
+                .filter(index -> get(index).getDescription().toLowerCase(Locale.ROOT)
+                        .contains(foldedKeyword))
+                .mapToObj(this::getNumberedTask)
+                .toList();
+    }
+
+    /**
+     * Returns one task's display line, numbered as it is in the full list.
+     *
+     * @param index the zero-based index of the task.
+     * @return the numbered task line.
+     */
+    private String getNumberedTask(int index) {
+        return (index + 1) + "." + get(index);
     }
 
     /**
