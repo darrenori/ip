@@ -118,6 +118,8 @@ public class Storage {
         for (Task task : tasks) {
             taskLines.add(formatTask(task));
         }
+        assert taskLines.size() == tasks.size()
+                : "One line per task is what makes a reload restore the same number of tasks.";
 
         Path temporaryFile = null;
         try {

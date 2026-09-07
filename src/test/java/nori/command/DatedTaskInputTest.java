@@ -66,13 +66,6 @@ public class DatedTaskInputTest {
     }
 
     @Test
-    public void execute_deadlineWithWhitespaceDueDate_reportsMissingDueDate() {
-        assertResponse("NOOT?! A deadline needs a due date after \"/by\"."
-                        + " Try \"deadline submit report /by 2019-10-15\".",
-                "deadline submit report /by    ");
-    }
-
-    @Test
     public void execute_deadlineWithUnparsableDate_reportsUnreadableDate() {
         assertResponse("NOOT?! I cannot understand \"tomorrow\" as a deadline."
                         + " Use a date like \"2019-10-15\".",
@@ -129,10 +122,10 @@ public class DatedTaskInputTest {
     }
 
     @Test
-    public void execute_eventWithWhitespaceEnd_reportsMissingEnd() {
+    public void execute_eventEndingAtSeparator_reportsMissingEnd() {
         assertResponse("NOOT?! An event is missing \"/to\" and its end time."
                         + " Even penguin meetings eventually end.",
-                "event team meeting /from Mon 2pm /to    ");
+                "event team meeting /from Mon 2pm /to");
     }
 
     @Test

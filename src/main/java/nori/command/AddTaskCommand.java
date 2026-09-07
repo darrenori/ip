@@ -30,6 +30,8 @@ abstract class AddTaskCommand extends InputCommand {
      */
     protected void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
         tasks.add(task);
+        assert tasks.get(tasks.size() - 1) == task
+                : "The added task must be the last one, because a failed save removes the last task.";
         try {
             storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {

@@ -16,6 +16,9 @@ public final class Commands {
      * @return the corresponding executable command.
      */
     public static Command create(CommandType commandType, String details) {
+        assert commandType != null : "Unrecognised input is turned into a command by createUnknown instead.";
+        assert details != null : "The parser always supplies the text after the keyword, empty at the least.";
+
         switch (commandType) {
             case TODO:
                 return new TodoCommand(details);
@@ -40,6 +43,7 @@ public final class Commands {
             case BYE:
                 return new ExitCommand();
             default:
+                assert false : "Every command type needs a command, but " + commandType + " has none.";
                 return new UnknownCommand();
         }
     }

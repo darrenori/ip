@@ -139,6 +139,8 @@ public class TaskList {
      * @return the date-range response lines.
      */
     public String[] getTasksInDateRangeDisplayLines(DateRange dateRange) {
+        assert dateRange != null : "The parser builds the range before a range listing is requested.";
+
         List<String> matchingTasks = getNumberedTasks(task -> occursInDateRange(task, dateRange));
         if (matchingTasks.isEmpty()) {
             return new String[] {"Nothing is hatching from " + dateRange.getFrom()
@@ -287,6 +289,8 @@ public class TaskList {
      * @return the combined response lines.
      */
     private String[] prependHeading(String heading, List<String> taskLines) {
+        assert !taskLines.isEmpty() : "A heading is added only when at least one task matched.";
+
         String[] lines = new String[taskLines.size() + 1];
         lines[0] = heading;
         for (int index = 0; index < taskLines.size(); index++) {

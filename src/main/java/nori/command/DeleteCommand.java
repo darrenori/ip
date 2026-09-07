@@ -24,6 +24,8 @@ class DeleteCommand extends InputCommand {
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         int taskIndex = tasks.getTaskIndex(details, "delete");
         Task deletedTask = tasks.remove(taskIndex);
+        assert taskIndex <= tasks.size()
+                : "Removing at taskIndex leaves that index insertable, which a failed save relies on.";
         try {
             storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {
