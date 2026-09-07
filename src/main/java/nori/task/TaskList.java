@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import nori.NoriException;
 
@@ -110,12 +112,8 @@ public class TaskList {
             return new String[] {"The iceberg is empty. Try \"todo borrow book\". Noot noot!"};
         }
 
-        String[] lines = new String[size() + 1];
-        lines[0] = "Noot noot! Tasks currently chilling on the iceberg:";
-        for (int index = 0; index < size(); index++) {
-            lines[index + 1] = (index + 1) + "." + get(index);
-        }
-        return lines;
+        List<String> taskLines = IntStream.range(0, size()).mapToObj(this::getNumberedTask).toList();
+        return prependHeading("Noot noot! Tasks currently chilling on the iceberg:", taskLines);
     }
 
     /**
@@ -241,12 +239,7 @@ public class TaskList {
         if (firstDigitIndex == text.length()) {
             return false;
         }
-        for (int index = firstDigitIndex; index < text.length(); index++) {
-            if (!Character.isDigit(text.charAt(index))) {
-                return false;
-            }
-        }
-        return true;
+        return text.substring(firstDigitIndex).chars().allMatch(Character::isDigit);
     }
 
     /**
@@ -256,14 +249,10 @@ public class TaskList {
      * @return the matching numbered task lines.
      */
     private List<String> getNumberedTasks(Predicate<Task> isMatch) {
-        List<String> matchingTasks = new ArrayList<>();
-        for (int index = 0; index < size(); index++) {
-            Task task = get(index);
-            if (isMatch.test(task)) {
-                matchingTasks.add((index + 1) + "." + task);
-            }
-        }
-        return matchingTasks;
+        return IntStream.range(0, size())
+                .filter(index -> isMatch.test(get(index)))
+                .mapToObj(this::getNumberedTask)
+                .toList();
     }
 
     /**
@@ -282,6 +271,16 @@ public class TaskList {
     }
 
     /**
+     * Returns one task's display line, numbered as it is in the full list.
+     *
+     * @param index the zero-based index of the task.
+     * @return the numbered task line.
+     */
+    private String getNumberedTask(int index) {
+        return (index + 1) + "." + get(index);
+    }
+
+    /**
      * Adds a heading before task lines.
      *
      * @param heading the response heading.
@@ -291,12 +290,7 @@ public class TaskList {
     private String[] prependHeading(String heading, List<String> taskLines) {
         assert !taskLines.isEmpty() : "A heading is added only when at least one task matched.";
 
-        String[] lines = new String[taskLines.size() + 1];
-        lines[0] = heading;
-        for (int index = 0; index < taskLines.size(); index++) {
-            lines[index + 1] = taskLines.get(index);
-        }
-        return lines;
+        return Stream.concat(Stream.of(heading), taskLines.stream()).toArray(String[]::new);
     }
 
     /**

@@ -2,6 +2,7 @@ package nori.command;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 
 import nori.NoriException;
 import nori.task.DateRange;
@@ -102,15 +103,24 @@ public class Parser {
      * @return the matching type, or {@code null} if the input is unrecognized.
      */
     private static CommandType findCommandType(String input) {
-        for (CommandType commandType : CommandType.values()) {
-            String keyword = commandType.getKeyword();
-            boolean isExactMatch = input.equals(keyword);
-            boolean isPrefixMatch = commandType != CommandType.BYE && input.startsWith(keyword + " ");
-            if (isExactMatch || isPrefixMatch) {
-                return commandType;
-            }
-        }
-        return null;
+        return Arrays.stream(CommandType.values())
+                .filter(commandType -> isCommandTypeOf(input, commandType))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Returns whether an input line begins with a command type's keyword.
+     *
+     * @param input the trimmed user input.
+     * @param commandType the command type to test the input against.
+     * @return {@code true} if the input is that command, with or without details.
+     */
+    private static boolean isCommandTypeOf(String input, CommandType commandType) {
+        String keyword = commandType.getKeyword();
+        boolean isExactMatch = input.equals(keyword);
+        boolean isPrefixMatch = commandType != CommandType.BYE && input.startsWith(keyword + " ");
+        return isExactMatch || isPrefixMatch;
     }
 
     /**
