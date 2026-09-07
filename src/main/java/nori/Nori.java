@@ -53,6 +53,8 @@ public class Nori {
         tasks = loadedTasks;
         loadingError = savedLoadingError;
         loadingNotice = savedLoadingNotice;
+        assert loadingError == null || loadingNotice == null
+                : "A failed load produces an error and no notice, so one startup message is shown.";
     }
 
     /**
@@ -83,6 +85,8 @@ public class Nori {
      * @return {@code true} when the command requests that Nori exits.
      */
     public boolean executeCommand(String input) {
+        assert input != null : "A user interface reads a command line before asking for it to run.";
+
         try {
             Command command = Parser.parse(input);
             command.execute(tasks, ui, storage);

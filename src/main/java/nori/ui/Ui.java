@@ -115,6 +115,8 @@ public class Ui {
      * @param lines the lines to print.
      */
     private void printResponse(boolean shouldIndent, String... lines) {
+        assert lines.length > 0 : "A response says something; empty dividers would tell a user nothing.";
+
         String divider = shouldIndent ? DIVIDER : DIVIDER_LINE;
         String prefix = shouldIndent ? INDENT + " " : "";
         System.out.println(divider);
