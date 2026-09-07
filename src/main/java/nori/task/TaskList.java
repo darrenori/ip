@@ -25,7 +25,7 @@ public class TaskList {
     /**
      * Creates a task list containing the supplied tasks in argument order.
      *
-     * @param tasks the tasks to place in the list
+     * @param tasks the tasks to place in the list.
      */
     public TaskList(Task... tasks) {
         this(List.of(tasks));
@@ -34,7 +34,7 @@ public class TaskList {
     /**
      * Creates a task list containing the supplied tasks.
      *
-     * @param tasks the tasks with which to initialize the list
+     * @param tasks the tasks with which to initialize the list.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -43,7 +43,7 @@ public class TaskList {
     /**
      * Adds a task to the end of the list.
      *
-     * @param task the task to add
+     * @param task the task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -52,8 +52,8 @@ public class TaskList {
     /**
      * Inserts a task at the specified zero-based index.
      *
-     * @param index the index at which to insert the task
-     * @param task the task to insert
+     * @param index the index at which to insert the task.
+     * @param task the task to insert.
      */
     public void add(int index, Task task) {
         tasks.add(index, task);
@@ -62,8 +62,8 @@ public class TaskList {
     /**
      * Removes and returns the task at the specified zero-based index.
      *
-     * @param index the index of the task to remove
-     * @return the removed task
+     * @param index the index of the task to remove.
+     * @return the removed task.
      */
     public Task remove(int index) {
         return tasks.remove(index);
@@ -72,8 +72,8 @@ public class TaskList {
     /**
      * Returns the task at the specified zero-based index.
      *
-     * @param index the index of the task to return
-     * @return the task at the specified index
+     * @param index the index of the task to return.
+     * @return the task at the specified index.
      */
     public Task get(int index) {
         return tasks.get(index);
@@ -82,10 +82,10 @@ public class TaskList {
     /**
      * Returns a valid zero-based index for a user-supplied task number.
      *
-     * @param taskNumber the user-supplied task number
-     * @param commandKeyword the command using the task number
-     * @return the matching zero-based index
-     * @throws NoriException if the task number is unusable
+     * @param taskNumber the user-supplied task number.
+     * @param commandKeyword the command using the task number.
+     * @return the matching zero-based index.
+     * @throws NoriException if the task number is unusable.
      */
     public int getTaskIndex(String taskNumber, String commandKeyword) throws NoriException {
         try {
@@ -102,15 +102,15 @@ public class TaskList {
     /**
      * Returns the task list as display lines.
      *
-     * @return the task-list response lines
+     * @return the task-list response lines.
      */
     public String[] getDisplayLines() {
         if (isEmpty()) {
-            return new String[] {"Your list is empty. Add something with \"todo borrow book\" lah."};
+            return new String[] {"The iceberg is empty. Try \"todo borrow book\". Noot noot!"};
         }
 
         String[] lines = new String[size() + 1];
-        lines[0] = "Here are the tasks in your list:";
+        lines[0] = "Noot noot! Tasks currently chilling on the iceberg:";
         for (int index = 0; index < size(); index++) {
             lines[index + 1] = (index + 1) + "." + get(index);
         }
@@ -120,30 +120,30 @@ public class TaskList {
     /**
      * Returns deadline and event task lines that occur on a date.
      *
-     * @param date the date to search
-     * @return the date-query response lines
+     * @param date the date to search.
+     * @return the date-query response lines.
      */
     public String[] getTasksOnDateDisplayLines(LocalDate date) {
         List<String> matchingTasks = getMatchingTasks(date, null);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no deadlines or events on " + date + "."};
+            return new String[] {"Nothing is hatching on " + date + ". The ice is quiet."};
         }
-        return prependHeading("Here are the deadlines and events on " + date + ":", matchingTasks);
+        return prependHeading("Noot noot! Things hatching on " + date + ":", matchingTasks);
     }
 
     /**
      * Returns deadline and event task lines that occur within a date range.
      *
-     * @param dateRange the inclusive date range to search
-     * @return the date-range response lines
+     * @param dateRange the inclusive date range to search.
+     * @return the date-range response lines.
      */
     public String[] getTasksInDateRangeDisplayLines(DateRange dateRange) {
         List<String> matchingTasks = getMatchingTasks(null, dateRange);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no deadlines or events from " + dateRange.getFrom()
-                    + " to " + dateRange.getTo() + "."};
+            return new String[] {"Nothing is hatching from " + dateRange.getFrom()
+                    + " to " + dateRange.getTo() + ". The ice is quiet."};
         }
-        return prependHeading("Here are the deadlines and events from " + dateRange.getFrom()
+        return prependHeading("Noot noot! Things hatching from " + dateRange.getFrom()
                 + " to " + dateRange.getTo() + ":", matchingTasks);
     }
 
@@ -156,21 +156,21 @@ public class TaskList {
      * details are not. Matching lines keep their numbers from the full list, so
      * a number shown here can be used directly with mark, unmark or delete.
      *
-     * @param keyword the text to search for in task descriptions
-     * @return the keyword-search response lines
+     * @param keyword the text to search for in task descriptions.
+     * @return the keyword-search response lines.
      */
     public String[] getTasksMatchingKeywordDisplayLines(String keyword) {
         List<String> matchingTasks = getTasksContainingKeyword(keyword);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no matching tasks in your list."};
+            return new String[] {"No matching fish in this sea. Try another keyword!"};
         }
-        return prependHeading("Here are the matching tasks in your list:", matchingTasks);
+        return prependHeading("Noot noot! I found these fish:", matchingTasks);
     }
 
     /**
      * Returns the number of tasks in the list.
      *
-     * @return the task count
+     * @return the task count.
      */
     public int size() {
         return tasks.size();
@@ -179,7 +179,7 @@ public class TaskList {
     /**
      * Returns whether the list contains no tasks.
      *
-     * @return {@code true} if no tasks are stored
+     * @return {@code true} if no tasks are stored.
      */
     public boolean isEmpty() {
         return tasks.isEmpty();
@@ -188,7 +188,7 @@ public class TaskList {
     /**
      * Returns a read-only view of the stored tasks.
      *
-     * @return an unmodifiable task list view
+     * @return an unmodifiable task list view.
      */
     public List<Task> asUnmodifiableList() {
         return Collections.unmodifiableList(tasks);
@@ -197,40 +197,40 @@ public class TaskList {
     /**
      * Explains why a command's task number cannot be used.
      *
-     * @param taskNumber the user-supplied task number
-     * @param commandKeyword the command using the task number
-     * @return a corrective error message
+     * @param taskNumber the user-supplied task number.
+     * @param commandKeyword the command using the task number.
+     * @return a corrective error message.
      */
     private String getTaskNumberError(String taskNumber, String commandKeyword) {
         if (taskNumber.isEmpty()) {
-            return "OOPS!!! \"" + commandKeyword + "\" needs a task number. Try \""
+            return "NOOT?! \"" + commandKeyword + "\" needs a task number. Try \""
                     + commandKeyword + " 1\".";
         }
         try {
             int taskIndex = Integer.parseInt(taskNumber) - 1;
             if (taskIndex < 0) {
-                return "OOPS!!! Task numbers start from 1, not " + taskNumber + ". Nice try lah.";
+                return "NOOT?! Task numbers start from 1, not " + taskNumber + ". Penguins can count!";
             }
             if (isEmpty()) {
-                return "OOPS!!! There are no tasks yet, so there is nothing to " + commandKeyword + ".";
+                return "NOOT?! The iceberg is empty, so there is nothing to " + commandKeyword + ".";
             }
-            return "OOPS!!! You have only " + size() + " task(s), so \"" + commandKeyword + " "
-                    + taskNumber + "\" is out of range. Don't anyhow point lah.";
+            return "NOOT?! The iceberg has only " + size() + " task(s), so \"" + commandKeyword + " "
+                    + taskNumber + "\" points straight into the sea.";
         } catch (NumberFormatException exception) {
             if (isIntegerLiteral(taskNumber)) {
-                return "ARE YOU DONEEEE????? \"" + taskNumber + "\" is far too large for a task number."
+                return "GIANT NOOT! \"" + taskNumber + "\" is far too large for a task number."
                         + " Use a whole number from 1 to " + Math.max(size(), 1) + ".";
             }
-            return "OOPS!!! \"" + taskNumber + "\" is not a task number. Use \""
-                    + commandKeyword + " 1\", not words lah.";
+            return "NOOT?! \"" + taskNumber + "\" is not a task number. Use \""
+                    + commandKeyword + " 1\"; penguins count with digits.";
         }
     }
 
     /**
      * Returns whether text is an optionally signed whole-number literal.
      *
-     * @param text the text to inspect
-     * @return {@code true} if the text contains only an optional sign and digits
+     * @param text the text to inspect.
+     * @return {@code true} if the text contains only an optional sign and digits.
      */
     private boolean isIntegerLiteral(String text) {
         int firstDigitIndex = text.startsWith("-") || text.startsWith("+") ? 1 : 0;
@@ -248,9 +248,9 @@ public class TaskList {
     /**
      * Finds task lines that match either a date or a date range.
      *
-     * @param date the date to search, or {@code null} for a range search
-     * @param dateRange the range to search, or {@code null} for a date search
-     * @return the matching numbered task lines
+     * @param date the date to search, or {@code null} for a range search.
+     * @param dateRange the range to search, or {@code null} for a date search.
+     * @return the matching numbered task lines.
      */
     private List<String> getMatchingTasks(LocalDate date, DateRange dateRange) {
         List<String> matchingTasks = new ArrayList<>();
@@ -270,8 +270,8 @@ public class TaskList {
      * Case folding uses {@link Locale#ROOT} so a search behaves the same way
      * whatever locale the machine running Nori is set to.
      *
-     * @param keyword the text to search for in task descriptions
-     * @return the matching numbered task lines
+     * @param keyword the text to search for in task descriptions.
+     * @return the matching numbered task lines.
      */
     private List<String> getTasksContainingKeyword(String keyword) {
         String foldedKeyword = keyword.toLowerCase(Locale.ROOT);
@@ -289,9 +289,9 @@ public class TaskList {
     /**
      * Adds a heading before task lines.
      *
-     * @param heading the response heading
-     * @param taskLines the numbered task lines
-     * @return the combined response lines
+     * @param heading the response heading.
+     * @param taskLines the numbered task lines.
+     * @return the combined response lines.
      */
     private String[] prependHeading(String heading, List<String> taskLines) {
         String[] lines = new String[taskLines.size() + 1];
@@ -305,9 +305,9 @@ public class TaskList {
     /**
      * Returns whether a task is a deadline or event occurring on the given date.
      *
-     * @param task the task to inspect
-     * @param date the date to match
-     * @return {@code true} if the task occurs on {@code date}
+     * @param task the task to inspect.
+     * @param date the date to match.
+     * @return {@code true} if the task occurs on {@code date}.
      */
     private boolean occursOn(Task task, LocalDate date) {
         if (task instanceof Deadline) {
@@ -322,9 +322,9 @@ public class TaskList {
     /**
      * Returns whether a task is a deadline in, or an event overlapping, a date range.
      *
-     * @param task the task to inspect
-     * @param dateRange the inclusive date range to match
-     * @return {@code true} if the task occurs within the date range
+     * @param task the task to inspect.
+     * @param dateRange the inclusive date range to match.
+     * @return {@code true} if the task occurs within the date range.
      */
     private boolean occursInDateRange(Task task, DateRange dateRange) {
         if (task instanceof Deadline) {

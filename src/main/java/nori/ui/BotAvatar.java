@@ -19,7 +19,7 @@ public final class BotAvatar extends StackPane {
     /**
      * Creates a circular Nori avatar at the requested size.
      *
-     * @param size the width and height of the avatar in pixels
+     * @param size the width and height of the avatar in pixels.
      */
     public BotAvatar(double size) {
         ImageView portrait = new ImageView(BOT_IMAGE);

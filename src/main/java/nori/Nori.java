@@ -11,7 +11,7 @@ import nori.ui.Ui;
  */
 public class Nori {
     /** The final response shown when a user ends a Nori session. */
-    private static final String GOODBYE_MESSAGE = "Bye. Hope to see you again soon!";
+    private static final String GOODBYE_MESSAGE = "Noot noot! Time to waddle off. Stay frosty!";
 
     /** Reads and writes the saved task list. */
     private final Storage storage;
@@ -34,7 +34,7 @@ public class Nori {
     /**
      * Creates Nori with a supplied user interface and standard disk storage.
      *
-     * @param ui the user interface that receives command responses
+     * @param ui the user interface that receives command responses.
      */
     public Nori(Ui ui) {
         this.ui = ui;
@@ -79,8 +79,8 @@ public class Nori {
     /**
      * Executes one command and sends its response to the configured user interface.
      *
-     * @param input the command entered by the user
-     * @return {@code true} when the command requests that Nori exits
+     * @param input the command entered by the user.
+     * @return {@code true} when the command requests that Nori exits.
      */
     public boolean executeCommand(String input) {
         try {
@@ -99,7 +99,7 @@ public class Nori {
     /**
      * Returns the notice or error produced while loading saved tasks.
      *
-     * @return the loading message, or {@code null} when loading was uneventful
+     * @return the loading message, or {@code null} when loading was uneventful.
      */
     public String getLoadingMessage() {
         return loadingError != null ? loadingError : loadingNotice;
@@ -119,7 +119,7 @@ public class Nori {
     /**
      * Starts Nori with its standard configuration.
      *
-     * @param args unused command-line arguments
+     * @param args unused command-line arguments.
      */
     public static void main(String[] args) {
         new Nori().run();

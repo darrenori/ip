@@ -46,9 +46,9 @@ public class NoriGuiTest {
         boolean isExitRequested = nori.executeCommand("todo finish tutorial");
 
         assertFalse(isExitRequested);
-        assertEquals("Got it. I've added this task:\n"
+        assertEquals("Noot noot! Task tucked safely under my wing:\n"
                 + "  [T][ ] finish tutorial\n"
-                + "Now you have 1 tasks in the list.", guiUi.consumeResponse());
+                + "The iceberg now holds 1 task(s).", guiUi.consumeResponse());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class NoriGuiTest {
         boolean isExitRequested = nori.executeCommand("bye");
 
         assertTrue(isExitRequested);
-        assertEquals("Bye. Hope to see you again soon!", guiUi.consumeResponse());
+        assertEquals("Noot noot! Time to waddle off. Stay frosty!", guiUi.consumeResponse());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class NoriGuiTest {
         boolean isExitRequested = nori.executeCommand("on 2026-09-02");
 
         assertFalse(isExitRequested);
-        assertEquals("Here are the deadlines and events on 2026-09-02:\n"
+        assertEquals("Noot noot! Things hatching on 2026-09-02:\n"
                 + "1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)", guiUi.consumeResponse());
     }
 
@@ -84,9 +84,10 @@ public class NoriGuiTest {
         boolean isExitRequested = nori.executeCommand("event backwards /from 2026-09-03 /to 2026-09-01");
 
         assertFalse(isExitRequested);
-        assertEquals("OOPS!!! An event cannot end before it starts.", guiUi.consumeResponse());
+        assertEquals("NOOT?! An event cannot end before it starts. Time only waddles forward.",
+                guiUi.consumeResponse());
         nori.executeCommand("list");
-        assertEquals("Your list is empty. Add something with \"todo borrow book\" lah.",
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
                 guiUi.consumeResponse());
     }
 
@@ -102,7 +103,7 @@ public class NoriGuiTest {
         Nori reloadedNori = new Nori(reloadedGuiUi);
         reloadedNori.executeCommand("list");
 
-        assertEquals("Here are the tasks in your list:\n1.[T][ ] " + description,
+        assertEquals("Noot noot! Tasks currently chilling on the iceberg:\n1.[T][ ] " + description,
                 reloadedGuiUi.consumeResponse());
     }
 
@@ -116,7 +117,7 @@ public class NoriGuiTest {
         boolean isExitRequested = nori.executeCommand("delete 999999999999999999999999999999999999");
 
         assertFalse(isExitRequested);
-        assertEquals("ARE YOU DONEEEE????? \"999999999999999999999999999999999999\""
+        assertEquals("GIANT NOOT! \"999999999999999999999999999999999999\""
                 + " is far too large for a task number. Use a whole number from 1 to 1.",
                 guiUi.consumeResponse());
     }

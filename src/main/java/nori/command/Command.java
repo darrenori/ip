@@ -16,17 +16,17 @@ public abstract class Command {
     /**
      * Performs this command's work.
      *
-     * @param tasks the stored tasks
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @throws NoriException if the command cannot be completed
+     * @param tasks the stored tasks.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @throws NoriException if the command cannot be completed.
      */
     public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException;
 
     /**
      * Returns whether this command ends the application.
      *
-     * @return {@code true} for an exit command
+     * @return {@code true} for an exit command.
      */
     public boolean isExit() {
         return false;

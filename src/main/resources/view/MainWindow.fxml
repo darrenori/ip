@@ -30,12 +30,12 @@
             <StackPane fx:id="logoSlot" minHeight="50.0" minWidth="50.0" />
             <VBox alignment="CENTER_LEFT" spacing="1.0">
                 <Label styleClass="brand-name" text="NORI" />
-                <Label styleClass="brand-tagline" text="A calm place for busy days" />
+                <Label styleClass="brand-tagline" text="Tiny flippers. Big plans." />
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER" spacing="7.0" styleClass="status-pill">
                 <Label styleClass="status-dot" text="●" />
-                <Label fx:id="statusLabel" styleClass="status-text" text="Ready to help" />
+                <Label fx:id="statusLabel" styleClass="status-text" text="Ready to noot" />
             </HBox>
         </HBox>
     </top>
@@ -73,7 +73,7 @@
                 <TextField fx:id="userInput"
                            accessibleHelp="Enter a Nori command"
                            onAction="#handleUserInput"
-                           promptText="Try: todo finish CS2103 tutorial"
+                           promptText="Type a command, e.g. todo finish CS2103 tutorial"
                            styleClass="command-input"
                            HBox.hgrow="ALWAYS" />
                 <Button fx:id="sendButton"

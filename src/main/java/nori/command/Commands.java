@@ -20,9 +20,9 @@ public final class Commands {
     /**
      * Creates the command represented by a recognized type.
      *
-     * @param commandType the recognized command type
-     * @param details the text after the command keyword
-     * @return the corresponding executable command
+     * @param commandType the recognized command type.
+     * @param details the text after the command keyword.
+     * @return the corresponding executable command.
      */
     public static Command create(CommandType commandType, String details) {
         switch (commandType) {
@@ -56,7 +56,7 @@ public final class Commands {
     /**
      * Creates a command that reports unrecognized input.
      *
-     * @return an unrecognized-command handler
+     * @return an unrecognized-command handler.
      */
     public static Command createUnknown() {
         return new UnknownCommand();
@@ -73,7 +73,7 @@ abstract class InputCommand extends Command {
     /**
      * Creates a command with its input details.
      *
-     * @param details the text after the command keyword
+     * @param details the text after the command keyword.
      */
     InputCommand(String details) {
         this.details = details;
@@ -87,7 +87,7 @@ class ListCommand extends InputCommand {
     /**
      * Creates a list command.
      *
-     * @param details the optional date range after the {@code list} keyword
+     * @param details the optional date range after the {@code list} keyword.
      */
     ListCommand(String details) {
         super(details);
@@ -126,7 +126,7 @@ class OnCommand extends InputCommand {
     /**
      * Creates a date-query command.
      *
-     * @param details the date after the {@code on} keyword
+     * @param details the date after the {@code on} keyword.
      */
     OnCommand(String details) {
         super(details);
@@ -146,7 +146,7 @@ class FindCommand extends InputCommand {
     /**
      * Creates a keyword-search command.
      *
-     * @param details the keyword after the {@code find} keyword
+     * @param details the keyword after the {@code find} keyword.
      */
     FindCommand(String details) {
         super(details);
@@ -156,8 +156,8 @@ class FindCommand extends InputCommand {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         if (details.isEmpty()) {
-            ui.showResponse("OOPS!!! \"find\" needs a keyword."
-                    + " Try \"find book\" — searching for nothing finds everything lah.");
+            ui.showResponse("NOOT?! \"find\" needs a keyword."
+                    + " Try \"find book\"; even penguins need a clue.");
             return;
         }
         ui.showResponse(tasks.getTasksMatchingKeywordDisplayLines(details));
@@ -171,7 +171,7 @@ class MarkCommand extends InputCommand {
     /**
      * Creates a command that completes a task.
      *
-     * @param details the task number after the {@code mark} keyword
+     * @param details the task number after the {@code mark} keyword.
      */
     MarkCommand(String details) {
         super(details);
@@ -183,7 +183,7 @@ class MarkCommand extends InputCommand {
         int taskIndex = tasks.getTaskIndex(details, "mark");
         Task task = tasks.get(taskIndex);
         if (task.isDone()) {
-            ui.showResponse("Yo! You've already marked this task.");
+            ui.showResponse("Noot noot! That task is already frozen solid (done).");
             return;
         }
 
@@ -194,7 +194,7 @@ class MarkCommand extends InputCommand {
             task.markAsNotDone();
             throw exception;
         }
-        ui.showResponse("Nice! I've marked this task as done:", "  " + task);
+        ui.showResponse("Noot noot! This task is now ice-cold complete:", "  " + task);
     }
 }
 
@@ -205,7 +205,7 @@ class UnmarkCommand extends InputCommand {
     /**
      * Creates a command that reopens a task.
      *
-     * @param details the task number after the {@code unmark} keyword
+     * @param details the task number after the {@code unmark} keyword.
      */
     UnmarkCommand(String details) {
         super(details);
@@ -217,7 +217,7 @@ class UnmarkCommand extends InputCommand {
         int taskIndex = tasks.getTaskIndex(details, "unmark");
         Task task = tasks.get(taskIndex);
         if (!task.isDone()) {
-            ui.showResponse("Yo! You've already unmarked this task.");
+            ui.showResponse("Noot noot! That task is already thawed (not done).");
             return;
         }
 
@@ -228,7 +228,7 @@ class UnmarkCommand extends InputCommand {
             task.markAsDone();
             throw exception;
         }
-        ui.showResponse("OK, I've marked this task as not done yet:", "  " + task);
+        ui.showResponse("Brrr... thawing this task back out:", "  " + task);
     }
 }
 
@@ -239,7 +239,7 @@ class DeleteCommand extends InputCommand {
     /**
      * Creates a command that removes a task.
      *
-     * @param details the task number after the {@code delete} keyword
+     * @param details the task number after the {@code delete} keyword.
      */
     DeleteCommand(String details) {
         super(details);
@@ -256,8 +256,8 @@ class DeleteCommand extends InputCommand {
             tasks.add(taskIndex, deletedTask);
             throw exception;
         }
-        ui.showResponse("Noted. I've removed this task:", "  " + deletedTask,
-                "Now you have " + tasks.size() + " tasks in the list.");
+        ui.showResponse("Splash! I kicked this task off the iceberg:", "  " + deletedTask,
+                "The iceberg now holds " + tasks.size() + " task(s).");
     }
 }
 
@@ -268,7 +268,7 @@ class TodoCommand extends InputCommand {
     /**
      * Creates a command that adds a todo.
      *
-     * @param details the description after the {@code todo} keyword
+     * @param details the description after the {@code todo} keyword.
      */
     TodoCommand(String details) {
         super(details);
@@ -278,8 +278,8 @@ class TodoCommand extends InputCommand {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         if (details.isEmpty()) {
-            ui.showResponse("OOPS!!! A todo needs a description."
-                    + " Try \"todo borrow book\" — I cannot read your mind lah.");
+            ui.showResponse("NOOT?! A todo needs a description."
+                    + " Try \"todo borrow book\"; my flippers cannot read minds.");
             return;
         }
         addTask(tasks, ui, storage, new Todo(details));
@@ -288,11 +288,11 @@ class TodoCommand extends InputCommand {
     /**
      * Adds a task, restores the list when saving fails, and displays confirmation.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param task the task to add
-     * @throws NoriException if the task cannot be saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param task the task to add.
+     * @throws NoriException if the task cannot be saved.
      */
     static void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
         tasks.add(task);
@@ -302,8 +302,8 @@ class TodoCommand extends InputCommand {
             tasks.remove(tasks.size() - 1);
             throw exception;
         }
-        ui.showResponse("Got it. I've added this task:", "  " + task,
-                "Now you have " + tasks.size() + " tasks in the list.");
+        ui.showResponse("Noot noot! Task tucked safely under my wing:", "  " + task,
+                "The iceberg now holds " + tasks.size() + " task(s).");
     }
 }
 
@@ -317,7 +317,7 @@ class DeadlineCommand extends InputCommand {
     /**
      * Creates a command that adds a deadline.
      *
-     * @param details the description and due date after the {@code deadline} keyword
+     * @param details the description and due date after the {@code deadline} keyword.
      */
     DeadlineCommand(String details) {
         super(details);
@@ -328,13 +328,13 @@ class DeadlineCommand extends InputCommand {
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         int separatorIndex = details.indexOf(DEADLINE_SEPARATOR);
         if (details.startsWith("/by ")) {
-            ui.showResponse("OOPS!!! A deadline needs a description before \"/by\"."
+            ui.showResponse("NOOT?! A deadline needs a description before \"/by\"."
                     + " Try \"deadline submit report /by 2019-10-15\".");
         } else if (details.endsWith("/by")) {
-            ui.showResponse("OOPS!!! A deadline needs a due date after \"/by\"."
+            ui.showResponse("NOOT?! A deadline needs a due date after \"/by\"."
                     + " Try \"deadline submit report /by 2019-10-15\".");
         } else if (separatorIndex == -1) {
-            ui.showResponse("OOPS!!! I cannot find the \"/by\" part of that deadline."
+            ui.showResponse("NOOT?! I cannot find the \"/by\" part of that deadline."
                     + " Use \"deadline submit report /by 2019-10-15\".");
         } else {
             addDeadline(tasks, ui, storage, separatorIndex);
@@ -344,22 +344,22 @@ class DeadlineCommand extends InputCommand {
     /**
      * Validates a deadline's details and adds the resulting task.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param separatorIndex the position of the {@code /by} separator
-     * @throws NoriException if the deadline cannot be parsed or saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param separatorIndex the position of the {@code /by} separator.
+     * @throws NoriException if the deadline cannot be parsed or saved.
      */
     private void addDeadline(TaskList tasks, Ui ui, Storage storage, int separatorIndex)
             throws NoriException {
         String description = details.substring(0, separatorIndex).trim();
         String deadlineInput = details.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
-            ui.showResponse("OOPS!!! A deadline needs a description before \"/by\"."
-                    + " Due for what exactly, boss?");
+            ui.showResponse("NOOT?! A deadline needs a description before \"/by\"."
+                    + " Even a penguin needs to know what is due.");
         } else if (deadlineInput.isEmpty()) {
-            ui.showResponse("OOPS!!! A deadline needs a due date after \"/by\"."
-                    + " Don't leave me hanging lah.");
+            ui.showResponse("NOOT?! A deadline needs a due date after \"/by\"."
+                    + " My calendar is colder than that empty space.");
         } else {
             TodoCommand.addTask(tasks, ui, storage,
                     new Deadline(description, Deadline.parseInput(deadlineInput)));
@@ -379,7 +379,7 @@ class EventCommand extends InputCommand {
     /**
      * Creates a command that adds an event.
      *
-     * @param details the description, start, and end after the {@code event} keyword
+     * @param details the description, start, and end after the {@code event} keyword.
      */
     EventCommand(String details) {
         super(details);
@@ -391,20 +391,20 @@ class EventCommand extends InputCommand {
         int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
         int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
         if (details.startsWith("/from ")) {
-            ui.showResponse("OOPS!!! An event needs a description before \"/from\"."
+            ui.showResponse("NOOT?! An event needs a description before \"/from\"."
                     + " Try \"event team meeting /from Mon 2pm /to 4pm\".");
         } else if (fromSeparatorIndex == -1 && toSeparatorIndex == -1) {
-            ui.showResponse("OOPS!!! An event needs both \"/from\" and \"/to\"."
+            ui.showResponse("NOOT?! An event needs both \"/from\" and \"/to\"."
                     + " Use \"event team meeting /from Mon 2pm /to 4pm\".");
         } else if (fromSeparatorIndex == -1) {
-            ui.showResponse("OOPS!!! An event is missing \"/from\" and its start time."
-                    + " Put \"/from\" before \"/to\", can?");
+            ui.showResponse("NOOT?! An event is missing \"/from\" and its start time."
+                    + " Tell me when to start waddling.");
         } else if (toSeparatorIndex == -1) {
-            ui.showResponse("OOPS!!! An event is missing \"/to\" and its end time."
-                    + " I need to know when you escape the meeting leh.");
+            ui.showResponse("NOOT?! An event is missing \"/to\" and its end time."
+                    + " Even penguin meetings eventually end.");
         } else if (toSeparatorIndex < fromSeparatorIndex) {
-            ui.showResponse("OOPS!!! Put \"/from\" before \"/to\"."
-                    + " Time flows forward, not backwards, sia.");
+            ui.showResponse("NOOT?! Put \"/from\" before \"/to\"."
+                    + " Time waddles forward, not backward.");
         } else {
             addEvent(tasks, ui, storage, fromSeparatorIndex, toSeparatorIndex);
         }
@@ -413,12 +413,12 @@ class EventCommand extends InputCommand {
     /**
      * Validates an event's details and adds the resulting task.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param fromSeparatorIndex the position of the {@code /from} separator
-     * @param toSeparatorIndex the position of the {@code /to} separator
-     * @throws NoriException if the event cannot be parsed or saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param fromSeparatorIndex the position of the {@code /from} separator.
+     * @param toSeparatorIndex the position of the {@code /to} separator.
+     * @throws NoriException if the event cannot be parsed or saved.
      */
     private void addEvent(TaskList tasks, Ui ui, Storage storage, int fromSeparatorIndex,
             int toSeparatorIndex) throws NoriException {
@@ -427,14 +427,14 @@ class EventCommand extends InputCommand {
                 toSeparatorIndex).trim();
         String to = details.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
-            ui.showResponse("OOPS!!! An event needs a description before \"/from\"."
-                    + " Meeting with who, your imaginary friend ah?");
+            ui.showResponse("NOOT?! An event needs a description before \"/from\"."
+                    + " Meeting whom, the invisible seals?");
         } else if (from.isEmpty()) {
-            ui.showResponse("OOPS!!! \"/from\" needs a start time."
-                    + " I cannot schedule an event that starts in the void leh.");
+            ui.showResponse("NOOT?! \"/from\" needs a start time."
+                    + " I cannot waddle in from the void.");
         } else if (to.isEmpty()) {
-            ui.showResponse("OOPS!!! \"/to\" needs an end time."
-                    + " Even meetings eventually end, right?");
+            ui.showResponse("NOOT?! \"/to\" needs an end time."
+                    + " Even penguin meetings eventually end.");
         } else {
             TodoCommand.addTask(tasks, ui, storage, new Event(description, from, to));
         }
@@ -473,7 +473,7 @@ class UnknownCommand extends Command {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
-        throw new NoriException("OOPS!!! I'm sorry, but I don't know what that means :-("
-                + " Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.");
+        throw new NoriException("CONFUSED NOOT! My flippers do not understand that command."
+                + " Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.");
     }
 }

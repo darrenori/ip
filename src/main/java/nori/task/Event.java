@@ -23,10 +23,10 @@ public class Event extends Task {
     /**
      * Creates an incomplete event with the given description, start, and end times.
      *
-     * @param description the event description
-     * @param from the start date or time, stored as entered by the user
-     * @param to the end date or time, stored as entered by the user
-     * @throws NoriException if a date in the start or end details is invalid
+     * @param description the event description.
+     * @param from the start date or time, stored as entered by the user.
+     * @param to the end date or time, stored as entered by the user.
+     * @throws NoriException if a date in the start or end details is invalid.
      */
     public Event(String description, String from, String to) throws NoriException {
         super(description);
@@ -40,7 +40,7 @@ public class Event extends Task {
     /**
      * Returns the event's start details as entered by the user.
      *
-     * @return the event start details
+     * @return the event start details.
      */
     public String getFrom() {
         return from;
@@ -49,7 +49,7 @@ public class Event extends Task {
     /**
      * Returns the event's end details as entered by the user.
      *
-     * @return the event end details
+     * @return the event end details.
      */
     public String getTo() {
         return to;
@@ -58,8 +58,8 @@ public class Event extends Task {
     /**
      * Returns whether the event's start or end details explicitly contain the given ISO-8601 date.
      *
-     * @param date the date to find in this event's start or end details
-     * @return {@code true} if the event explicitly includes {@code date}
+     * @param date the date to find in this event's start or end details.
+     * @return {@code true} if the event explicitly includes {@code date}.
      */
     public boolean occursOn(LocalDate date) {
         LocalDate eventStart = findDate(from);
@@ -76,9 +76,9 @@ public class Event extends Task {
      * An event with dates in both its start and end details is treated as a date interval.
      * An event with a date in only one detail is treated as occurring on that date.
      *
-     * @param rangeStart the earliest date in the range
-     * @param rangeEnd the latest date in the range
-     * @return {@code true} if this event occurs in the range
+     * @param rangeStart the earliest date in the range.
+     * @param rangeEnd the latest date in the range.
+     * @return {@code true} if this event occurs in the range.
      */
     public boolean occursInDateRange(LocalDate rangeStart, LocalDate rangeEnd) {
         LocalDate eventStart = findDate(from);
@@ -98,12 +98,12 @@ public class Event extends Task {
     /**
      * Validates every date-like value in an event detail.
      *
-     * @param eventDetail the start or end detail to validate
-     * @throws NoriException if a date-like value is not a valid ISO-8601 date
+     * @param eventDetail the start or end detail to validate.
+     * @throws NoriException if a date-like value is not a valid ISO-8601 date.
      */
     private static void validateDates(String eventDetail) throws NoriException {
         if (eventDetail == null) {
-            throw new NoriException("OOPS!!! An event cannot have a missing date or time.");
+            throw new NoriException("NOOT?! An event cannot have a missing date or time.");
         }
 
         Matcher matcher = DATE_PATTERN.matcher(eventDetail);
@@ -112,7 +112,7 @@ public class Event extends Task {
             try {
                 LocalDate.parse(dateText);
             } catch (DateTimeParseException exception) {
-                throw new NoriException("OOPS!!! I cannot understand \"" + dateText + "\" as an event date."
+                throw new NoriException("NOOT?! I cannot understand \"" + dateText + "\" as an event date."
                         + " Use a date like \"2019-10-15\".");
             }
         }
@@ -125,23 +125,24 @@ public class Event extends Task {
      * Those forms have insufficient date information for an ordering check and
      * remain valid.
      *
-     * @param from the event's start details
-     * @param to the event's end details
-     * @throws NoriException if both details contain dates in reverse order
+     * @param from the event's start details.
+     * @param to the event's end details.
+     * @throws NoriException if both details contain dates in reverse order.
      */
     private static void validateDateOrder(String from, String to) throws NoriException {
         LocalDate eventStart = findDate(from);
         LocalDate eventEnd = findDate(to);
         if (eventStart != null && eventEnd != null && eventEnd.isBefore(eventStart)) {
-            throw new NoriException("OOPS!!! An event cannot end before it starts.");
+            throw new NoriException("NOOT?! An event cannot end before it starts."
+                    + " Time only waddles forward.");
         }
     }
 
     /**
      * Returns the first ISO-8601 date in an event detail, if any.
      *
-     * @param eventDetail the start or end detail to inspect
-     * @return the first valid date, or {@code null} when the detail has no date
+     * @param eventDetail the start or end detail to inspect.
+     * @return the first valid date, or {@code null} when the detail has no date.
      */
     private static LocalDate findDate(String eventDetail) {
         if (eventDetail == null) {
@@ -162,7 +163,9 @@ public class Event extends Task {
     /**
      * Returns this event with its {@code [E]} type icon and its start and end details.
      *
-     * @return this event rendered as {@code [E][<status>] <description> (from: <from> to: <to>)}
+     * @return the task rendering behind an {@code [E]} type icon, followed
+     *         by the start and end details exactly as the user typed them,
+     *         for example {@code [E][ ] book fair (from: 2pm to: 4pm)}.
      */
     @Override
     public String toString() {

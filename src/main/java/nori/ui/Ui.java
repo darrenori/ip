@@ -21,7 +21,7 @@ public class Ui {
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
     /** The command summary shown by the help command. */
     private static final String[] HELP_LINES = {
-        "Here are the commands you can use:",
+        "Noot noot! Here is what my flippers understand:",
         "todo <description>",
         "deadline <description> /by yyyy-MM-dd",
         "event <description> /from <start> /to <end>",
@@ -34,7 +34,7 @@ public class Ui {
         "delete <task number>",
         "help",
         "bye",
-        "Use yyyy-MM-dd in an event's /from or /to to find it with on."
+        "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it."
     };
     /** Reads command lines from standard input. */
     private final Scanner scanner;
@@ -49,7 +49,7 @@ public class Ui {
     /**
      * Reads and trims one command from standard input.
      *
-     * @return the command, or {@code null} if standard input has ended
+     * @return the command, or {@code null} if standard input has ended.
      */
     public String readCommand() {
         if (!scanner.hasNextLine()) {
@@ -70,13 +70,14 @@ public class Ui {
      */
     public void showWelcome() {
         System.out.print(BANNER);
-        printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
+        printResponse(false, "Noot noot! I'm Nori, your tiny task penguin.",
+                "Waddle in a command and I'll get flapping.");
     }
 
     /**
      * Displays an error that occurred while loading saved tasks.
      *
-     * @param message the loading error to display
+     * @param message the loading error to display.
      */
     public void showLoadingError(String message) {
         showResponse(message);
@@ -85,7 +86,7 @@ public class Ui {
     /**
      * Displays a notice produced while loading saved tasks.
      *
-     * @param message the loading notice to display
+     * @param message the loading notice to display.
      */
     public void showLoadingNotice(String message) {
         showResponse(message);
@@ -101,7 +102,7 @@ public class Ui {
     /**
      * Displays one or more response lines between indented dividers.
      *
-     * @param lines the response lines to display
+     * @param lines the response lines to display.
      */
     public void showResponse(String... lines) {
         printResponse(true, lines);
@@ -110,8 +111,8 @@ public class Ui {
     /**
      * Prints one or more lines between dividers, followed by a blank line.
      *
-     * @param shouldIndent whether the response should align under the banner
-     * @param lines the lines to print
+     * @param shouldIndent whether the response should align under the banner.
+     * @param lines the lines to print.
      */
     private void printResponse(boolean shouldIndent, String... lines) {
         String divider = shouldIndent ? DIVIDER : DIVIDER_LINE;

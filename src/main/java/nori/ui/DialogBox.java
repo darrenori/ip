@@ -47,8 +47,8 @@ public final class DialogBox extends HBox {
     /**
      * Creates a dialog aligned to the right for user input.
      *
-     * @param text the command entered by the user
-     * @return the user dialog box
+     * @param text the command entered by the user.
+     * @return the user dialog box.
      */
     public static DialogBox getUserDialog(String text) {
         DialogBox dialogBox = new DialogBox(text, "YOU", createUserAvatar(), "user-bubble");
@@ -59,8 +59,8 @@ public final class DialogBox extends HBox {
     /**
      * Creates a dialog aligned to the left for Nori's response.
      *
-     * @param text Nori's response text
-     * @return Nori's dialog box
+     * @param text Nori's response text.
+     * @return Nori's dialog box.
      */
     public static DialogBox getNoriDialog(String text) {
         return new DialogBox(text, "NORI", new BotAvatar(AVATAR_SIZE), "nori-bubble");

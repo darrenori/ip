@@ -49,7 +49,7 @@ public class TaskListTest {
         TaskList tasks = buildSampleList();
 
         assertArrayEquals(new String[] {
-            "Here are the matching tasks in your list:",
+            "Noot noot! I found these fish:",
             "3.[E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)",
         }, tasks.getTasksMatchingKeywordDisplayLines("fair"));
     }
@@ -60,7 +60,7 @@ public class TaskListTest {
         TaskList tasks = buildSampleList();
 
         assertArrayEquals(new String[] {
-            "Here are the matching tasks in your list:",
+            "Noot noot! I found these fish:",
             "1.[T][X] read book",
             "2.[D][ ] return book (by: Jun 06 2019)",
             "3.[E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)",
@@ -84,7 +84,7 @@ public class TaskListTest {
         TaskList tasks = buildSampleList();
 
         assertArrayEquals(new String[] {
-            "Here are the matching tasks in your list:",
+            "Noot noot! I found these fish:",
             "4.[T][ ] Bookshop errand",
         }, tasks.getTasksMatchingKeywordDisplayLines("shop"));
     }
@@ -93,13 +93,13 @@ public class TaskListTest {
     public void getTasksMatchingKeywordDisplayLines_noMatch_reportsNoMatchingTasks() throws NoriException {
         TaskList tasks = buildSampleList();
 
-        assertArrayEquals(new String[] {"There are no matching tasks in your list."},
+        assertArrayEquals(new String[] {"No matching fish in this sea. Try another keyword!"},
                 tasks.getTasksMatchingKeywordDisplayLines("bicycle"));
     }
 
     @Test
     public void getTasksMatchingKeywordDisplayLines_emptyList_reportsNoMatchingTasks() {
-        assertArrayEquals(new String[] {"There are no matching tasks in your list."},
+        assertArrayEquals(new String[] {"No matching fish in this sea. Try another keyword!"},
                 new TaskList().getTasksMatchingKeywordDisplayLines("book"));
     }
 
@@ -110,7 +110,7 @@ public class TaskListTest {
 
         // "2019-06-06" is the deadline's due date and the event's start and end,
         // but it appears in no description, so the description-only search misses it.
-        assertArrayEquals(new String[] {"There are no matching tasks in your list."},
+        assertArrayEquals(new String[] {"No matching fish in this sea. Try another keyword!"},
                 tasks.getTasksMatchingKeywordDisplayLines("2019-06-06"));
     }
 
@@ -123,7 +123,7 @@ public class TaskListTest {
 
     @Test
     public void getDisplayLines_emptyList_promptsForATask() {
-        assertArrayEquals(new String[] {"Your list is empty. Add something with \"todo borrow book\" lah."},
+        assertArrayEquals(new String[] {"The iceberg is empty. Try \"todo borrow book\". Noot noot!"},
                 new TaskList().getDisplayLines());
     }
 
@@ -138,8 +138,8 @@ public class TaskListTest {
     /**
      * Returns a list holding one task of each type, with a completed first task.
      *
-     * @return the sample task list used by these tests
-     * @throws NoriException if a sample task cannot be created
+     * @return the sample task list used by these tests.
+     * @throws NoriException if a sample task cannot be created.
      */
     private static TaskList buildSampleList() throws NoriException {
         Task readBook = new Todo("read book");

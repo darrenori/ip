@@ -17,8 +17,8 @@ public class NoriTest {
     /**
      * Runs every end-to-end regression test.
      *
-     * @param args ignored command-line arguments
-     * @throws Exception if a test cannot create its isolated environment or Nori cannot run
+     * @param args ignored command-line arguments.
+     * @throws Exception if a test cannot create its isolated environment or Nori cannot run.
      */
     public static void main(String[] args) throws Exception {
         runTest("Completes a mixed task workflow", NoriTest::mixedTaskWorkflow_updatesListAndStatuses);
@@ -48,8 +48,8 @@ public class NoriTest {
             assertContains(finalList, "1.[D][ ] return book (by: Feb 29 2024)");
             assertContains(finalList, "2.[E][ ] exam (from: 2024-02-29 0900 to: 2024-02-29 1200)");
             assertNotContains(finalList, "read book");
-            assertContains(output, "Nice! I've marked this task as done:");
-            assertContains(output, "OK, I've marked this task as not done yet:");
+            assertContains(output, "Noot noot! This task is now ice-cold complete:");
+            assertContains(output, "Brrr... thawing this task back out:");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -66,12 +66,12 @@ public class NoriTest {
                     + "list\n"
                     + "bye\n");
 
-            assertContains(output, "OOPS!!! A todo needs a description.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-02-30\" as a deadline.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-2-29\" as an event date.");
-            assertContains(output, "OOPS!!! \"on\" needs a date.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-02-30\" as a date.");
-            assertContains(output, "Your list is empty.");
+            assertContains(output, "NOOT?! A todo needs a description.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-02-30\" as a deadline.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-2-29\" as an event date.");
+            assertContains(output, "NOOT?! \"on\" needs a date.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-02-30\" as a date.");
+            assertContains(output, "The iceberg is empty.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -82,12 +82,13 @@ public class NoriTest {
         try {
             String output = runNori(testDirectory, "help\nbye\n");
 
-            assertContains(output, "Here are the commands you can use:");
+            assertContains(output, "Noot noot! Here is what my flippers understand:");
             assertContains(output, "deadline <description> /by yyyy-MM-dd");
             assertContains(output, "on yyyy-MM-dd");
             assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
             assertContains(output, "find <keyword>");
-            assertContains(output, "Use yyyy-MM-dd in an event's /from or /to to find it with on.");
+            assertContains(output,
+                    "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -105,13 +106,13 @@ public class NoriTest {
                     + "bye\n");
 
             String matchingTasks = getSectionAfter(output,
-                    "Here are the deadlines and events on 2024-03-01:");
+                    "Noot noot! Things hatching on 2024-03-01:");
             assertContains(matchingTasks, "2.[D][ ] submit work (by: Mar 01 2024)");
             assertContains(matchingTasks, "3.[E][ ] workshop (from: 2024-03-01 0900 to: 2024-03-01 1100)");
             assertContains(matchingTasks,
                     "4.[E][ ] overnight session (from: 2024-02-29 2300 to: 2024-03-01 0100)");
             assertNotContains(matchingTasks, "unrelated task");
-            assertContains(output, "There are no deadlines or events on 2024-03-02.");
+            assertContains(output, "Nothing is hatching on 2024-03-02. The ice is quiet.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -137,7 +138,7 @@ public class NoriTest {
                     + "bye\n");
 
             String matchingTasks = getSectionAfter(output,
-                    "Here are the deadlines and events from 2019-01-01 to 2021-01-01:");
+                    "Noot noot! Things hatching from 2019-01-01 to 2021-01-01:");
             assertContains(matchingTasks, "3.[D][ ] first day (by: Jan 01 2019)");
             assertContains(matchingTasks, "4.[D][ ] last day (by: Jan 01 2021)");
             assertContains(matchingTasks, "6.[E][ ] long project");
@@ -147,7 +148,7 @@ public class NoriTest {
             assertNotContains(matchingTasks, "late deadline");
             assertNotContains(matchingTasks, "old meeting");
             assertNotContains(matchingTasks, "undated meeting");
-            assertContains(output, "There are no deadlines or events from 2022-01-01 to 2022-01-02.");
+            assertContains(output, "Nothing is hatching from 2022-01-01 to 2022-01-02. The ice is quiet.");
             assertContains(output, "The \"/to\" date cannot be before the \"/from\" date.");
             assertContains(output, "A date-range list needs \"/to\" and an end date.");
             assertContains(output, "Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
@@ -172,7 +173,7 @@ public class NoriTest {
             assertContains(output, "1.[T][X] pack bag");
             assertContains(output, "2.[D][ ] return book (by: Dec 31 2024)");
             assertContains(output, "3.[E][X] celebration (from: 2024-12-31 2000 to: 2025-01-01 0100)");
-            assertContains(output, "Here are the deadlines and events on 2025-01-01:");
+            assertContains(output, "Noot noot! Things hatching on 2025-01-01:");
             assertContains(output, "3.[E][X] celebration");
         } finally {
             deleteDirectory(testDirectory);
@@ -196,7 +197,7 @@ public class NoriTest {
             // The final search is "find BOOK", so this is that search's section.
             // An upper-case keyword matching lower-case descriptions proves the
             // keyword side is case folded.
-            String matchingTasks = getSectionAfter(output, "Here are the matching tasks in your list:");
+            String matchingTasks = getSectionAfter(output, "Noot noot! I found these fish:");
             assertContains(matchingTasks, "1.[T][X] read book");
             assertContains(matchingTasks, "2.[D][ ] return book (by: Jun 06 2019)");
             assertContains(matchingTasks, "3.[E][ ] book fair");
@@ -205,8 +206,8 @@ public class NoriTest {
             // "find milk" matching "Buy Milk" proves the description side is case
             // folded too, and that a match keeps its number from the full list.
             assertContains(output, "4.[T][ ] Buy Milk");
-            assertContains(output, "There are no matching tasks in your list.");
-            assertContains(output, "OOPS!!! \"find\" needs a keyword.");
+            assertContains(output, "No matching fish in this sea. Try another keyword!");
+            assertContains(output, "NOOT?! \"find\" needs a keyword.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -215,8 +216,8 @@ public class NoriTest {
     /**
      * Runs one test case and reports it as passed, letting a failure stop the suite.
      *
-     * @param testName the name to report for this test
-     * @param testCase the test to run
+     * @param testName the name to report for this test.
+     * @param testCase the test to run.
      */
     private static void runTest(String testName, NoriTestCase testCase) throws Exception {
         testCase.run();
@@ -226,11 +227,11 @@ public class NoriTest {
     /**
      * Runs Nori in the given directory with one complete standard-input session.
      *
-     * @param workingDirectory the isolated working directory for this Nori launch
-     * @param input the standard-input content to send to Nori
-     * @return Nori's complete console output
-     * @throws IOException if the child process cannot be started or communicated with
-     * @throws InterruptedException if the current thread is interrupted while Nori is running
+     * @param workingDirectory the isolated working directory for this Nori launch.
+     * @param input the standard-input content to send to Nori.
+     * @return Nori's complete console output.
+     * @throws IOException if the child process cannot be started or communicated with.
+     * @throws InterruptedException if the current thread is interrupted while Nori is running.
      */
     private static String runNori(Path workingDirectory, String input)
             throws IOException, InterruptedException {
@@ -254,19 +255,19 @@ public class NoriTest {
     /**
      * Returns the final displayed task list from a Nori session.
      *
-     * @param output Nori's complete console output
-     * @return the part of the output beginning with the final task-list heading
+     * @param output Nori's complete console output.
+     * @return the part of the output beginning with the final task-list heading.
      */
     private static String getFinalList(String output) {
-        return getSectionAfter(output, "Here are the tasks in your list:");
+        return getSectionAfter(output, "Noot noot! Tasks currently chilling on the iceberg:");
     }
 
     /**
      * Returns the final output section beginning with a required heading.
      *
-     * @param output Nori's complete console output
-     * @param heading the required section heading
-     * @return the output beginning at the final occurrence of {@code heading}
+     * @param output Nori's complete console output.
+     * @param heading the required section heading.
+     * @return the output beginning at the final occurrence of {@code heading}.
      */
     private static String getSectionAfter(String output, String heading) {
         int headingIndex = output.lastIndexOf(heading);
@@ -279,7 +280,7 @@ public class NoriTest {
     /**
      * Returns the compiled test classpath as an absolute path for child Nori processes.
      *
-     * @return the absolute classpath for the compiled test classes
+     * @return the absolute classpath for the compiled test classes.
      */
     private static String getAbsoluteClassPath() {
         String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
@@ -291,8 +292,8 @@ public class NoriTest {
     /**
      * Deletes an isolated test directory and all of its contents.
      *
-     * @param directory the directory to delete
-     * @throws IOException if the directory tree cannot be read
+     * @param directory the directory to delete.
+     * @throws IOException if the directory tree cannot be read.
      */
     private static void deleteDirectory(Path directory) throws IOException {
         try (Stream<Path> paths = Files.walk(directory)) {
@@ -303,7 +304,7 @@ public class NoriTest {
     /**
      * Deletes one file or directory while cleaning up a test directory.
      *
-     * @param path the path to delete
+     * @param path the path to delete.
      */
     private static void deletePath(Path path) {
         try {
@@ -316,8 +317,8 @@ public class NoriTest {
     /**
      * Fails the current test unless the actual text contains the expected text.
      *
-     * @param actual the text to inspect
-     * @param expected the text that must be present
+     * @param actual the text to inspect.
+     * @param expected the text that must be present.
      */
     private static void assertContains(String actual, String expected) {
         if (!actual.contains(expected)) {
@@ -328,8 +329,8 @@ public class NoriTest {
     /**
      * Fails the current test if the actual text contains the unexpected text.
      *
-     * @param actual the text to inspect
-     * @param unexpected the text that must be absent
+     * @param actual the text to inspect.
+     * @param unexpected the text that must be absent.
      */
     private static void assertNotContains(String actual, String unexpected) {
         if (actual.contains(unexpected)) {
@@ -346,7 +347,7 @@ public class NoriTest {
         /**
          * Runs this test case.
          *
-         * @throws Exception if the test fails or its environment cannot be prepared
+         * @throws Exception if the test fails or its environment cannot be prepared.
          */
         void run() throws Exception;
     }
