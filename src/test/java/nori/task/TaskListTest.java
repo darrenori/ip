@@ -135,6 +135,43 @@ public class TaskListTest {
         assertEquals(3, tasks.getTaskIndex("4", "mark"));
     }
 
+    @Test
+    public void getScheduleDisplayLines_mixedList_ordersAndGroupsTheDay() throws NoriException {
+        TaskList tasks = buildSampleList();
+
+        assertArrayEquals(new String[] {
+            "Noot noot! Schedule for 2019-06-06:",
+            "10:00 3.[E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)",
+            "Due:",
+            "      2.[D][ ] return book (by: Jun 06 2019)",
+            "Anytime:",
+            "      1.[T][X] read book",
+            "      4.[T][ ] Bookshop errand",
+            "      5.[T][ ] buy milk",
+        }, tasks.getScheduleDisplayLines(LocalDate.of(2019, 6, 6)));
+    }
+
+    @Test
+    public void getScheduleDisplayLines_dateWithNoDatedTasks_stillOffersTheTodos() throws NoriException {
+        TaskList tasks = buildSampleList();
+
+        assertArrayEquals(new String[] {
+            "Noot noot! Schedule for 2019-07-01:",
+            "Anytime:",
+            "      1.[T][X] read book",
+            "      4.[T][ ] Bookshop errand",
+            "      5.[T][ ] buy milk",
+        }, tasks.getScheduleDisplayLines(LocalDate.of(2019, 7, 1)));
+    }
+
+    @Test
+    public void getScheduleDisplayLines_emptyList_reportsQuietIce() {
+        TaskList tasks = new TaskList();
+
+        assertArrayEquals(new String[] {"Nothing on the schedule for 2019-06-06. The ice is quiet."},
+                tasks.getScheduleDisplayLines(LocalDate.of(2019, 6, 6)));
+    }
+
     /**
      * Returns a list holding one task of each type, with a completed first task.
      *

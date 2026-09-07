@@ -29,6 +29,8 @@ public class NoriTest {
         runTest("Lists deadlines and events in a date range", NoriTest::listCommand_matchesDateRange);
         runTest("Finds tasks by description keyword", NoriTest::findCommand_matchesTaskDescriptions);
         runTest("Persists every task type and completion state", NoriTest::savedTasks_restoreAcrossLaunches);
+        runTest("Lays a day out as an ordered schedule",
+                NoriTest::scheduleCommand_ordersTheDayAndGroupsTheRest);
         System.out.println("All Nori regression tests passed.");
     }
 
@@ -87,8 +89,11 @@ public class NoriTest {
             assertContains(output, "on yyyy-MM-dd");
             assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
             assertContains(output, "find <keyword>");
+            assertContains(output, "schedule yyyy-MM-dd");
             assertContains(output,
                     "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it.");
+            assertContains(output, "Penguin tip: add a time like 0900, 9:30 or 2pm to an event's"
+                    + " /from to place it on the schedule.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -152,6 +157,38 @@ public class NoriTest {
             assertContains(output, "The \"/to\" date cannot be before the \"/from\" date.");
             assertContains(output, "A date-range list needs \"/to\" and an end date.");
             assertContains(output, "Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
+        } finally {
+            deleteDirectory(testDirectory);
+        }
+    }
+
+    private static void scheduleCommand_ordersTheDayAndGroupsTheRest() throws Exception {
+        Path testDirectory = Files.createTempDirectory("nori-regression-test-");
+        try {
+            String output = runNori(testDirectory, "todo unrelated task\n"
+                    + "deadline submit work /by 2024-03-01\n"
+                    + "event late review /from 2024-03-01 1600 /to 1700\n"
+                    + "event standup /from 2024-03-01 9am /to 9:30am\n"
+                    + "event conference /from 2024-02-28 0900 /to 2024-03-03 1700\n"
+                    + "schedule 2024-03-01\n"
+                    + "schedule 2024-04-01\n"
+                    + "bye\n");
+
+            String schedule = getSectionAfter(output, "Noot noot! Schedule for 2024-03-01:");
+            assertContains(schedule, "09:00 4.[E][ ] standup (from: 2024-03-01 9am to: 9:30am)");
+            assertContains(schedule, "16:00 3.[E][ ] late review (from: 2024-03-01 1600 to: 1700)");
+            assertContains(schedule,
+                    "      5.[E][ ] conference (from: 2024-02-28 0900 to: 2024-03-03 1700)");
+            assertContains(schedule, "      2.[D][ ] submit work (by: Mar 01 2024)");
+            assertContains(schedule, "      1.[T][ ] unrelated task");
+            assertOrder(schedule, "09:00 4.[E][ ] standup", "16:00 3.[E][ ] late review");
+            assertOrder(schedule, "16:00 3.[E][ ] late review", "All day:");
+            assertOrder(schedule, "All day:", "Due:");
+            assertOrder(schedule, "Due:", "Anytime:");
+
+            String laterDay = getSectionAfter(output, "Noot noot! Schedule for 2024-04-01:");
+            assertContains(laterDay, "      1.[T][ ] unrelated task");
+            assertNotContains(laterDay, "submit work");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -321,6 +358,15 @@ public class NoriTest {
      * @param actual the text to inspect.
      * @param expected the text that must be present.
      */
+    private static void assertOrder(String actual, String first, String second) {
+        int firstIndex = actual.indexOf(first);
+        int secondIndex = actual.indexOf(second);
+        if (firstIndex == -1 || secondIndex == -1 || firstIndex > secondIndex) {
+            throw new AssertionError("Expected \"" + first + "\" before \"" + second
+                    + "\" but was:\n" + actual);
+        }
+    }
+
     private static void assertContains(String actual, String expected) {
         if (!actual.contains(expected)) {
             throw new AssertionError("Expected output to contain \"" + expected + "\" but was:\n" + actual);
