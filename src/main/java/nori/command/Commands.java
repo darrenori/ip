@@ -25,6 +25,9 @@ public final class Commands {
      * @return the corresponding executable command.
      */
     public static Command create(CommandType commandType, String details) {
+        assert commandType != null : "Unrecognised input is turned into a command by createUnknown instead.";
+        assert details != null : "The parser always supplies the text after the keyword, empty at the least.";
+
         switch (commandType) {
             case TODO:
                 return new TodoCommand(details);
@@ -49,6 +52,7 @@ public final class Commands {
             case BYE:
                 return new ExitCommand();
             default:
+                assert false : "Every command type needs a command, but " + commandType + " has none.";
                 return new UnknownCommand();
         }
     }
@@ -250,6 +254,8 @@ class DeleteCommand extends InputCommand {
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         int taskIndex = tasks.getTaskIndex(details, "delete");
         Task deletedTask = tasks.remove(taskIndex);
+        assert taskIndex <= tasks.size()
+                : "Removing at taskIndex leaves that index insertable, which a failed save relies on.";
         try {
             storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {
@@ -296,6 +302,8 @@ class TodoCommand extends InputCommand {
      */
     static void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
         tasks.add(task);
+        assert tasks.get(tasks.size() - 1) == task
+                : "The added task must be the last one, because a failed save removes the last task.";
         try {
             storage.saveTasks(tasks.asUnmodifiableList());
         } catch (NoriException exception) {
