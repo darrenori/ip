@@ -103,7 +103,7 @@ public class Event extends Task {
      */
     private static void validateDates(String eventDetail) throws NoriException {
         if (eventDetail == null) {
-            throw new NoriException("OOPS!!! An event cannot have a missing date or time.");
+            throw new NoriException("NOOT?! An event cannot have a missing date or time.");
         }
 
         Matcher matcher = DATE_PATTERN.matcher(eventDetail);
@@ -112,7 +112,7 @@ public class Event extends Task {
             try {
                 LocalDate.parse(dateText);
             } catch (DateTimeParseException exception) {
-                throw new NoriException("OOPS!!! I cannot understand \"" + dateText + "\" as an event date."
+                throw new NoriException("NOOT?! I cannot understand \"" + dateText + "\" as an event date."
                         + " Use a date like \"2019-10-15\".");
             }
         }
@@ -133,7 +133,8 @@ public class Event extends Task {
         LocalDate eventStart = findDate(from);
         LocalDate eventEnd = findDate(to);
         if (eventStart != null && eventEnd != null && eventEnd.isBefore(eventStart)) {
-            throw new NoriException("OOPS!!! An event cannot end before it starts.");
+            throw new NoriException("NOOT?! An event cannot end before it starts."
+                    + " Time only waddles forward.");
         }
     }
 

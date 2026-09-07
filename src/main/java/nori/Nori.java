@@ -11,7 +11,7 @@ import nori.ui.Ui;
  */
 public class Nori {
     /** The final response shown when a user ends a Nori session. */
-    private static final String GOODBYE_MESSAGE = "Bye. Hope to see you again soon!";
+    private static final String GOODBYE_MESSAGE = "Noot noot! Time to waddle off. Stay frosty!";
 
     /** Reads and writes the saved task list. */
     private final Storage storage;

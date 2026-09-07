@@ -44,12 +44,12 @@ public class Parser {
      */
     public static LocalDate parseDate(String dateInput) throws NoriException {
         if (dateInput.isEmpty()) {
-            throw new NoriException("OOPS!!! \"on\" needs a date. Try \"on 2019-10-15\".");
+            throw new NoriException("NOOT?! \"on\" needs a date. Try \"on 2019-10-15\".");
         }
         try {
             return LocalDate.parse(dateInput);
         } catch (DateTimeParseException exception) {
-            throw new NoriException("OOPS!!! I cannot understand \"" + dateInput + "\" as a date."
+            throw new NoriException("NOOT?! I cannot understand \"" + dateInput + "\" as a date."
                     + " Use a date like \"2019-10-15\".");
         }
     }
@@ -63,30 +63,31 @@ public class Parser {
      */
     public static DateRange parseListDateRange(String listDetails) throws NoriException {
         if (!listDetails.startsWith(LIST_FROM_PREFIX)) {
-            throw new NoriException("OOPS!!! Use either \"list\" or"
+            throw new NoriException("NOOT?! Use either \"list\" or"
                     + " \"list /from 2019-01-01 /to 2021-01-01\".");
         }
         int toSeparatorIndex = listDetails.indexOf(LIST_TO_SEPARATOR);
         if (toSeparatorIndex == -1) {
-            throw new NoriException("OOPS!!! A date-range list needs \"/to\" and an end date."
+            throw new NoriException("NOOT?! A date-range list needs \"/to\" and an end date."
                     + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
         }
 
         String fromInput = listDetails.substring(LIST_FROM_PREFIX.length(), toSeparatorIndex).trim();
         String toInput = listDetails.substring(toSeparatorIndex + LIST_TO_SEPARATOR.length()).trim();
         if (fromInput.isEmpty()) {
-            throw new NoriException("OOPS!!! \"/from\" needs a start date."
+            throw new NoriException("NOOT?! \"/from\" needs a start date."
                     + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
         }
         if (toInput.isEmpty()) {
-            throw new NoriException("OOPS!!! \"/to\" needs an end date."
+            throw new NoriException("NOOT?! \"/to\" needs an end date."
                     + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
         }
 
         LocalDate fromDate = parseRangeDate(fromInput, "/from");
         LocalDate toDate = parseRangeDate(toInput, "/to");
         if (toDate.isBefore(fromDate)) {
-            throw new NoriException("OOPS!!! The \"/to\" date cannot be before the \"/from\" date.");
+            throw new NoriException("NOOT?! The \"/to\" date cannot be before the \"/from\" date."
+                    + " Time only waddles forward.");
         }
         return new DateRange(fromDate, toDate);
     }
@@ -132,7 +133,7 @@ public class Parser {
         try {
             return LocalDate.parse(dateInput);
         } catch (DateTimeParseException exception) {
-            throw new NoriException("OOPS!!! I cannot understand \"" + dateInput + "\" as the "
+            throw new NoriException("NOOT?! I cannot understand \"" + dateInput + "\" as the "
                     + rangePart + " date. Use a date like \"2019-10-15\".");
         }
     }

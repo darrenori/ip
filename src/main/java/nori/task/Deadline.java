@@ -40,7 +40,7 @@ public class Deadline extends Task {
         try {
             return LocalDate.parse(input);
         } catch (DateTimeParseException exception) {
-            throw new NoriException("OOPS!!! I cannot understand \"" + input + "\" as a deadline."
+            throw new NoriException("NOOT?! I cannot understand \"" + input + "\" as a deadline."
                     + " Use a date like \"2019-10-15\".");
         }
     }

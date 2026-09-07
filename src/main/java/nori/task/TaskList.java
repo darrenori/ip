@@ -106,11 +106,11 @@ public class TaskList {
      */
     public String[] getDisplayLines() {
         if (isEmpty()) {
-            return new String[] {"Your list is empty. Add something with \"todo borrow book\" lah."};
+            return new String[] {"The iceberg is empty. Try \"todo borrow book\". Noot noot!"};
         }
 
         String[] lines = new String[size() + 1];
-        lines[0] = "Here are the tasks in your list:";
+        lines[0] = "Noot noot! Tasks currently chilling on the iceberg:";
         for (int index = 0; index < size(); index++) {
             lines[index + 1] = (index + 1) + "." + get(index);
         }
@@ -126,9 +126,9 @@ public class TaskList {
     public String[] getTasksOnDateDisplayLines(LocalDate date) {
         List<String> matchingTasks = getMatchingTasks(date, null);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no deadlines or events on " + date + "."};
+            return new String[] {"Nothing is hatching on " + date + ". The ice is quiet."};
         }
-        return prependHeading("Here are the deadlines and events on " + date + ":", matchingTasks);
+        return prependHeading("Noot noot! Things hatching on " + date + ":", matchingTasks);
     }
 
     /**
@@ -140,10 +140,10 @@ public class TaskList {
     public String[] getTasksInDateRangeDisplayLines(DateRange dateRange) {
         List<String> matchingTasks = getMatchingTasks(null, dateRange);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no deadlines or events from " + dateRange.getFrom()
-                    + " to " + dateRange.getTo() + "."};
+            return new String[] {"Nothing is hatching from " + dateRange.getFrom()
+                    + " to " + dateRange.getTo() + ". The ice is quiet."};
         }
-        return prependHeading("Here are the deadlines and events from " + dateRange.getFrom()
+        return prependHeading("Noot noot! Things hatching from " + dateRange.getFrom()
                 + " to " + dateRange.getTo() + ":", matchingTasks);
     }
 
@@ -162,9 +162,9 @@ public class TaskList {
     public String[] getTasksMatchingKeywordDisplayLines(String keyword) {
         List<String> matchingTasks = getTasksContainingKeyword(keyword);
         if (matchingTasks.isEmpty()) {
-            return new String[] {"There are no matching tasks in your list."};
+            return new String[] {"No matching fish in this sea. Try another keyword!"};
         }
-        return prependHeading("Here are the matching tasks in your list:", matchingTasks);
+        return prependHeading("Noot noot! I found these fish:", matchingTasks);
     }
 
     /**
@@ -203,26 +203,26 @@ public class TaskList {
      */
     private String getTaskNumberError(String taskNumber, String commandKeyword) {
         if (taskNumber.isEmpty()) {
-            return "OOPS!!! \"" + commandKeyword + "\" needs a task number. Try \""
+            return "NOOT?! \"" + commandKeyword + "\" needs a task number. Try \""
                     + commandKeyword + " 1\".";
         }
         try {
             int taskIndex = Integer.parseInt(taskNumber) - 1;
             if (taskIndex < 0) {
-                return "OOPS!!! Task numbers start from 1, not " + taskNumber + ". Nice try lah.";
+                return "NOOT?! Task numbers start from 1, not " + taskNumber + ". Penguins can count!";
             }
             if (isEmpty()) {
-                return "OOPS!!! There are no tasks yet, so there is nothing to " + commandKeyword + ".";
+                return "NOOT?! The iceberg is empty, so there is nothing to " + commandKeyword + ".";
             }
-            return "OOPS!!! You have only " + size() + " task(s), so \"" + commandKeyword + " "
-                    + taskNumber + "\" is out of range. Don't anyhow point lah.";
+            return "NOOT?! The iceberg has only " + size() + " task(s), so \"" + commandKeyword + " "
+                    + taskNumber + "\" points straight into the sea.";
         } catch (NumberFormatException exception) {
             if (isIntegerLiteral(taskNumber)) {
-                return "ARE YOU DONEEEE????? \"" + taskNumber + "\" is far too large for a task number."
+                return "GIANT NOOT! \"" + taskNumber + "\" is far too large for a task number."
                         + " Use a whole number from 1 to " + Math.max(size(), 1) + ".";
             }
-            return "OOPS!!! \"" + taskNumber + "\" is not a task number. Use \""
-                    + commandKeyword + " 1\", not words lah.";
+            return "NOOT?! \"" + taskNumber + "\" is not a task number. Use \""
+                    + commandKeyword + " 1\"; penguins count with digits.";
         }
     }
 

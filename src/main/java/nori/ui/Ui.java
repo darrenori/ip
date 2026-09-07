@@ -21,7 +21,7 @@ public class Ui {
             + " |_| \\_|\\____/|_|  \\_\\_____|\n\n\n";
     /** The command summary shown by the help command. */
     private static final String[] HELP_LINES = {
-        "Here are the commands you can use:",
+        "Noot noot! Here is what my flippers understand:",
         "todo <description>",
         "deadline <description> /by yyyy-MM-dd",
         "event <description> /from <start> /to <end>",
@@ -34,7 +34,7 @@ public class Ui {
         "delete <task number>",
         "help",
         "bye",
-        "Use yyyy-MM-dd in an event's /from or /to to find it with on."
+        "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it."
     };
     /** Reads command lines from standard input. */
     private final Scanner scanner;
@@ -70,7 +70,8 @@ public class Ui {
      */
     public void showWelcome() {
         System.out.print(BANNER);
-        printResponse(false, "Hello! I'm Nori.", "What can I do for you?");
+        printResponse(false, "Noot noot! I'm Nori, your tiny task penguin.",
+                "Waddle in a command and I'll get flapping.");
     }
 
     /**
