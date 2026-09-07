@@ -1,7 +1,9 @@
 package nori.task;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,6 +97,34 @@ public class Event extends Task {
             return !eventEnd.isBefore(rangeStart) && !eventEnd.isAfter(rangeEnd);
         }
         return false;
+    }
+
+    /**
+     * Returns the time of day this event starts at on a given date.
+     *
+     * An event is timed on a date only when its own start details name that
+     * date and give a time. A multi-day event is therefore untimed on the days
+     * after the one it begins on, because the hour it began at says nothing
+     * about those later days.
+     *
+     * @param date the date to read a start time for.
+     * @return the start time on {@code date}, or empty when the event gives none there.
+     */
+    public Optional<LocalTime> findStartTimeOn(LocalDate date) {
+        if (!date.equals(findDate(from))) {
+            return Optional.empty();
+        }
+        return ClockTimes.findFirstIn(removeDates(from));
+    }
+
+    /**
+     * Removes every ISO-8601 date from an event detail.
+     *
+     * @param eventDetail the start or end detail to clear of dates.
+     * @return the detail with each date replaced by a space.
+     */
+    private static String removeDates(String eventDetail) {
+        return DATE_PATTERN.matcher(eventDetail).replaceAll(" ");
     }
 
     /**
