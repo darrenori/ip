@@ -26,6 +26,9 @@ import nori.task.Todo;
 public class Storage {
     /** System property that redirects storage into an isolated directory for tests. */
     private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
+    /** Reported whenever a stored line cannot be turned back into a task. */
+    private static final String UNREADABLE_STORAGE_ERROR =
+            "OOPS!!! I couldn't read your saved tasks from disk.";
     /** Marks a stored field as Base64-encoded, distinguishing it from the older plain-text format. */
     private static final String ENCODED_FIELD_PREFIX = "b64:";
     /** Separates the fields of one stored task line. */
@@ -274,7 +277,7 @@ public class Storage {
     private static Task parseTask(String taskLine) throws NoriException {
         String[] taskFields = taskLine.split(Pattern.quote(TASK_SEPARATOR), -1);
         if (taskFields.length < FIELD_COUNT_TODO || !isValidStatus(taskFields[INDEX_STATUS])) {
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+            throw new NoriException(UNREADABLE_STORAGE_ERROR);
         }
 
         Task task = createTask(taskFields);
@@ -282,7 +285,7 @@ public class Storage {
             task.markAsDone();
         }
         if (!hasTaskDetails(task)) {
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+            throw new NoriException(UNREADABLE_STORAGE_ERROR);
         }
         return task;
     }
@@ -308,7 +311,7 @@ public class Storage {
                     decodeField(taskFields[INDEX_EVENT_FROM]),
                     decodeField(taskFields[INDEX_EVENT_TO]));
         }
-        throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+        throw new NoriException(UNREADABLE_STORAGE_ERROR);
     }
 
     /**
@@ -417,7 +420,7 @@ public class Storage {
                     .decode(ByteBuffer.wrap(encodedBytes))
                     .toString();
         } catch (IllegalArgumentException | CharacterCodingException exception) {
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+            throw new NoriException(UNREADABLE_STORAGE_ERROR);
         }
     }
 
