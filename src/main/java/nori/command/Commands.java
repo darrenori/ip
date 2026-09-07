@@ -81,6 +81,41 @@ abstract class InputCommand extends Command {
 }
 
 /**
+ * Provides the shared step that adds a task, saves it, and confirms it.
+ */
+abstract class AddTaskCommand extends InputCommand {
+    /**
+     * Creates a task-adding command with its input details.
+     *
+     * @param details the text after the command keyword.
+     */
+    AddTaskCommand(String details) {
+        super(details);
+    }
+
+    /**
+     * Adds a task, restores the list when saving fails, and displays confirmation.
+     *
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param task the task to add.
+     * @throws NoriException if the task cannot be saved.
+     */
+    protected void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
+        tasks.add(task);
+        try {
+            storage.saveTasks(tasks.asUnmodifiableList());
+        } catch (NoriException exception) {
+            tasks.remove(tasks.size() - 1);
+            throw exception;
+        }
+        ui.showResponse("Noot noot! Task tucked safely under my wing:", "  " + task,
+                "The iceberg now holds " + tasks.size() + " task(s).");
+    }
+}
+
+/**
  * Displays the complete task list or tasks in a date range.
  */
 class ListCommand extends InputCommand {
@@ -264,7 +299,7 @@ class DeleteCommand extends InputCommand {
 /**
  * Adds a todo task.
  */
-class TodoCommand extends InputCommand {
+class TodoCommand extends AddTaskCommand {
     /**
      * Creates a command that adds a todo.
      *
@@ -284,33 +319,12 @@ class TodoCommand extends InputCommand {
         }
         addTask(tasks, ui, storage, new Todo(details));
     }
-
-    /**
-     * Adds a task, restores the list when saving fails, and displays confirmation.
-     *
-     * @param tasks the task list to change.
-     * @param ui the console user interface.
-     * @param storage the persistent task storage.
-     * @param task the task to add.
-     * @throws NoriException if the task cannot be saved.
-     */
-    static void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
-        tasks.add(task);
-        try {
-            storage.saveTasks(tasks.asUnmodifiableList());
-        } catch (NoriException exception) {
-            tasks.remove(tasks.size() - 1);
-            throw exception;
-        }
-        ui.showResponse("Noot noot! Task tucked safely under my wing:", "  " + task,
-                "The iceberg now holds " + tasks.size() + " task(s).");
-    }
 }
 
 /**
  * Adds a deadline task.
  */
-class DeadlineCommand extends InputCommand {
+class DeadlineCommand extends AddTaskCommand {
     /** Separates a deadline description from its due date. */
     private static final String DEADLINE_SEPARATOR = " /by ";
 
@@ -361,7 +375,7 @@ class DeadlineCommand extends InputCommand {
             ui.showResponse("NOOT?! A deadline needs a due date after \"/by\"."
                     + " My calendar is colder than that empty space.");
         } else {
-            TodoCommand.addTask(tasks, ui, storage,
+            addTask(tasks, ui, storage,
                     new Deadline(description, Deadline.parseInput(deadlineInput)));
         }
     }
@@ -370,7 +384,7 @@ class DeadlineCommand extends InputCommand {
 /**
  * Adds an event task.
  */
-class EventCommand extends InputCommand {
+class EventCommand extends AddTaskCommand {
     /** Separates an event description from its start details. */
     private static final String EVENT_FROM_SEPARATOR = " /from ";
     /** Separates an event start from its end details. */
@@ -436,7 +450,7 @@ class EventCommand extends InputCommand {
             ui.showResponse("NOOT?! \"/to\" needs an end time."
                     + " Even penguin meetings eventually end.");
         } else {
-            TodoCommand.addTask(tasks, ui, storage, new Event(description, from, to));
+            addTask(tasks, ui, storage, new Event(description, from, to));
         }
     }
 }
