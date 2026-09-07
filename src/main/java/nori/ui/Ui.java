@@ -26,6 +26,8 @@ public class Ui {
         "deadline <description> /by yyyy-MM-dd",
         "event <description> /from <start> /to <end>",
         "on yyyy-MM-dd",
+        "schedule",
+        "schedule yyyy-MM-dd",
         "list",
         "list /from yyyy-MM-dd /to yyyy-MM-dd",
         "find <keyword>",
@@ -34,7 +36,8 @@ public class Ui {
         "delete <task number>",
         "help",
         "bye",
-        "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it."
+        "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it.",
+        "Penguin tip: add a time like 0900, 9:30 or 2pm to an event's /from to place it on the schedule."
     };
     /** Reads command lines from standard input. */
     private final Scanner scanner;

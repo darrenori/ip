@@ -32,6 +32,8 @@ public final class Commands {
                 return new HelpCommand();
             case ON:
                 return new OnCommand(details);
+            case SCHEDULE:
+                return new ScheduleCommand(details);
             case FIND:
                 return new FindCommand(details);
             case MARK:

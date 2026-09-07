@@ -1,10 +1,14 @@
 package nori.task;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -15,6 +19,12 @@ import nori.NoriException;
  * Stores tasks and performs operations on their task numbers and date queries.
  */
 public class TaskList {
+    /** Renders a scheduled event's start time, as in {@code 09:30}. */
+    private static final DateTimeFormatter SCHEDULE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+    /** Stands in for a missing start time, so untimed rows line up under the timed ones. */
+    private static final String SCHEDULE_TIME_PADDING = "      ";
+
     /** The tasks, in the order the user added them. */
     private final List<Task> tasks;
 
@@ -170,6 +180,33 @@ public class TaskList {
     }
 
     /**
+     * Returns one day's tasks laid out as a schedule.
+     *
+     * The events the day names a start time for come first, in the order they
+     * start. Below them come the events that run over the day without a time
+     * of their own, then the deadlines falling due, then every to-do, which
+     * belongs to no particular day. A section with nothing in it is left out.
+     *
+     * Task numbers are the ones the full list uses, so a number read here can
+     * be given straight to mark, unmark or delete.
+     *
+     * @param date the date to lay out.
+     * @return the schedule response lines.
+     */
+    public String[] getScheduleDisplayLines(LocalDate date) {
+        assert date != null : "A schedule is asked for either today or a date the parser read.";
+
+        List<String> scheduleLines = new ArrayList<>(getTimedEventLines(date));
+        addSection(scheduleLines, "All day:", getUntimedEventLines(date));
+        addSection(scheduleLines, "Due:", getDeadlineLines(date));
+        addSection(scheduleLines, "Anytime:", getTodoLines());
+        if (scheduleLines.isEmpty()) {
+            return new String[] {"Nothing on the schedule for " + date + ". The ice is quiet."};
+        }
+        return prependHeading("Noot noot! Schedule for " + date + ":", scheduleLines);
+    }
+
+    /**
      * Returns the number of tasks in the list.
      *
      * @return the task count.
@@ -256,6 +293,93 @@ public class TaskList {
     }
 
     /**
+     * Finds the rows for the events that start at a known time on a date.
+     *
+     * @param date the date being laid out.
+     * @return the rows, each behind its start time, earliest first.
+     */
+    private List<String> getTimedEventLines(LocalDate date) {
+        return IntStream.range(0, size())
+                .mapToObj(index -> toScheduledEvent(index, date))
+                .flatMap(Optional::stream)
+                .sorted(Comparator.comparing(ScheduledEvent::startTime))
+                .map(scheduledEvent -> scheduledEvent.startTime().format(SCHEDULE_TIME_FORMATTER)
+                        + " " + scheduledEvent.displayLine())
+                .toList();
+    }
+
+    /**
+     * Places one task on a schedule, if it is an event starting at a known time on the date.
+     *
+     * @param index the zero-based index of the task.
+     * @param date the date being laid out.
+     * @return the scheduled event, or empty when the task is not one.
+     */
+    private Optional<ScheduledEvent> toScheduledEvent(int index, LocalDate date) {
+        Task task = get(index);
+        if (!(task instanceof Event)) {
+            return Optional.empty();
+        }
+        return ((Event) task).findStartTimeOn(date)
+                .map(startTime -> new ScheduledEvent(startTime, getNumberedTask(index)));
+    }
+
+    /**
+     * Finds the rows for the events running over a date without starting at a time on it.
+     *
+     * @param date the date being laid out.
+     * @return the rows for the date's all-day events.
+     */
+    private List<String> getUntimedEventLines(LocalDate date) {
+        return getPaddedLines(task -> task instanceof Event && occursOn(task, date)
+                && ((Event) task).findStartTimeOn(date).isEmpty());
+    }
+
+    /**
+     * Finds the rows for the deadlines falling due on a date.
+     *
+     * @param date the date being laid out.
+     * @return the rows for the date's deadlines.
+     */
+    private List<String> getDeadlineLines(LocalDate date) {
+        return getPaddedLines(task -> task instanceof Deadline && occursOn(task, date));
+    }
+
+    /**
+     * Finds the rows for every to-do, which has no date and so suits any day.
+     *
+     * @return the rows for the stored to-dos.
+     */
+    private List<String> getTodoLines() {
+        return getPaddedLines(task -> task instanceof Todo);
+    }
+
+    /**
+     * Finds numbered rows indented to the width of the schedule's time column.
+     *
+     * @param isMatch the test each task is put through.
+     * @return the matching rows, each padded into line.
+     */
+    private List<String> getPaddedLines(Predicate<Task> isMatch) {
+        return getNumberedTasks(isMatch).stream().map(line -> SCHEDULE_TIME_PADDING + line).toList();
+    }
+
+    /**
+     * Adds a headed section to a schedule, unless the section has nothing in it.
+     *
+     * @param scheduleLines the schedule being built.
+     * @param heading the section heading.
+     * @param sectionLines the section rows.
+     */
+    private static void addSection(List<String> scheduleLines, String heading, List<String> sectionLines) {
+        if (sectionLines.isEmpty()) {
+            return;
+        }
+        scheduleLines.add(heading);
+        scheduleLines.addAll(sectionLines);
+    }
+
+    /**
      * Returns whether a task's description contains an already folded keyword.
      *
      * Case folding uses {@link Locale#ROOT} so a search behaves the same way
@@ -325,5 +449,14 @@ public class TaskList {
             return ((Event) task).occursInDateRange(dateRange.getFrom(), dateRange.getTo());
         }
         return false;
+    }
+
+    /**
+     * Pairs an event's display row with the time it starts, so a day can be put in order.
+     *
+     * @param startTime the time the event starts on the day being laid out.
+     * @param displayLine the event's numbered display row.
+     */
+    private record ScheduledEvent(LocalTime startTime, String displayLine) {
     }
 }

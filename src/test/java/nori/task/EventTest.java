@@ -1,11 +1,14 @@
 package nori.task;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -76,5 +79,40 @@ public class EventTest {
         Event event = new Event("conference", "2026-09-02", "2026-09-03");
 
         assertFalse(event.occursInDateRange(LocalDate.of(2026, 9, 4), LocalDate.of(2026, 9, 5)));
+    }
+
+    @Test
+    public void findStartTimeOn_startNamesDateAndTime_returnsThatTime() throws NoriException {
+        Event event = new Event("exam", "2026-09-01 0900", "2026-09-01 1200");
+
+        assertEquals(Optional.of(LocalTime.of(9, 0)), event.findStartTimeOn(LocalDate.of(2026, 9, 1)));
+    }
+
+    @Test
+    public void findStartTimeOn_startNamesDateOnly_returnsEmpty() throws NoriException {
+        Event event = new Event("conference", "2026-09-01", "2026-09-03");
+
+        assertTrue(event.findStartTimeOn(LocalDate.of(2026, 9, 1)).isEmpty());
+    }
+
+    @Test
+    public void findStartTimeOn_dayAfterAMultiDayEventStarts_returnsEmpty() throws NoriException {
+        Event event = new Event("conference", "2026-09-01 0900", "2026-09-03 1700");
+
+        assertTrue(event.findStartTimeOn(LocalDate.of(2026, 9, 2)).isEmpty());
+    }
+
+    @Test
+    public void findStartTimeOn_undatedEvent_returnsEmpty() throws NoriException {
+        Event event = new Event("lunch", "Monday 1pm", "2pm");
+
+        assertTrue(event.findStartTimeOn(LocalDate.of(2026, 9, 1)).isEmpty());
+    }
+
+    @Test
+    public void findStartTimeOn_dateDigitsBesideTheTime_readsOnlyTheTime() throws NoriException {
+        Event event = new Event("standup", "2026-09-01 2pm", "2026-09-01 3pm");
+
+        assertEquals(Optional.of(LocalTime.of(14, 0)), event.findStartTimeOn(LocalDate.of(2026, 9, 1)));
     }
 }

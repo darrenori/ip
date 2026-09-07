@@ -315,7 +315,7 @@ ____________________________________________________________
 
 ## Test 13: Display command help
 
-**Aim:** Verify that `help` lists every command and documents the date format used by deadline and date-query commands.
+**Aim:** Verify that `help` lists every command, including both forms of `schedule`, and documents the date format used by deadline and date-query commands as well as the times a schedule can order events by.
 
 ### Input
 ```text
@@ -344,6 +344,8 @@ ____________________________________________________________
      deadline <description> /by yyyy-MM-dd
      event <description> /from <start> /to <end>
      on yyyy-MM-dd
+     schedule
+     schedule yyyy-MM-dd
      list
      list /from yyyy-MM-dd /to yyyy-MM-dd
      find <keyword>
@@ -353,6 +355,7 @@ ____________________________________________________________
      help
      bye
      Penguin tip: use yyyy-MM-dd in an event's /from or /to so "on" can find it.
+     Penguin tip: add a time like 0900, 9:30 or 2pm to an event's /from to place it on the schedule.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1268,6 +1271,95 @@ ____________________________________________________________
 
     ____________________________________________________________
      NOOT?! "find" needs a keyword. Try "find book"; even penguins need a clue.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```
+
+## Test 18: Lay a day out as a schedule
+
+**Aim:** Verify that `schedule` orders a date's timed events by their start time, groups the all-day events, deadlines and to-dos beneath them under their own headings, drops the sections with nothing in them, and rejects a date it cannot read.
+
+### Input
+```text
+todo read book
+deadline return book /by 2019-06-06
+event exam /from 2019-06-06 0900 /to 2019-06-06 1200
+event conference /from 2019-06-06 /to 2019-06-08
+event book fair /from 2019-06-06 1000 /to 1800
+schedule 2019-06-06
+schedule 2019-07-01
+schedule tomorrow
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [T][ ] read book
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [D][ ] return book (by: Jun 06 2019)
+     The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] exam (from: 2019-06-06 0900 to: 2019-06-06 1200)
+     The iceberg now holds 3 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] conference (from: 2019-06-06 to: 2019-06-08)
+     The iceberg now holds 4 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] book fair (from: 2019-06-06 1000 to: 1800)
+     The iceberg now holds 5 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Schedule for 2019-06-06:
+     09:00 3.[E][ ] exam (from: 2019-06-06 0900 to: 2019-06-06 1200)
+     10:00 5.[E][ ] book fair (from: 2019-06-06 1000 to: 1800)
+     All day:
+           4.[E][ ] conference (from: 2019-06-06 to: 2019-06-08)
+     Due:
+           2.[D][ ] return book (by: Jun 06 2019)
+     Anytime:
+           1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Schedule for 2019-07-01:
+     Anytime:
+           1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! I cannot understand "tomorrow" as a date. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
