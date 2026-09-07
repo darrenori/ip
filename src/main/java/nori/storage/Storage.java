@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import nori.NoriException;
 import nori.task.Deadline;
@@ -26,9 +27,37 @@ public class Storage {
     /** System property that redirects storage into an isolated directory for tests. */
     private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
     /** Marks a stored field as Base64-encoded, distinguishing it from the older plain-text format. */
-    private static final String FIELD_PREFIX = "b64:";
+    private static final String ENCODED_FIELD_PREFIX = "b64:";
     /** Separates the fields of one stored task line. */
     private static final String TASK_SEPARATOR = " | ";
+    /** Type code that begins a stored to-do line. */
+    private static final String TYPE_TODO = "T";
+    /** Type code that begins a stored deadline line. */
+    private static final String TYPE_DEADLINE = "D";
+    /** Type code that begins a stored event line. */
+    private static final String TYPE_EVENT = "E";
+    /** Stored completion status of a finished task. */
+    private static final String STATUS_DONE = "1";
+    /** Stored completion status of an unfinished task. */
+    private static final String STATUS_NOT_DONE = "0";
+    /** Position of the type code in a stored line. */
+    private static final int INDEX_TYPE = 0;
+    /** Position of the completion status in a stored line. */
+    private static final int INDEX_STATUS = 1;
+    /** Position of the description in a stored line. */
+    private static final int INDEX_DESCRIPTION = 2;
+    /** Position of a deadline's due date in a stored line. */
+    private static final int INDEX_DEADLINE_DATE = 3;
+    /** Position of an event's start details in a stored line. */
+    private static final int INDEX_EVENT_FROM = 3;
+    /** Position of an event's end details in a stored line. */
+    private static final int INDEX_EVENT_TO = 4;
+    /** Number of fields in a stored to-do line, which is also the fewest any line has. */
+    private static final int FIELD_COUNT_TODO = 3;
+    /** Number of fields in a stored deadline line. */
+    private static final int FIELD_COUNT_DEADLINE = 4;
+    /** Number of fields in a stored event line. */
+    private static final int FIELD_COUNT_EVENT = 5;
     /** Prefix of the temporary file a save is written to before replacing the storage file. */
     private static final String TEMP_FILE_PREFIX = "nori-";
     /** Suffix of that temporary save file. */
@@ -214,18 +243,21 @@ public class Storage {
             throw new NoriException("OOPS!!! I couldn't save a missing task.");
         }
 
-        String status = task.isDone() ? "1" : "0";
+        String status = task.isDone() ? STATUS_DONE : STATUS_NOT_DONE;
         if (task instanceof Todo) {
-            return "T" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription());
+            return TYPE_TODO + TASK_SEPARATOR + status + TASK_SEPARATOR
+                    + encodeField(task.getDescription());
         }
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
-            return "D" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription())
+            return TYPE_DEADLINE + TASK_SEPARATOR + status + TASK_SEPARATOR
+                    + encodeField(task.getDescription())
                     + TASK_SEPARATOR + encodeField(deadline.getStorageDate());
         }
         if (task instanceof Event) {
             Event event = (Event) task;
-            return "E" + TASK_SEPARATOR + status + TASK_SEPARATOR + encodeField(task.getDescription())
+            return TYPE_EVENT + TASK_SEPARATOR + status + TASK_SEPARATOR
+                    + encodeField(task.getDescription())
                     + TASK_SEPARATOR + encodeField(event.getFrom())
                     + TASK_SEPARATOR + encodeField(event.getTo());
         }
@@ -240,23 +272,13 @@ public class Storage {
      * @throws NoriException if the stored task line has an invalid format.
      */
     private static Task parseTask(String taskLine) throws NoriException {
-        String[] taskParts = taskLine.split(" \\| ", -1);
-        if (taskParts.length < 3 || !isValidStatus(taskParts[1])) {
+        String[] taskFields = taskLine.split(Pattern.quote(TASK_SEPARATOR), -1);
+        if (taskFields.length < FIELD_COUNT_TODO || !isValidStatus(taskFields[INDEX_STATUS])) {
             throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
         }
 
-        Task task;
-        if (taskParts[0].equals("T") && taskParts.length == 3) {
-            task = new Todo(decodeField(taskParts[2]));
-        } else if (taskParts[0].equals("D") && taskParts.length == 4) {
-            task = Deadline.fromStorage(decodeField(taskParts[2]), decodeField(taskParts[3]));
-        } else if (taskParts[0].equals("E") && taskParts.length == 5) {
-            task = new Event(decodeField(taskParts[2]), decodeField(taskParts[3]), decodeField(taskParts[4]));
-        } else {
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
-        }
-
-        if (taskParts[1].equals("1")) {
+        Task task = createTask(taskFields);
+        if (taskFields[INDEX_STATUS].equals(STATUS_DONE)) {
             task.markAsDone();
         }
         if (!hasTaskDetails(task)) {
@@ -266,13 +288,37 @@ public class Storage {
     }
 
     /**
+     * Creates the task that the fields of one stored line describe.
+     *
+     * @param taskFields the fields of a stored task line.
+     * @return the restored task.
+     * @throws NoriException if no task type matches the fields.
+     */
+    private static Task createTask(String[] taskFields) throws NoriException {
+        String taskType = taskFields[INDEX_TYPE];
+        if (taskType.equals(TYPE_TODO) && taskFields.length == FIELD_COUNT_TODO) {
+            return new Todo(decodeField(taskFields[INDEX_DESCRIPTION]));
+        }
+        if (taskType.equals(TYPE_DEADLINE) && taskFields.length == FIELD_COUNT_DEADLINE) {
+            return Deadline.fromStorage(decodeField(taskFields[INDEX_DESCRIPTION]),
+                    decodeField(taskFields[INDEX_DEADLINE_DATE]));
+        }
+        if (taskType.equals(TYPE_EVENT) && taskFields.length == FIELD_COUNT_EVENT) {
+            return new Event(decodeField(taskFields[INDEX_DESCRIPTION]),
+                    decodeField(taskFields[INDEX_EVENT_FROM]),
+                    decodeField(taskFields[INDEX_EVENT_TO]));
+        }
+        throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+    }
+
+    /**
      * Returns whether text represents a stored task completion status.
      *
      * @param status the stored completion status.
      * @return {@code true} when the status is 0 or 1.
      */
     private static boolean isValidStatus(String status) {
-        return status.equals("0") || status.equals("1");
+        return status.equals(STATUS_NOT_DONE) || status.equals(STATUS_DONE);
     }
 
     /**
@@ -348,7 +394,7 @@ public class Storage {
         if (field == null) {
             throw new NoriException("OOPS!!! I couldn't save a task with missing details.");
         }
-        return FIELD_PREFIX + Base64.getEncoder().encodeToString(field.getBytes(StandardCharsets.UTF_8));
+        return ENCODED_FIELD_PREFIX + Base64.getEncoder().encodeToString(field.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -359,12 +405,12 @@ public class Storage {
      * @throws NoriException if the encoded field is invalid.
      */
     private static String decodeField(String storedField) throws NoriException {
-        if (!storedField.startsWith(FIELD_PREFIX)) {
+        if (!storedField.startsWith(ENCODED_FIELD_PREFIX)) {
             return storedField;
         }
 
         try {
-            byte[] encodedBytes = Base64.getDecoder().decode(storedField.substring(FIELD_PREFIX.length()));
+            byte[] encodedBytes = Base64.getDecoder().decode(storedField.substring(ENCODED_FIELD_PREFIX.length()));
             return StandardCharsets.UTF_8.newDecoder()
                     .onMalformedInput(CodingErrorAction.REPORT)
                     .onUnmappableCharacter(CodingErrorAction.REPORT)
