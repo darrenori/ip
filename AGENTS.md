@@ -24,6 +24,24 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Coding conventions
+
+`docs/conventions/` is the authoritative, checked-in copy of every convention
+this project follows. Read the relevant file there before writing code, a commit
+message, or a review comment — not after.
+
+| File | Covers |
+| --- | --- |
+| `docs/conventions/README.md` | Index, and the choices this project has committed to |
+| `docs/conventions/git.md` | Commit message subject and body, branch names |
+| `docs/conventions/java.md` | Naming, layout, statements, comments |
+| `docs/conventions/logging.md` | Logging levels and when to use each |
+| `docs/conventions/checkstyle.md` | Static style checking, Gradle and IDE setup |
+
+These files are working copies of the SE-EDU guides at
+<https://se-education.org/guides/>. The upstream pages remain the authority: if
+one changes, update the local file and say so in the commit body.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
@@ -31,15 +49,25 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 ## Java coding standard
 
 All Java code in this project, in `src/` and `test/` alike, must follow the SE-EDU
-Java coding standard at basic and intermediate level
-(<https://se-education.org/guides/conventions/java/intermediate.html>).
+Java coding standard at basic and intermediate level, written out in
+`docs/conventions/java.md`.
 
-Invoke the project-specific `seedu-java-coding-standard` skill before writing,
-editing, or reviewing any Java file, and follow it for all new code. This is
-mandatory, not advisory: a change that does not comply is not finished.
+Read `docs/conventions/java.md` before writing, editing, or reviewing any Java
+file, and follow it for all new code. This is mandatory, not advisory: a change
+that does not comply is not finished. The `seedu-java-coding-standard` skill
+carries the same rules and may be invoked instead.
+
+Checkstyle enforces the machine-checkable half of the standard. Run
+`./gradlew checkstyleMain checkstyleTest` before handing work back; see
+`docs/conventions/checkstyle.md`.
 
 Non-compliant code found while working on something else may be corrected in the
 same change when the fix is small and in scope; otherwise leave it and say so.
+
+## Logging
+
+When logging is added, follow `docs/conventions/logging.md`: use
+`java.util.logging`, and use only the four levels the guide defines.
 
 ## UI testing after code changes
 
@@ -57,11 +85,14 @@ handing the work back to the user.
 
 ## Git
 
-All commit messages in this project must follow the SE-EDU Git convention
-(<https://se-education.org/guides/conventions/git.html>).
+All commit messages in this project must follow the SE-EDU Git convention,
+written out in `docs/conventions/git.md`.
 
-Invoke the project-specific `seedu-git-standard` skill before proposing or
-writing any commit message. This is mandatory for all future commits.
+Read `docs/conventions/git.md` before proposing or writing any commit message.
+This is mandatory for all future commits. Every non-trivial commit carries a
+body, wrapped at 72 characters, structured as current situation → why it needs
+to change → what is being done → why that way. The `seedu-git-standard` skill
+carries the same rules and may be invoked instead.
 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
