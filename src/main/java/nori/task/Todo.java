@@ -17,7 +17,8 @@ public class Todo extends Task {
     /**
      * Returns this to-do prefixed with its {@code [T]} type icon.
      *
-     * @return this to-do rendered as {@code [T][<status>] <description>}.
+     * @return the task rendering behind a {@code [T]} type icon, for
+     *         example {@code [T][ ] borrow book}.
      */
     @Override
     public String toString() {

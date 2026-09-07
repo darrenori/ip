@@ -163,7 +163,9 @@ public class Event extends Task {
     /**
      * Returns this event with its {@code [E]} type icon and its start and end details.
      *
-     * @return this event rendered as {@code [E][<status>] <description> (from: <from> to: <to>)}.
+     * @return the task rendering behind an {@code [E]} type icon, followed
+     *         by the start and end details exactly as the user typed them,
+     *         for example {@code [E][ ] book fair (from: 2pm to: 4pm)}.
      */
     @Override
     public String toString() {

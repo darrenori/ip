@@ -94,7 +94,9 @@ public class Deadline extends Task {
     /**
      * Returns this deadline with its {@code [D]} type icon and readable due date.
      *
-     * @return this deadline rendered as {@code [D][<status>] <description> (by: MMM dd uuuu)}.
+     * @return the task rendering behind a {@code [D]} type icon, followed
+     *         by the due date as {@code MMM dd uuuu}, for example
+     *         {@code [D][ ] return book (by: Jun 06 2019)}.
      */
     @Override
     public String toString() {

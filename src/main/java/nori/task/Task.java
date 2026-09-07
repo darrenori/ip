@@ -50,7 +50,8 @@ public abstract class Task {
     /**
      * Returns the marker used in task lists to show whether this task is complete.
      *
-     * @return {@code "X"} when complete; otherwise, a space.
+     * @return the single character {@code "X"} when this task is done, or
+     *         {@code " "} when it is not.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -59,7 +60,8 @@ public abstract class Task {
     /**
      * Returns this task's status icon and description, as shown in a task list.
      *
-     * @return this task rendered as {@code [<status>] <description>}.
+     * @return the status icon in square brackets, a space, then the
+     *         description, for example {@code [X] read book}.
      */
     @Override
     public String toString() {
