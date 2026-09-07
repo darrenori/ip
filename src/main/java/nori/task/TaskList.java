@@ -235,12 +235,7 @@ public class TaskList {
         if (firstDigitIndex == text.length()) {
             return false;
         }
-        for (int index = firstDigitIndex; index < text.length(); index++) {
-            if (!Character.isDigit(text.charAt(index))) {
-                return false;
-            }
-        }
-        return true;
+        return text.substring(firstDigitIndex).chars().allMatch(Character::isDigit);
     }
 
     /**
