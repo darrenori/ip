@@ -26,6 +26,9 @@ public class Parser {
      * @return the command represented by the input.
      */
     public static Command parse(String input) {
+        assert input != null : "Parsing starts only after a user interface has supplied a command line.";
+        assert input.equals(input.trim()) : "Both user interfaces trim a command line before parsing it.";
+
         CommandType commandType = findCommandType(input);
         if (commandType == null) {
             return Commands.createUnknown();
@@ -118,6 +121,8 @@ public class Parser {
      * @return the command details, without surrounding whitespace.
      */
     private static String getCommandDetails(String input, String commandKeyword) {
+        assert input.startsWith(commandKeyword)
+                : "findCommandType matched this keyword, so the details start after it.";
         return input.substring(commandKeyword.length()).trim();
     }
 
@@ -130,6 +135,7 @@ public class Parser {
      * @throws NoriException if the date is invalid.
      */
     private static LocalDate parseRangeDate(String dateInput, String rangePart) throws NoriException {
+        assert !dateInput.isEmpty() : "parseListDateRange reports a missing range date before parsing it.";
         try {
             return LocalDate.parse(dateInput);
         } catch (DateTimeParseException exception) {
