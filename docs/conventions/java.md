@@ -244,6 +244,37 @@ often introduced by a comment.
   Rationale: an explicit list documents the dependencies of the class and keeps
   them reviewable.
 
+#### The groups this project actually enforces
+
+The guide says the ordering must be *consistent* without fixing the groups, so
+`config/checkstyle/checkstyle.xml` settles it. `CustomImportOrder` defines four
+groups, in this order:
+
+| Group | Matches |
+| --- | --- |
+| `STATIC` | every `import static` |
+| `STANDARD_JAVA_PACKAGE` | `java.*` and `javax.*` |
+| `SPECIAL_IMPORTS` | `^org\.` |
+| `THIRD_PARTY_PACKAGE` | everything else, including `javafx.*` **and** `nori.*` |
+
+Imports are sorted alphabetically within a group, groups are separated by a
+blank line, and a blank line *inside* a group is a violation
+(`Extra separation in import group`).
+
+The consequence catches people out: **`javafx.*` and `nori.*` are one group**,
+so they run together with no blank line between them.
+
+```java
+import java.io.IOException;
+
+import javafx.stage.Stage;
+import nori.ui.GuiUi;      // no blank line above this: same group
+```
+
+Splitting them reads better and has been suggested in review, but Checkstyle
+rejects it, and the standard's own worked example likewise runs `javafx.*` and
+`junit.*` together in the final group. Leave them contiguous.
+
 ### Types
 
 **Array specifiers attach to the type, not the variable.**
