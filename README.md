@@ -1,5 +1,7 @@
 # Nori
 
+[![Java CI](https://github.com/darrenori/ip/actions/workflows/gradle.yml/badge.svg)](https://github.com/darrenori/ip/actions/workflows/gradle.yml)
+
 Nori is a desktop task companion with a JavaFX chat interface and a retained console interface for automated testing.
 
 ## Running Nori
