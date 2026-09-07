@@ -37,46 +37,46 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] pack bag
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] submit report (by: Dec 02 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] team meeting (from: Mon 2pm to: 4pm)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [D][X] submit report (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Splash! I kicked this task off the iceberg:
        [T][ ] pack bag
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Brrr... thawing this task back out:
        [D][ ] submit report (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -109,46 +109,46 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] conference (from: 2026-09-01 to: 2026-09-03)
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines and events on 2026-09-01:
+     Noot noot! Things hatching on 2026-09-01:
      1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines and events on 2026-09-02:
+     Noot noot! Things hatching on 2026-09-02:
      1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines and events on 2026-09-03:
+     Noot noot! Things hatching on 2026-09-03:
      1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
     ____________________________________________________________
 
     ____________________________________________________________
-     There are no deadlines or events on 2026-09-04.
+     Nothing is hatching on 2026-09-04. The ice is quiet.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! An event cannot end before it starts.
+     NOOT?! An event cannot end before it starts. Time only waddles forward.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[E][ ] conference (from: 2026-09-01 to: 2026-09-03)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -176,23 +176,23 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] <script>alert('x')</script> | ../data & command
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] <script>alert('x')</script> | ../data & command
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -219,27 +219,27 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot understand "2019-02-31" as a deadline. Use a date like "2019-10-15".
+     NOOT?! I cannot understand "2019-02-31" as a deadline. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] return book (by: Dec 02 2019)
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[D][ ] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -270,46 +270,46 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] submit report (by: Oct 15 2019)
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot understand "2019-02-31" as an event date. Use a date like "2019-10-15".
+     NOOT?! I cannot understand "2019-02-31" as an event date. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines and events on 2019-10-15:
+     Noot noot! Things hatching on 2019-10-15:
      1.[D][ ] submit report (by: Oct 15 2019)
      2.[E][ ] project meeting (from: 2019-10-15 1400 to: 2019-10-15 1600)
     ____________________________________________________________
 
     ____________________________________________________________
-     There are no deadlines or events on 2019-10-17.
+     Nothing is hatching on 2019-10-17. The ice is quiet.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! "on" needs a date. Try "on 2019-10-15".
+     NOOT?! "on" needs a date. Try "on 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot understand "2019-02-31" as a date. Use a date like "2019-10-15".
+     NOOT?! I cannot understand "2019-02-31" as a date. Use a date like "2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -334,12 +334,12 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Here are the commands you can use:
+     Noot noot! Here is what my flippers understand:
      todo <description>
      deadline <description> /by yyyy-MM-dd
      event <description> /from <start> /to <end>
@@ -352,11 +352,11 @@ ____________________________________________________________
      delete <task number>
      help
      bye
-     Use yyyy-MM-dd in an event's /from or /to to find it with on.
+     Penguin tip: use yyyy-MM-dd in an event's /from or /to so "on" can find it.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -391,64 +391,64 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] excluded task
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] first day (by: Jan 01 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] after range (by: Jan 02 2021)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
-     Now you have 4 tasks in the list.
+     The iceberg now holds 4 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] old meeting (from: 2018-12-31 0900 to: 2018-12-31 1200)
-     Now you have 5 tasks in the list.
+     The iceberg now holds 5 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines and events from 2019-01-01 to 2021-01-01:
+     Noot noot! Things hatching from 2019-01-01 to 2021-01-01:
      2.[D][ ] first day (by: Jan 01 2019)
      4.[E][ ] long project (from: 2018-12-01 0900 to: 2021-02-01 1700)
     ____________________________________________________________
 
     ____________________________________________________________
-     There are no deadlines or events from 2022-01-01 to 2022-01-02.
+     Nothing is hatching from 2022-01-01 to 2022-01-02. The ice is quiet.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! The "/to" date cannot be before the "/from" date.
+     NOOT?! The "/to" date cannot be before the "/from" date. Time only waddles forward.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A date-range list needs "/to" and an end date. Try "list /from 2019-01-01 /to 2021-01-01".
+     NOOT?! A date-range list needs "/to" and an end date. Try "list /from 2019-01-01 /to 2021-01-01".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! Use either "list" or "list /from 2019-01-01 /to 2021-01-01".
+     NOOT?! Use either "list" or "list /from 2019-01-01 /to 2021-01-01".
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -504,55 +504,55 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] borrow book
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] return book (by: Dec 02 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [D][X] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Yo! You've already marked this task.
+     Noot noot! That task is already frozen solid (done).
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Brrr... thawing this task back out:
        [D][ ] return book (by: Dec 02 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Yo! You've already unmarked this task.
+     Noot noot! That task is already thawed (not done).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] borrow book
      2.[D][ ] return book (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -593,57 +593,57 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] join sports club
-     Now you have 4 tasks in the list.
+     The iceberg now holds 4 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] borrow book
-     Now you have 5 tasks in the list.
+     The iceberg now holds 5 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [T][X] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
@@ -652,13 +652,13 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Splash! I kicked this task off the iceberg:
        [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
-     Now you have 4 tasks in the list.
+     The iceberg now holds 4 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019)
      3.[T][X] join sports club
@@ -666,21 +666,21 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Brrr... thawing this task back out:
        [T][ ] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [T][X] borrow book
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! You have only 4 task(s), so "mark 5" is out of range. Don't anyhow point lah.
+     NOOT?! The iceberg has only 4 task(s), so "mark 5" points straight into the sea.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019)
      3.[T][ ] join sports club
@@ -688,7 +688,7 @@ ____________________________________________________________
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -715,27 +715,27 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     ARE YOU DONEEEE????? "999999999999999999999999" is far too large for a task number. Use a whole number from 1 to 1.
+     GIANT NOOT! "999999999999999999999999" is far too large for a task number. Use a whole number from 1 to 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -765,36 +765,36 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A todo needs a description. Try "todo borrow book" — I cannot read your mind lah.
+     NOOT?! A todo needs a description. Try "todo borrow book"; my flippers cannot read minds.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I cannot find the "/by" part of that deadline. Use "deadline submit report /by 2019-10-15".
+     NOOT?! I cannot find the "/by" part of that deadline. Use "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! An event is missing "/to" and its end time. I need to know when you escape the meeting leh.
+     NOOT?! An event is missing "/to" and its end time. Even penguin meetings eventually end.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! "eat food" is not a task number. Use "mark 1", not words lah.
+     NOOT?! "eat food" is not a task number. Use "mark 1"; penguins count with digits.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! There are no tasks yet, so there is nothing to unmark.
+     NOOT?! The iceberg is empty, so there is nothing to unmark.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -829,67 +829,67 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A todo needs a description. Try "todo borrow book" — I cannot read your mind lah.
+     NOOT?! A todo needs a description. Try "todo borrow book"; my flippers cannot read minds.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] finish lab
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! You have only 1 task(s), so "mark 2" is out of range. Don't anyhow point lah.
+     NOOT?! The iceberg has only 1 task(s), so "mark 2" points straight into the sea.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [T][X] finish lab
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a description before "/by". Try "deadline submit report /by 2019-10-15".
+     NOOT?! A deadline needs a description before "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] submit report (by: Dec 02 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! Put "/from" before "/to". Time flows forward, not backwards, sia.
+     NOOT?! Put "/from" before "/to". Time waddles forward, not backward.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! You have only 3 task(s), so "unmark 4" is out of range. Don't anyhow point lah.
+     NOOT?! The iceberg has only 3 task(s), so "unmark 4" points straight into the sea.
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Brrr... thawing this task back out:
        [T][ ] finish lab
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] finish lab
      2.[D][ ] submit report (by: Dec 02 2019)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -924,63 +924,63 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] alpha
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] beta
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] charlie
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Splash! I kicked this task off the iceberg:
        [T][ ] alpha
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] beta
      2.[T][ ] charlie
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Splash! I kicked this task off the iceberg:
        [T][ ] charlie
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] beta
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Splash! I kicked this task off the iceberg:
        [T][ ] beta
-     Now you have 0 tasks in the list.
+     The iceberg now holds 0 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Your list is empty. Add something with "todo borrow book" lah.
+     The iceberg is empty. Try "todo borrow book". Noot noot!
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -1015,51 +1015,51 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! There are no tasks yet, so there is nothing to mark.
+     NOOT?! The iceberg is empty, so there is nothing to mark.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! There are no tasks yet, so there is nothing to delete.
+     NOOT?! The iceberg is empty, so there is nothing to delete.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] alpha
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! "mark" needs a task number. Try "mark 1".
+     NOOT?! "mark" needs a task number. Try "mark 1".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! Task numbers start from 1, not 0. Nice try lah.
+     NOOT?! Task numbers start from 1, not 0. Penguins can count!
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! Task numbers start from 1, not -3. Nice try lah.
+     NOOT?! Task numbers start from 1, not -3. Penguins can count!
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! You have only 1 task(s), so "unmark 2" is out of range. Don't anyhow point lah.
+     NOOT?! The iceberg has only 1 task(s), so "unmark 2" points straight into the sea.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! You have only 1 task(s), so "delete 7" is out of range. Don't anyhow point lah.
+     NOOT?! The iceberg has only 1 task(s), so "delete 7" points straight into the sea.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] alpha
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -1090,32 +1090,32 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! A deadline needs a due date after "/by". Try "deadline submit report /by 2019-10-15".
+     NOOT?! A deadline needs a due date after "/by". Try "deadline submit report /by 2019-10-15".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! An event needs both "/from" and "/to". Use "event team meeting /from Mon 2pm /to 4pm".
+     NOOT?! An event needs both "/from" and "/to". Use "event team meeting /from Mon 2pm /to 4pm".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! An event needs a description before "/from". Try "event team meeting /from Mon 2pm /to 4pm".
+     NOOT?! An event needs a description before "/from". Try "event team meeting /from Mon 2pm /to 4pm".
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! An event is missing "/from" and its start time. Put "/from" before "/to", can?
+     NOOT?! An event is missing "/from" and its start time. Tell me when to start waddling.
     ____________________________________________________________
 
     ____________________________________________________________
-     Your list is empty. Add something with "todo borrow book" lah.
+     The iceberg is empty. Try "todo borrow book". Noot noot!
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -1148,43 +1148,43 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! I'm sorry, but I don't know what that means :-( Try todo, deadline, event, on, list, mark, unmark, delete, help, or bye lah.
+     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Noot noot! Tasks currently chilling on the iceberg:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
 
@@ -1217,60 +1217,60 @@ bye
 
 
 ____________________________________________________________
-Hello! I'm Nori.
-What can I do for you?
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     The iceberg now holds 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     The iceberg now holds 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)
-     Now you have 3 tasks in the list.
+     The iceberg now holds 3 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Noot noot! Task tucked safely under my wing:
        [T][ ] Buy Milk
-     Now you have 4 tasks in the list.
+     The iceberg now holds 4 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Noot noot! This task is now ice-cold complete:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     There are no matching tasks in your list.
+     No matching fish in this sea. Try another keyword!
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     Noot noot! I found these fish:
      4.[T][ ] Buy Milk
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     Noot noot! I found these fish:
      1.[T][X] read book
      2.[D][ ] return book (by: Jun 06 2019)
      3.[E][ ] book fair (from: 2019-06-06 1000 to: 2019-06-06 1800)
     ____________________________________________________________
 
     ____________________________________________________________
-     OOPS!!! "find" needs a keyword. Try "find book" — searching for nothing finds everything lah.
+     NOOT?! "find" needs a keyword. Try "find book"; even penguins need a clue.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
