@@ -65,17 +65,9 @@ class EventCommand extends AddTaskCommand {
             return Optional.of("NOOT?! Put \"/from\" before \"/to\"."
                     + " Time waddles forward, not backward.");
         }
-        if (getDescription().isEmpty()) {
-            return Optional.of("NOOT?! An event needs a description before \"/from\"."
-                    + " Meeting whom, the invisible seals?");
-        }
         if (getStartInput().isEmpty()) {
             return Optional.of("NOOT?! \"/from\" needs a start time."
                     + " I cannot waddle in from the void.");
-        }
-        if (getEndInput().isEmpty()) {
-            return Optional.of("NOOT?! \"/to\" needs an end time."
-                    + " Even penguin meetings eventually end.");
         }
         return Optional.empty();
     }

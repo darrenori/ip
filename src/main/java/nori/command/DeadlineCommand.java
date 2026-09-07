@@ -54,14 +54,6 @@ class DeadlineCommand extends AddTaskCommand {
             return Optional.of("NOOT?! I cannot find the \"/by\" part of that deadline."
                     + " Use \"deadline submit report /by 2019-10-15\".");
         }
-        if (getDescription().isEmpty()) {
-            return Optional.of("NOOT?! A deadline needs a description before \"/by\"."
-                    + " Even a penguin needs to know what is due.");
-        }
-        if (getDueDateInput().isEmpty()) {
-            return Optional.of("NOOT?! A deadline needs a due date after \"/by\"."
-                    + " My calendar is colder than that empty space.");
-        }
         return Optional.empty();
     }
 
