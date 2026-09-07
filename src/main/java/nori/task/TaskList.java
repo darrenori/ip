@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import nori.NoriException;
 
@@ -110,12 +111,8 @@ public class TaskList {
             return new String[] {"The iceberg is empty. Try \"todo borrow book\". Noot noot!"};
         }
 
-        String[] lines = new String[size() + 1];
-        lines[0] = "Noot noot! Tasks currently chilling on the iceberg:";
-        for (int index = 0; index < size(); index++) {
-            lines[index + 1] = (index + 1) + "." + get(index);
-        }
-        return lines;
+        List<String> taskLines = IntStream.range(0, size()).mapToObj(this::getNumberedTask).toList();
+        return prependHeading("Noot noot! Tasks currently chilling on the iceberg:", taskLines);
     }
 
     /**
@@ -298,12 +295,7 @@ public class TaskList {
      * @return the combined response lines.
      */
     private String[] prependHeading(String heading, List<String> taskLines) {
-        String[] lines = new String[taskLines.size() + 1];
-        lines[0] = heading;
-        for (int index = 0; index < taskLines.size(); index++) {
-            lines[index + 1] = taskLines.get(index);
-        }
-        return lines;
+        return Stream.concat(Stream.of(heading), taskLines.stream()).toArray(String[]::new);
     }
 
     /**
