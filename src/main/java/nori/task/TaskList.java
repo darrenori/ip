@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import nori.NoriException;
 
@@ -124,7 +125,7 @@ public class TaskList {
      * @return the date-query response lines.
      */
     public String[] getTasksOnDateDisplayLines(LocalDate date) {
-        List<String> matchingTasks = getMatchingTasks(date, null);
+        List<String> matchingTasks = getNumberedTasks(task -> occursOn(task, date));
         if (matchingTasks.isEmpty()) {
             return new String[] {"Nothing is hatching on " + date + ". The ice is quiet."};
         }
@@ -138,7 +139,7 @@ public class TaskList {
      * @return the date-range response lines.
      */
     public String[] getTasksInDateRangeDisplayLines(DateRange dateRange) {
-        List<String> matchingTasks = getMatchingTasks(null, dateRange);
+        List<String> matchingTasks = getNumberedTasks(task -> occursInDateRange(task, dateRange));
         if (matchingTasks.isEmpty()) {
             return new String[] {"Nothing is hatching from " + dateRange.getFrom()
                     + " to " + dateRange.getTo() + ". The ice is quiet."};
@@ -160,7 +161,8 @@ public class TaskList {
      * @return the keyword-search response lines.
      */
     public String[] getTasksMatchingKeywordDisplayLines(String keyword) {
-        List<String> matchingTasks = getTasksContainingKeyword(keyword);
+        String foldedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<String> matchingTasks = getNumberedTasks(task -> containsKeyword(task, foldedKeyword));
         if (matchingTasks.isEmpty()) {
             return new String[] {"No matching fish in this sea. Try another keyword!"};
         }
@@ -246,18 +248,16 @@ public class TaskList {
     }
 
     /**
-     * Finds task lines that match either a date or a date range.
+     * Finds the display lines of the tasks a search accepts, numbered as in the full list.
      *
-     * @param date the date to search, or {@code null} for a range search.
-     * @param dateRange the range to search, or {@code null} for a date search.
+     * @param isMatch the search each task is put through.
      * @return the matching numbered task lines.
      */
-    private List<String> getMatchingTasks(LocalDate date, DateRange dateRange) {
+    private List<String> getNumberedTasks(Predicate<Task> isMatch) {
         List<String> matchingTasks = new ArrayList<>();
         for (int index = 0; index < size(); index++) {
             Task task = get(index);
-            boolean isMatch = date != null ? occursOn(task, date) : occursInDateRange(task, dateRange);
-            if (isMatch) {
+            if (isMatch.test(task)) {
                 matchingTasks.add((index + 1) + "." + task);
             }
         }
@@ -265,25 +265,18 @@ public class TaskList {
     }
 
     /**
-     * Finds numbered task lines whose descriptions contain a keyword.
+     * Returns whether a task's description contains an already folded keyword.
      *
      * Case folding uses {@link Locale#ROOT} so a search behaves the same way
-     * whatever locale the machine running Nori is set to.
+     * whatever locale the machine running Nori is set to. The caller folds the
+     * keyword once rather than once per task.
      *
-     * @param keyword the text to search for in task descriptions.
-     * @return the matching numbered task lines.
+     * @param task the task to inspect.
+     * @param foldedKeyword the search keyword, already in lower case.
+     * @return {@code true} if the description contains the keyword.
      */
-    private List<String> getTasksContainingKeyword(String keyword) {
-        String foldedKeyword = keyword.toLowerCase(Locale.ROOT);
-        List<String> matchingTasks = new ArrayList<>();
-        for (int index = 0; index < size(); index++) {
-            Task task = get(index);
-            boolean isMatch = task.getDescription().toLowerCase(Locale.ROOT).contains(foldedKeyword);
-            if (isMatch) {
-                matchingTasks.add((index + 1) + "." + task);
-            }
-        }
-        return matchingTasks;
+    private static boolean containsKeyword(Task task, String foldedKeyword) {
+        return task.getDescription().toLowerCase(Locale.ROOT).contains(foldedKeyword);
     }
 
     /**
