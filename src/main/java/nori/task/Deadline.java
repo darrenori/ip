@@ -88,6 +88,7 @@ public class Deadline extends Task {
      * @return {@code true} if this deadline is due in the range.
      */
     public boolean occursInDateRange(LocalDate from, LocalDate to) {
+        assert !to.isBefore(from) : "A DateRange orders its two dates when it is built.";
         return !by.isBefore(from) && !by.isAfter(to);
     }
 

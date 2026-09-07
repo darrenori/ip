@@ -95,6 +95,8 @@ check {
 
 application {
     mainClass = 'nori.Launcher'
+    // Assertions state Nori's internal assumptions, so developer launches check them.
+    applicationDefaultJvmArgs = ['-ea']
 }
 
 jar {

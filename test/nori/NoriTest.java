@@ -236,7 +236,8 @@ public class NoriTest {
     private static String runNori(Path workingDirectory, String input)
             throws IOException, InterruptedException {
         Path storageDirectory = workingDirectory.resolve("data").toAbsolutePath();
-        Process process = new ProcessBuilder("java", "-Dnori.storage.dir=" + storageDirectory,
+        Process process = new ProcessBuilder("java", "-ea",
+                "-Dnori.storage.dir=" + storageDirectory,
                 "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)

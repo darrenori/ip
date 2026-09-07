@@ -250,7 +250,7 @@ public class StorageTest {
      */
     private static String runNori(Path workingDirectory, Path storageDirectory, String input)
             throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java",
+        Process process = new ProcessBuilder("java", "-ea",
                 "-Dnori.storage.dir=" + storageDirectory.toAbsolutePath(),
                 "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
@@ -278,7 +278,8 @@ public class StorageTest {
      */
     private static String runNoriUsingProjectStorage(Path workingDirectory, String input)
             throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("java", "-cp", getAbsoluteClassPath(), "nori.Nori")
+        Process process = new ProcessBuilder("java", "-ea",
+                "-cp", getAbsoluteClassPath(), "nori.Nori")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();

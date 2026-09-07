@@ -18,6 +18,9 @@ public class DateRange {
      * @param toDate the last date in the range.
      */
     public DateRange(LocalDate fromDate, LocalDate toDate) {
+        assert fromDate != null && toDate != null : "A range is built from two dates the parser read.";
+        assert !toDate.isBefore(fromDate) : "The parser reports a reversed range instead of building one.";
+
         this.fromDate = fromDate;
         this.toDate = toDate;
     }

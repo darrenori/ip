@@ -81,6 +81,8 @@ public class Event extends Task {
      * @return {@code true} if this event occurs in the range.
      */
     public boolean occursInDateRange(LocalDate rangeStart, LocalDate rangeEnd) {
+        assert !rangeEnd.isBefore(rangeStart) : "A DateRange orders its two dates when it is built.";
+
         LocalDate eventStart = findDate(from);
         LocalDate eventEnd = findDate(to);
         if (eventStart != null && eventEnd != null) {
