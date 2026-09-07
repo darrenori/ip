@@ -49,7 +49,7 @@ public class Ui {
     /**
      * Reads and trims one command from standard input.
      *
-     * @return the command, or {@code null} if standard input has ended
+     * @return the command, or {@code null} if standard input has ended.
      */
     public String readCommand() {
         if (!scanner.hasNextLine()) {
@@ -77,7 +77,7 @@ public class Ui {
     /**
      * Displays an error that occurred while loading saved tasks.
      *
-     * @param message the loading error to display
+     * @param message the loading error to display.
      */
     public void showLoadingError(String message) {
         showResponse(message);
@@ -86,7 +86,7 @@ public class Ui {
     /**
      * Displays a notice produced while loading saved tasks.
      *
-     * @param message the loading notice to display
+     * @param message the loading notice to display.
      */
     public void showLoadingNotice(String message) {
         showResponse(message);
@@ -102,7 +102,7 @@ public class Ui {
     /**
      * Displays one or more response lines between indented dividers.
      *
-     * @param lines the response lines to display
+     * @param lines the response lines to display.
      */
     public void showResponse(String... lines) {
         printResponse(true, lines);
@@ -111,8 +111,8 @@ public class Ui {
     /**
      * Prints one or more lines between dividers, followed by a blank line.
      *
-     * @param shouldIndent whether the response should align under the banner
-     * @param lines the lines to print
+     * @param shouldIndent whether the response should align under the banner.
+     * @param lines the lines to print.
      */
     private void printResponse(boolean shouldIndent, String... lines) {
         String divider = shouldIndent ? DIVIDER : DIVIDER_LINE;

@@ -197,8 +197,8 @@ public class ParserTest {
     /**
      * Verifies that parsing a date range fails with the expected user-facing message.
      *
-     * @param input the date-range details to parse
-     * @param expectedMessage the expected error message
+     * @param input the date-range details to parse.
+     * @param expectedMessage the expected error message.
      */
     private static void assertRangeParsingFails(String input, String expectedMessage) {
         NoriException exception = assertThrows(NoriException.class, () -> Parser.parseListDateRange(input));

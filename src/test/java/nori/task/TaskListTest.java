@@ -138,8 +138,8 @@ public class TaskListTest {
     /**
      * Returns a list holding one task of each type, with a completed first task.
      *
-     * @return the sample task list used by these tests
-     * @throws NoriException if a sample task cannot be created
+     * @return the sample task list used by these tests.
+     * @throws NoriException if a sample task cannot be created.
      */
     private static TaskList buildSampleList() throws NoriException {
         Task readBook = new Todo("read book");

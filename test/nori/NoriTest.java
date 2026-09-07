@@ -17,8 +17,8 @@ public class NoriTest {
     /**
      * Runs every end-to-end regression test.
      *
-     * @param args ignored command-line arguments
-     * @throws Exception if a test cannot create its isolated environment or Nori cannot run
+     * @param args ignored command-line arguments.
+     * @throws Exception if a test cannot create its isolated environment or Nori cannot run.
      */
     public static void main(String[] args) throws Exception {
         runTest("Completes a mixed task workflow", NoriTest::mixedTaskWorkflow_updatesListAndStatuses);
@@ -216,8 +216,8 @@ public class NoriTest {
     /**
      * Runs one test case and reports it as passed, letting a failure stop the suite.
      *
-     * @param testName the name to report for this test
-     * @param testCase the test to run
+     * @param testName the name to report for this test.
+     * @param testCase the test to run.
      */
     private static void runTest(String testName, NoriTestCase testCase) throws Exception {
         testCase.run();
@@ -227,11 +227,11 @@ public class NoriTest {
     /**
      * Runs Nori in the given directory with one complete standard-input session.
      *
-     * @param workingDirectory the isolated working directory for this Nori launch
-     * @param input the standard-input content to send to Nori
-     * @return Nori's complete console output
-     * @throws IOException if the child process cannot be started or communicated with
-     * @throws InterruptedException if the current thread is interrupted while Nori is running
+     * @param workingDirectory the isolated working directory for this Nori launch.
+     * @param input the standard-input content to send to Nori.
+     * @return Nori's complete console output.
+     * @throws IOException if the child process cannot be started or communicated with.
+     * @throws InterruptedException if the current thread is interrupted while Nori is running.
      */
     private static String runNori(Path workingDirectory, String input)
             throws IOException, InterruptedException {
@@ -255,8 +255,8 @@ public class NoriTest {
     /**
      * Returns the final displayed task list from a Nori session.
      *
-     * @param output Nori's complete console output
-     * @return the part of the output beginning with the final task-list heading
+     * @param output Nori's complete console output.
+     * @return the part of the output beginning with the final task-list heading.
      */
     private static String getFinalList(String output) {
         return getSectionAfter(output, "Noot noot! Tasks currently chilling on the iceberg:");
@@ -265,9 +265,9 @@ public class NoriTest {
     /**
      * Returns the final output section beginning with a required heading.
      *
-     * @param output Nori's complete console output
-     * @param heading the required section heading
-     * @return the output beginning at the final occurrence of {@code heading}
+     * @param output Nori's complete console output.
+     * @param heading the required section heading.
+     * @return the output beginning at the final occurrence of {@code heading}.
      */
     private static String getSectionAfter(String output, String heading) {
         int headingIndex = output.lastIndexOf(heading);
@@ -280,7 +280,7 @@ public class NoriTest {
     /**
      * Returns the compiled test classpath as an absolute path for child Nori processes.
      *
-     * @return the absolute classpath for the compiled test classes
+     * @return the absolute classpath for the compiled test classes.
      */
     private static String getAbsoluteClassPath() {
         String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
@@ -292,8 +292,8 @@ public class NoriTest {
     /**
      * Deletes an isolated test directory and all of its contents.
      *
-     * @param directory the directory to delete
-     * @throws IOException if the directory tree cannot be read
+     * @param directory the directory to delete.
+     * @throws IOException if the directory tree cannot be read.
      */
     private static void deleteDirectory(Path directory) throws IOException {
         try (Stream<Path> paths = Files.walk(directory)) {
@@ -304,7 +304,7 @@ public class NoriTest {
     /**
      * Deletes one file or directory while cleaning up a test directory.
      *
-     * @param path the path to delete
+     * @param path the path to delete.
      */
     private static void deletePath(Path path) {
         try {
@@ -317,8 +317,8 @@ public class NoriTest {
     /**
      * Fails the current test unless the actual text contains the expected text.
      *
-     * @param actual the text to inspect
-     * @param expected the text that must be present
+     * @param actual the text to inspect.
+     * @param expected the text that must be present.
      */
     private static void assertContains(String actual, String expected) {
         if (!actual.contains(expected)) {
@@ -329,8 +329,8 @@ public class NoriTest {
     /**
      * Fails the current test if the actual text contains the unexpected text.
      *
-     * @param actual the text to inspect
-     * @param unexpected the text that must be absent
+     * @param actual the text to inspect.
+     * @param unexpected the text that must be absent.
      */
     private static void assertNotContains(String actual, String unexpected) {
         if (actual.contains(unexpected)) {
@@ -347,7 +347,7 @@ public class NoriTest {
         /**
          * Runs this test case.
          *
-         * @throws Exception if the test fails or its environment cannot be prepared
+         * @throws Exception if the test fails or its environment cannot be prepared.
          */
         void run() throws Exception;
     }

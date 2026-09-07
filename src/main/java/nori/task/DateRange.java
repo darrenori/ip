@@ -14,8 +14,8 @@ public class DateRange {
     /**
      * Creates an inclusive range between two dates.
      *
-     * @param from the first date in the range
-     * @param to the last date in the range
+     * @param from the first date in the range.
+     * @param to the last date in the range.
      */
     public DateRange(LocalDate from, LocalDate to) {
         this.from = from;
@@ -25,7 +25,7 @@ public class DateRange {
     /**
      * Returns the first date in the range.
      *
-     * @return the inclusive lower bound
+     * @return the inclusive lower bound.
      */
     public LocalDate getFrom() {
         return from;
@@ -34,7 +34,7 @@ public class DateRange {
     /**
      * Returns the last date in the range.
      *
-     * @return the inclusive upper bound
+     * @return the inclusive upper bound.
      */
     public LocalDate getTo() {
         return to;

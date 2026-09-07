@@ -20,9 +20,9 @@ public final class Commands {
     /**
      * Creates the command represented by a recognized type.
      *
-     * @param commandType the recognized command type
-     * @param details the text after the command keyword
-     * @return the corresponding executable command
+     * @param commandType the recognized command type.
+     * @param details the text after the command keyword.
+     * @return the corresponding executable command.
      */
     public static Command create(CommandType commandType, String details) {
         switch (commandType) {
@@ -56,7 +56,7 @@ public final class Commands {
     /**
      * Creates a command that reports unrecognized input.
      *
-     * @return an unrecognized-command handler
+     * @return an unrecognized-command handler.
      */
     public static Command createUnknown() {
         return new UnknownCommand();
@@ -73,7 +73,7 @@ abstract class InputCommand extends Command {
     /**
      * Creates a command with its input details.
      *
-     * @param details the text after the command keyword
+     * @param details the text after the command keyword.
      */
     InputCommand(String details) {
         this.details = details;
@@ -87,7 +87,7 @@ class ListCommand extends InputCommand {
     /**
      * Creates a list command.
      *
-     * @param details the optional date range after the {@code list} keyword
+     * @param details the optional date range after the {@code list} keyword.
      */
     ListCommand(String details) {
         super(details);
@@ -126,7 +126,7 @@ class OnCommand extends InputCommand {
     /**
      * Creates a date-query command.
      *
-     * @param details the date after the {@code on} keyword
+     * @param details the date after the {@code on} keyword.
      */
     OnCommand(String details) {
         super(details);
@@ -146,7 +146,7 @@ class FindCommand extends InputCommand {
     /**
      * Creates a keyword-search command.
      *
-     * @param details the keyword after the {@code find} keyword
+     * @param details the keyword after the {@code find} keyword.
      */
     FindCommand(String details) {
         super(details);
@@ -171,7 +171,7 @@ class MarkCommand extends InputCommand {
     /**
      * Creates a command that completes a task.
      *
-     * @param details the task number after the {@code mark} keyword
+     * @param details the task number after the {@code mark} keyword.
      */
     MarkCommand(String details) {
         super(details);
@@ -205,7 +205,7 @@ class UnmarkCommand extends InputCommand {
     /**
      * Creates a command that reopens a task.
      *
-     * @param details the task number after the {@code unmark} keyword
+     * @param details the task number after the {@code unmark} keyword.
      */
     UnmarkCommand(String details) {
         super(details);
@@ -239,7 +239,7 @@ class DeleteCommand extends InputCommand {
     /**
      * Creates a command that removes a task.
      *
-     * @param details the task number after the {@code delete} keyword
+     * @param details the task number after the {@code delete} keyword.
      */
     DeleteCommand(String details) {
         super(details);
@@ -268,7 +268,7 @@ class TodoCommand extends InputCommand {
     /**
      * Creates a command that adds a todo.
      *
-     * @param details the description after the {@code todo} keyword
+     * @param details the description after the {@code todo} keyword.
      */
     TodoCommand(String details) {
         super(details);
@@ -288,11 +288,11 @@ class TodoCommand extends InputCommand {
     /**
      * Adds a task, restores the list when saving fails, and displays confirmation.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param task the task to add
-     * @throws NoriException if the task cannot be saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param task the task to add.
+     * @throws NoriException if the task cannot be saved.
      */
     static void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
         tasks.add(task);
@@ -317,7 +317,7 @@ class DeadlineCommand extends InputCommand {
     /**
      * Creates a command that adds a deadline.
      *
-     * @param details the description and due date after the {@code deadline} keyword
+     * @param details the description and due date after the {@code deadline} keyword.
      */
     DeadlineCommand(String details) {
         super(details);
@@ -344,11 +344,11 @@ class DeadlineCommand extends InputCommand {
     /**
      * Validates a deadline's details and adds the resulting task.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param separatorIndex the position of the {@code /by} separator
-     * @throws NoriException if the deadline cannot be parsed or saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param separatorIndex the position of the {@code /by} separator.
+     * @throws NoriException if the deadline cannot be parsed or saved.
      */
     private void addDeadline(TaskList tasks, Ui ui, Storage storage, int separatorIndex)
             throws NoriException {
@@ -379,7 +379,7 @@ class EventCommand extends InputCommand {
     /**
      * Creates a command that adds an event.
      *
-     * @param details the description, start, and end after the {@code event} keyword
+     * @param details the description, start, and end after the {@code event} keyword.
      */
     EventCommand(String details) {
         super(details);
@@ -413,12 +413,12 @@ class EventCommand extends InputCommand {
     /**
      * Validates an event's details and adds the resulting task.
      *
-     * @param tasks the task list to change
-     * @param ui the console user interface
-     * @param storage the persistent task storage
-     * @param fromSeparatorIndex the position of the {@code /from} separator
-     * @param toSeparatorIndex the position of the {@code /to} separator
-     * @throws NoriException if the event cannot be parsed or saved
+     * @param tasks the task list to change.
+     * @param ui the console user interface.
+     * @param storage the persistent task storage.
+     * @param fromSeparatorIndex the position of the {@code /from} separator.
+     * @param toSeparatorIndex the position of the {@code /to} separator.
+     * @throws NoriException if the event cannot be parsed or saved.
      */
     private void addEvent(TaskList tasks, Ui ui, Storage storage, int fromSeparatorIndex,
             int toSeparatorIndex) throws NoriException {

@@ -33,7 +33,7 @@ public enum CommandType {
     /**
      * Creates a command type with its input keyword.
      *
-     * @param keyword the command's input keyword
+     * @param keyword the command's input keyword.
      */
     CommandType(String keyword) {
         this.keyword = keyword;
@@ -42,7 +42,7 @@ public enum CommandType {
     /**
      * Returns the keyword used to recognize this command.
      *
-     * @return the command keyword
+     * @return the command keyword.
      */
     public String getKeyword() {
         return keyword;

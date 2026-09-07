@@ -16,7 +16,7 @@ public final class GuiUi extends Ui {
     /**
      * Returns and clears the pending response.
      *
-     * @return the response produced by the latest command
+     * @return the response produced by the latest command.
      */
     public String consumeResponse() {
         String response = pendingResponse;

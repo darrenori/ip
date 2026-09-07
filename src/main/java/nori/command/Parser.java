@@ -22,8 +22,8 @@ public class Parser {
     /**
      * Creates an executable command from trimmed user input.
      *
-     * @param input the trimmed user input
-     * @return the command represented by the input
+     * @param input the trimmed user input.
+     * @return the command represented by the input.
      */
     public static Command parse(String input) {
         CommandType commandType = findCommandType(input);
@@ -38,9 +38,9 @@ public class Parser {
     /**
      * Parses the ISO-8601 date supplied to the {@code on} command.
      *
-     * @param dateInput the date text after the {@code on} command
-     * @return the parsed date
-     * @throws NoriException if the date is missing or invalid
+     * @param dateInput the date text after the {@code on} command.
+     * @return the parsed date.
+     * @throws NoriException if the date is missing or invalid.
      */
     public static LocalDate parseDate(String dateInput) throws NoriException {
         if (dateInput.isEmpty()) {
@@ -57,9 +57,9 @@ public class Parser {
     /**
      * Parses the inclusive date range supplied to the {@code list} command.
      *
-     * @param listDetails the text after the {@code list} command
-     * @return the parsed inclusive date range
-     * @throws NoriException if the range format, dates, or order is invalid
+     * @param listDetails the text after the {@code list} command.
+     * @return the parsed inclusive date range.
+     * @throws NoriException if the range format, dates, or order is invalid.
      */
     public static DateRange parseListDateRange(String listDetails) throws NoriException {
         if (!listDetails.startsWith(LIST_FROM_PREFIX)) {
@@ -95,8 +95,8 @@ public class Parser {
     /**
      * Finds the command type at the start of an input line.
      *
-     * @param input the trimmed user input
-     * @return the matching type, or {@code null} if the input is unrecognized
+     * @param input the trimmed user input.
+     * @return the matching type, or {@code null} if the input is unrecognized.
      */
     private static CommandType findCommandType(String input) {
         for (CommandType commandType : CommandType.values()) {
@@ -113,9 +113,9 @@ public class Parser {
     /**
      * Returns the trimmed text after a command keyword.
      *
-     * @param input the complete user input
-     * @param commandKeyword the command keyword
-     * @return the command details, without surrounding whitespace
+     * @param input the complete user input.
+     * @param commandKeyword the command keyword.
+     * @return the command details, without surrounding whitespace.
      */
     private static String getCommandDetails(String input, String commandKeyword) {
         return input.substring(commandKeyword.length()).trim();
@@ -124,10 +124,10 @@ public class Parser {
     /**
      * Parses one date from a date-range list command.
      *
-     * @param dateInput the date text to parse
-     * @param rangePart the range separator introducing the date
-     * @return the parsed date
-     * @throws NoriException if the date is invalid
+     * @param dateInput the date text to parse.
+     * @param rangePart the range separator introducing the date.
+     * @return the parsed date.
+     * @throws NoriException if the date is invalid.
      */
     private static LocalDate parseRangeDate(String dateInput, String rangePart) throws NoriException {
         try {

@@ -52,8 +52,8 @@ public final class MainWindow {
     /**
      * Injects Nori and displays the opening messages for this session.
      *
-     * @param nori the application logic used to execute commands
-     * @param guiUi the response adapter used by the graphical interface
+     * @param nori the application logic used to execute commands.
+     * @param guiUi the response adapter used by the graphical interface.
      */
     public void setNori(Nori nori, GuiUi guiUi) {
         this.nori = nori;

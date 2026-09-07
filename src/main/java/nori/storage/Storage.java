@@ -71,8 +71,8 @@ public class Storage {
     /**
      * Saves every task to the storage file, replacing its previous contents.
      *
-     * @param tasks the tasks to save
-     * @throws NoriException if the tasks cannot be written to disk
+     * @param tasks the tasks to save.
+     * @throws NoriException if the tasks cannot be written to disk.
      */
     public void saveTasks(List<Task> tasks) throws NoriException {
         if (!canWriteToStorage) {
@@ -105,8 +105,8 @@ public class Storage {
     /**
      * Loads every stored task, or returns an empty list when no storage file exists.
      *
-     * @return the tasks restored from disk
-     * @throws NoriException if the storage file cannot be read or contains an invalid task
+     * @return the tasks restored from disk.
+     * @throws NoriException if the storage file cannot be read or contains an invalid task.
      */
     public List<Task> loadTasks() throws NoriException {
         loadingNotice = null;
@@ -127,7 +127,7 @@ public class Storage {
     /**
      * Returns a startup notice generated while loading storage, if any.
      *
-     * @return the startup notice, or {@code null} when loading completed normally
+     * @return the startup notice, or {@code null} when loading completed normally.
      */
     public String getLoadingNotice() {
         return loadingNotice;
@@ -136,7 +136,7 @@ public class Storage {
     /**
      * Locates the project root so storage remains independent of the directory used to launch Nori.
      *
-     * @return the project root, or the current directory when no project source marker is found
+     * @return the project root, or the current directory when no project source marker is found.
      */
     private static Path findProjectRoot() {
         Path currentDirectory = Path.of("").toAbsolutePath().normalize();
@@ -160,7 +160,7 @@ public class Storage {
      * The {@code nori.storage.dir} property exists for isolated automated test launches.
      * Normal application launches do not set it and therefore retain project-root storage.
      *
-     * @return the directory that contains Nori's storage files
+     * @return the directory that contains Nori's storage files.
      */
     private Path findStorageDirectory() {
         String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
@@ -173,7 +173,7 @@ public class Storage {
     /**
      * Copies legacy data created from {@code src/main/java} to the canonical project-root location.
      *
-     * @throws NoriException if existing legacy data cannot be copied safely
+     * @throws NoriException if existing legacy data cannot be copied safely.
      */
     private void migrateLegacyStorageIfNeeded() throws NoriException {
         if (hasConfiguredStorageDirectory() || Files.exists(filePath) || Files.notExists(legacyFilePath)) {
@@ -195,7 +195,7 @@ public class Storage {
     /**
      * Returns whether this launch has explicitly selected an isolated storage directory.
      *
-     * @return {@code true} when the test-storage property is set to nonblank text
+     * @return {@code true} when the test-storage property is set to nonblank text.
      */
     private static boolean hasConfiguredStorageDirectory() {
         String configuredDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
@@ -205,9 +205,9 @@ public class Storage {
     /**
      * Formats one task as a line in the storage file.
      *
-     * @param task the task to format
-     * @return the formatted task line
-     * @throws NoriException if the task type is unsupported
+     * @param task the task to format.
+     * @return the formatted task line.
+     * @throws NoriException if the task type is unsupported.
      */
     private static String formatTask(Task task) throws NoriException {
         if (task == null) {
@@ -235,9 +235,9 @@ public class Storage {
     /**
      * Rebuilds one task from a line in the storage file.
      *
-     * @param taskLine the stored task line
-     * @return the restored task
-     * @throws NoriException if the stored task line has an invalid format
+     * @param taskLine the stored task line.
+     * @return the restored task.
+     * @throws NoriException if the stored task line has an invalid format.
      */
     private static Task parseTask(String taskLine) throws NoriException {
         String[] taskParts = taskLine.split(" \\| ", -1);
@@ -268,8 +268,8 @@ public class Storage {
     /**
      * Returns whether text represents a stored task completion status.
      *
-     * @param status the stored completion status
-     * @return {@code true} when the status is 0 or 1
+     * @param status the stored completion status.
+     * @return {@code true} when the status is 0 or 1.
      */
     private static boolean isValidStatus(String status) {
         return status.equals("0") || status.equals("1");
@@ -278,10 +278,10 @@ public class Storage {
     /**
      * Reads and parses every task from a storage file.
      *
-     * @param filePath the file to read
-     * @return the parsed tasks
-     * @throws IOException if the file cannot be read
-     * @throws NoriException if a stored task is invalid
+     * @param filePath the file to read.
+     * @return the parsed tasks.
+     * @throws IOException if the file cannot be read.
+     * @throws NoriException if a stored task is invalid.
      */
     private static List<Task> readTasks(Path filePath) throws IOException, NoriException {
         List<Task> tasks = new ArrayList<>();
@@ -294,8 +294,8 @@ public class Storage {
     /**
      * Restores tasks from the backup file after the main storage file cannot be read.
      *
-     * @return the restored tasks
-     * @throws NoriException if no valid backup can be used
+     * @return the restored tasks.
+     * @throws NoriException if no valid backup can be used.
      */
     private List<Task> recoverFromBackup() throws NoriException {
         if (Files.notExists(backupFilePath)) {
@@ -320,8 +320,8 @@ public class Storage {
     /**
      * Returns whether a restored task contains every detail required by its type.
      *
-     * @param task the restored task
-     * @return {@code true} if every required task field is nonempty
+     * @param task the restored task.
+     * @return {@code true} if every required task field is nonempty.
      */
     private static boolean hasTaskDetails(Task task) {
         if (task.getDescription().isEmpty()) {
@@ -340,9 +340,9 @@ public class Storage {
     /**
      * Encodes one task field so delimiters in user-entered text do not corrupt storage.
      *
-     * @param field the task field to encode
-     * @return the encoded task field
-     * @throws NoriException if the field is missing
+     * @param field the task field to encode.
+     * @return the encoded task field.
+     * @throws NoriException if the field is missing.
      */
     private static String encodeField(String field) throws NoriException {
         if (field == null) {
@@ -354,9 +354,9 @@ public class Storage {
     /**
      * Decodes a task field, retaining compatibility with the original plain-text format.
      *
-     * @param storedField the stored task field
-     * @return the decoded task field
-     * @throws NoriException if the encoded field is invalid
+     * @param storedField the stored task field.
+     * @return the decoded task field.
+     * @throws NoriException if the encoded field is invalid.
      */
     private static String decodeField(String storedField) throws NoriException {
         if (!storedField.startsWith(FIELD_PREFIX)) {
@@ -378,8 +378,8 @@ public class Storage {
     /**
      * Replaces the storage file with a completed temporary file.
      *
-     * @param temporaryFile the complete replacement file
-     * @throws IOException if the replacement cannot be completed
+     * @param temporaryFile the complete replacement file.
+     * @throws IOException if the replacement cannot be completed.
      */
     private void replaceStorageFile(Path temporaryFile) throws IOException {
         try {
@@ -404,7 +404,7 @@ public class Storage {
     /**
      * Removes a leftover temporary file without masking the primary storage error.
      *
-     * @param temporaryFile the temporary file to remove, if one was created
+     * @param temporaryFile the temporary file to remove, if one was created.
      */
     private void deleteTemporaryFile(Path temporaryFile) {
         if (temporaryFile == null) {
