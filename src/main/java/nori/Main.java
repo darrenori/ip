@@ -24,6 +24,10 @@ public class Main extends Application {
     /** Coordinates commands, tasks, and storage for the GUI session. */
     private final Nori nori = new Nori(guiUi);
 
+    /** Creates the application, as required by the JavaFX launcher. */
+    public Main() {
+    }
+
     /** {@inheritDoc} */
     @Override
     public void start(Stage stage) throws IOException {

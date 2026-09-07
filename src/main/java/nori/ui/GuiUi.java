@@ -7,6 +7,10 @@ public final class GuiUi extends Ui {
     /** The most recent command response that has not been displayed. */
     private String pendingResponse = "";
 
+    /** Creates a user interface that holds each response until it is consumed. */
+    public GuiUi() {
+    }
+
     /** {@inheritDoc} */
     @Override
     public void showResponse(String... lines) {

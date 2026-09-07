@@ -38,6 +38,10 @@ public final class MainWindow {
     /** Supplies the text response generated for each GUI command. */
     private GuiUi guiUi;
 
+    /** Creates the controller, as required by the FXML loader. */
+    public MainWindow() {
+    }
+
     /**
      * Initializes visual elements that are easier to express in Java.
      */
