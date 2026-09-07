@@ -7,19 +7,19 @@ import java.time.LocalDate;
  */
 public class DateRange {
     /** Inclusive first date of the range. */
-    private final LocalDate from;
+    private final LocalDate fromDate;
     /** Inclusive last date of the range. */
-    private final LocalDate to;
+    private final LocalDate toDate;
 
     /**
      * Creates an inclusive range between two dates.
      *
-     * @param from the first date in the range.
-     * @param to the last date in the range.
+     * @param fromDate the first date in the range.
+     * @param toDate the last date in the range.
      */
-    public DateRange(LocalDate from, LocalDate to) {
-        this.from = from;
-        this.to = to;
+    public DateRange(LocalDate fromDate, LocalDate toDate) {
+        this.fromDate = fromDate;
+        this.toDate = toDate;
     }
 
     /**
@@ -28,7 +28,7 @@ public class DateRange {
      * @return the inclusive lower bound.
      */
     public LocalDate getFrom() {
-        return from;
+        return fromDate;
     }
 
     /**
@@ -37,6 +37,6 @@ public class DateRange {
      * @return the inclusive upper bound.
      */
     public LocalDate getTo() {
-        return to;
+        return toDate;
     }
 }
