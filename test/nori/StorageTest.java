@@ -128,7 +128,7 @@ public class StorageTest {
             String output = runNori(sourceDirectory, isolatedStorageDirectory,
                     "todo isolated test task\nbye\n");
 
-            assertContains(output, "Now you have 1 tasks in the list.");
+            assertContains(output, "The iceberg now holds 1 task(s).");
             assertEquals(protectedContent, Files.readString(projectStorageFile, StandardCharsets.UTF_8));
             assertContains(Files.readString(isolatedStorageDirectory.resolve(STORAGE_FILE),
                     StandardCharsets.UTF_8),
@@ -145,7 +145,7 @@ public class StorageTest {
             String output = runNori(testDirectory, "todo end cleanly\n");
 
             assertContains(output, "[T][ ] end cleanly");
-            assertContains(output, "Bye. Hope to see you again soon!");
+            assertContains(output, "Noot noot! Time to waddle off. Stay frosty!");
         } finally {
             deleteDirectory(testDirectory);
         }

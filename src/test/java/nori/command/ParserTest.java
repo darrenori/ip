@@ -112,14 +112,14 @@ public class ParserTest {
     public void parseDate_emptyInput_throwsHelpfulException() {
         NoriException exception = assertThrows(NoriException.class, () -> Parser.parseDate(""));
 
-        assertEquals("OOPS!!! \"on\" needs a date. Try \"on 2019-10-15\".", exception.getMessage());
+        assertEquals("NOOT?! \"on\" needs a date. Try \"on 2019-10-15\".", exception.getMessage());
     }
 
     @Test
     public void parseDate_nonIsoDate_throwsHelpfulException() {
         NoriException exception = assertThrows(NoriException.class, () -> Parser.parseDate("15-10-2019"));
 
-        assertEquals("OOPS!!! I cannot understand \"15-10-2019\" as a date."
+        assertEquals("NOOT?! I cannot understand \"15-10-2019\" as a date."
                 + " Use a date like \"2019-10-15\".", exception.getMessage());
     }
 
@@ -127,7 +127,7 @@ public class ParserTest {
     public void parseDate_impossibleDate_throwsHelpfulException() {
         NoriException exception = assertThrows(NoriException.class, () -> Parser.parseDate("2023-02-29"));
 
-        assertEquals("OOPS!!! I cannot understand \"2023-02-29\" as a date."
+        assertEquals("NOOT?! I cannot understand \"2023-02-29\" as a date."
                 + " Use a date like \"2019-10-15\".", exception.getMessage());
     }
 
@@ -150,48 +150,48 @@ public class ParserTest {
     @Test
     public void parseListDateRange_unexpectedDetails_throwsHelpfulException() {
         assertRangeParsingFails("unexpected details",
-                "OOPS!!! Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
+                "NOOT?! Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
     }
 
     @Test
     public void parseListDateRange_missingToSeparator_throwsHelpfulException() {
         assertRangeParsingFails("/from 2019-01-01",
-                "OOPS!!! A date-range list needs \"/to\" and an end date."
+                "NOOT?! A date-range list needs \"/to\" and an end date."
                         + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
     }
 
     @Test
     public void parseListDateRange_missingStartDate_throwsHelpfulException() {
         assertRangeParsingFails("/from  /to 2021-01-01",
-                "OOPS!!! \"/from\" needs a start date."
+                "NOOT?! \"/from\" needs a start date."
                         + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
     }
 
     @Test
     public void parseListDateRange_missingEndDate_throwsHelpfulException() {
         assertRangeParsingFails("/from 2019-01-01 /to ",
-                "OOPS!!! \"/to\" needs an end date."
+                "NOOT?! \"/to\" needs an end date."
                         + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
     }
 
     @Test
     public void parseListDateRange_invalidStartDate_throwsHelpfulException() {
         assertRangeParsingFails("/from 2019-02-29 /to 2021-01-01",
-                "OOPS!!! I cannot understand \"2019-02-29\" as the /from date."
+                "NOOT?! I cannot understand \"2019-02-29\" as the /from date."
                         + " Use a date like \"2019-10-15\".");
     }
 
     @Test
     public void parseListDateRange_invalidEndDate_throwsHelpfulException() {
         assertRangeParsingFails("/from 2019-01-01 /to tomorrow",
-                "OOPS!!! I cannot understand \"tomorrow\" as the /to date."
+                "NOOT?! I cannot understand \"tomorrow\" as the /to date."
                         + " Use a date like \"2019-10-15\".");
     }
 
     @Test
     public void parseListDateRange_endBeforeStart_throwsHelpfulException() {
         assertRangeParsingFails("/from 2021-01-02 /to 2021-01-01",
-                "OOPS!!! The \"/to\" date cannot be before the \"/from\" date.");
+                "NOOT?! The \"/to\" date cannot be before the \"/from\" date. Time only waddles forward.");
     }
 
     /**

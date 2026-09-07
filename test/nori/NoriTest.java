@@ -48,8 +48,8 @@ public class NoriTest {
             assertContains(finalList, "1.[D][ ] return book (by: Feb 29 2024)");
             assertContains(finalList, "2.[E][ ] exam (from: 2024-02-29 0900 to: 2024-02-29 1200)");
             assertNotContains(finalList, "read book");
-            assertContains(output, "Nice! I've marked this task as done:");
-            assertContains(output, "OK, I've marked this task as not done yet:");
+            assertContains(output, "Noot noot! This task is now ice-cold complete:");
+            assertContains(output, "Brrr... thawing this task back out:");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -66,12 +66,12 @@ public class NoriTest {
                     + "list\n"
                     + "bye\n");
 
-            assertContains(output, "OOPS!!! A todo needs a description.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-02-30\" as a deadline.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-2-29\" as an event date.");
-            assertContains(output, "OOPS!!! \"on\" needs a date.");
-            assertContains(output, "OOPS!!! I cannot understand \"2024-02-30\" as a date.");
-            assertContains(output, "Your list is empty.");
+            assertContains(output, "NOOT?! A todo needs a description.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-02-30\" as a deadline.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-2-29\" as an event date.");
+            assertContains(output, "NOOT?! \"on\" needs a date.");
+            assertContains(output, "NOOT?! I cannot understand \"2024-02-30\" as a date.");
+            assertContains(output, "The iceberg is empty.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -82,12 +82,13 @@ public class NoriTest {
         try {
             String output = runNori(testDirectory, "help\nbye\n");
 
-            assertContains(output, "Here are the commands you can use:");
+            assertContains(output, "Noot noot! Here is what my flippers understand:");
             assertContains(output, "deadline <description> /by yyyy-MM-dd");
             assertContains(output, "on yyyy-MM-dd");
             assertContains(output, "list /from yyyy-MM-dd /to yyyy-MM-dd");
             assertContains(output, "find <keyword>");
-            assertContains(output, "Use yyyy-MM-dd in an event's /from or /to to find it with on.");
+            assertContains(output,
+                    "Penguin tip: use yyyy-MM-dd in an event's /from or /to so \"on\" can find it.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -105,13 +106,13 @@ public class NoriTest {
                     + "bye\n");
 
             String matchingTasks = getSectionAfter(output,
-                    "Here are the deadlines and events on 2024-03-01:");
+                    "Noot noot! Things hatching on 2024-03-01:");
             assertContains(matchingTasks, "2.[D][ ] submit work (by: Mar 01 2024)");
             assertContains(matchingTasks, "3.[E][ ] workshop (from: 2024-03-01 0900 to: 2024-03-01 1100)");
             assertContains(matchingTasks,
                     "4.[E][ ] overnight session (from: 2024-02-29 2300 to: 2024-03-01 0100)");
             assertNotContains(matchingTasks, "unrelated task");
-            assertContains(output, "There are no deadlines or events on 2024-03-02.");
+            assertContains(output, "Nothing is hatching on 2024-03-02. The ice is quiet.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -137,7 +138,7 @@ public class NoriTest {
                     + "bye\n");
 
             String matchingTasks = getSectionAfter(output,
-                    "Here are the deadlines and events from 2019-01-01 to 2021-01-01:");
+                    "Noot noot! Things hatching from 2019-01-01 to 2021-01-01:");
             assertContains(matchingTasks, "3.[D][ ] first day (by: Jan 01 2019)");
             assertContains(matchingTasks, "4.[D][ ] last day (by: Jan 01 2021)");
             assertContains(matchingTasks, "6.[E][ ] long project");
@@ -147,7 +148,7 @@ public class NoriTest {
             assertNotContains(matchingTasks, "late deadline");
             assertNotContains(matchingTasks, "old meeting");
             assertNotContains(matchingTasks, "undated meeting");
-            assertContains(output, "There are no deadlines or events from 2022-01-01 to 2022-01-02.");
+            assertContains(output, "Nothing is hatching from 2022-01-01 to 2022-01-02. The ice is quiet.");
             assertContains(output, "The \"/to\" date cannot be before the \"/from\" date.");
             assertContains(output, "A date-range list needs \"/to\" and an end date.");
             assertContains(output, "Use either \"list\" or \"list /from 2019-01-01 /to 2021-01-01\".");
@@ -172,7 +173,7 @@ public class NoriTest {
             assertContains(output, "1.[T][X] pack bag");
             assertContains(output, "2.[D][ ] return book (by: Dec 31 2024)");
             assertContains(output, "3.[E][X] celebration (from: 2024-12-31 2000 to: 2025-01-01 0100)");
-            assertContains(output, "Here are the deadlines and events on 2025-01-01:");
+            assertContains(output, "Noot noot! Things hatching on 2025-01-01:");
             assertContains(output, "3.[E][X] celebration");
         } finally {
             deleteDirectory(testDirectory);
@@ -196,7 +197,7 @@ public class NoriTest {
             // The final search is "find BOOK", so this is that search's section.
             // An upper-case keyword matching lower-case descriptions proves the
             // keyword side is case folded.
-            String matchingTasks = getSectionAfter(output, "Here are the matching tasks in your list:");
+            String matchingTasks = getSectionAfter(output, "Noot noot! I found these fish:");
             assertContains(matchingTasks, "1.[T][X] read book");
             assertContains(matchingTasks, "2.[D][ ] return book (by: Jun 06 2019)");
             assertContains(matchingTasks, "3.[E][ ] book fair");
@@ -205,8 +206,8 @@ public class NoriTest {
             // "find milk" matching "Buy Milk" proves the description side is case
             // folded too, and that a match keeps its number from the full list.
             assertContains(output, "4.[T][ ] Buy Milk");
-            assertContains(output, "There are no matching tasks in your list.");
-            assertContains(output, "OOPS!!! \"find\" needs a keyword.");
+            assertContains(output, "No matching fish in this sea. Try another keyword!");
+            assertContains(output, "NOOT?! \"find\" needs a keyword.");
         } finally {
             deleteDirectory(testDirectory);
         }
@@ -258,7 +259,7 @@ public class NoriTest {
      * @return the part of the output beginning with the final task-list heading
      */
     private static String getFinalList(String output) {
-        return getSectionAfter(output, "Here are the tasks in your list:");
+        return getSectionAfter(output, "Noot noot! Tasks currently chilling on the iceberg:");
     }
 
     /**
