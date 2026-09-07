@@ -17,8 +17,8 @@ import nori.Nori;
  */
 public final class MainWindow {
     private static final Duration EXIT_DELAY = Duration.millis(900);
-    private static final String GREETING = "Hi! I'm Nori, your little task companion. "
-            + "Type help to see everything we can do together.";
+    private static final String GREETING = "Noot noot! I'm Nori, your tiny task penguin. "
+            + "Type help to see what my flippers can do.";
 
     @FXML
     private VBox dialogContainer;
@@ -90,7 +90,7 @@ public final class MainWindow {
     private void endSession() {
         userInput.setDisable(true);
         sendButton.setDisable(true);
-        statusLabel.setText("Session complete");
+        statusLabel.setText("Waddling away...");
 
         PauseTransition exitPause = new PauseTransition(EXIT_DELAY);
         exitPause.setOnFinished(event -> Platform.exit());
