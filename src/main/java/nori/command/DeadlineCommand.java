@@ -1,5 +1,7 @@
 package nori.command;
 
+import java.util.Optional;
+
 import nori.NoriException;
 import nori.storage.Storage;
 import nori.task.Deadline;
@@ -25,43 +27,60 @@ class DeadlineCommand extends AddTaskCommand {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
-        int separatorIndex = details.indexOf(DEADLINE_SEPARATOR);
-        if (details.startsWith("/by ")) {
-            ui.showResponse("NOOT?! A deadline needs a description before \"/by\"."
-                    + " Try \"deadline submit report /by 2019-10-15\".");
-        } else if (details.endsWith("/by")) {
-            ui.showResponse("NOOT?! A deadline needs a due date after \"/by\"."
-                    + " Try \"deadline submit report /by 2019-10-15\".");
-        } else if (separatorIndex == -1) {
-            ui.showResponse("NOOT?! I cannot find the \"/by\" part of that deadline."
-                    + " Use \"deadline submit report /by 2019-10-15\".");
-        } else {
-            addDeadline(tasks, ui, storage, separatorIndex);
+        Optional<String> formatError = findFormatError();
+        if (formatError.isPresent()) {
+            ui.showResponse(formatError.get());
+            return;
         }
+        addTask(tasks, ui, storage,
+                new Deadline(getDescription(), Deadline.parseInput(getDueDateInput())));
     }
 
     /**
-     * Validates a deadline's details and adds the resulting task.
+     * Reports the first fault in this command's details.
      *
-     * @param tasks the task list to change.
-     * @param ui the console user interface.
-     * @param storage the persistent task storage.
-     * @param separatorIndex the position of the {@code /by} separator.
-     * @throws NoriException if the deadline cannot be parsed or saved.
+     * @return the correction to show the user, or empty when a deadline can be built.
      */
-    private void addDeadline(TaskList tasks, Ui ui, Storage storage, int separatorIndex)
-            throws NoriException {
-        String description = details.substring(0, separatorIndex).trim();
-        String deadlineInput = details.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
-        if (description.isEmpty()) {
-            ui.showResponse("NOOT?! A deadline needs a description before \"/by\"."
-                    + " Even a penguin needs to know what is due.");
-        } else if (deadlineInput.isEmpty()) {
-            ui.showResponse("NOOT?! A deadline needs a due date after \"/by\"."
-                    + " My calendar is colder than that empty space.");
-        } else {
-            addTask(tasks, ui, storage,
-                    new Deadline(description, Deadline.parseInput(deadlineInput)));
+    private Optional<String> findFormatError() {
+        if (details.startsWith("/by ")) {
+            return Optional.of("NOOT?! A deadline needs a description before \"/by\"."
+                    + " Try \"deadline submit report /by 2019-10-15\".");
         }
+        if (details.endsWith("/by")) {
+            return Optional.of("NOOT?! A deadline needs a due date after \"/by\"."
+                    + " Try \"deadline submit report /by 2019-10-15\".");
+        }
+        if (!details.contains(DEADLINE_SEPARATOR)) {
+            return Optional.of("NOOT?! I cannot find the \"/by\" part of that deadline."
+                    + " Use \"deadline submit report /by 2019-10-15\".");
+        }
+        if (getDescription().isEmpty()) {
+            return Optional.of("NOOT?! A deadline needs a description before \"/by\"."
+                    + " Even a penguin needs to know what is due.");
+        }
+        if (getDueDateInput().isEmpty()) {
+            return Optional.of("NOOT?! A deadline needs a due date after \"/by\"."
+                    + " My calendar is colder than that empty space.");
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns the text before the {@code /by} separator.
+     *
+     * @return the deadline description.
+     */
+    private String getDescription() {
+        return details.substring(0, details.indexOf(DEADLINE_SEPARATOR)).trim();
+    }
+
+    /**
+     * Returns the text after the {@code /by} separator.
+     *
+     * @return the unparsed due date.
+     */
+    private String getDueDateInput() {
+        int separatorIndex = details.indexOf(DEADLINE_SEPARATOR);
+        return details.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
     }
 }

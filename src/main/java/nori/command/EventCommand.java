@@ -1,5 +1,7 @@
 package nori.command;
 
+import java.util.Optional;
+
 import nori.NoriException;
 import nori.storage.Storage;
 import nori.task.Event;
@@ -27,55 +29,85 @@ class EventCommand extends AddTaskCommand {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
-        int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
-        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
-        if (details.startsWith("/from ")) {
-            ui.showResponse("NOOT?! An event needs a description before \"/from\"."
-                    + " Try \"event team meeting /from Mon 2pm /to 4pm\".");
-        } else if (fromSeparatorIndex == -1 && toSeparatorIndex == -1) {
-            ui.showResponse("NOOT?! An event needs both \"/from\" and \"/to\"."
-                    + " Use \"event team meeting /from Mon 2pm /to 4pm\".");
-        } else if (fromSeparatorIndex == -1) {
-            ui.showResponse("NOOT?! An event is missing \"/from\" and its start time."
-                    + " Tell me when to start waddling.");
-        } else if (toSeparatorIndex == -1) {
-            ui.showResponse("NOOT?! An event is missing \"/to\" and its end time."
-                    + " Even penguin meetings eventually end.");
-        } else if (toSeparatorIndex < fromSeparatorIndex) {
-            ui.showResponse("NOOT?! Put \"/from\" before \"/to\"."
-                    + " Time waddles forward, not backward.");
-        } else {
-            addEvent(tasks, ui, storage, fromSeparatorIndex, toSeparatorIndex);
+        Optional<String> formatError = findFormatError();
+        if (formatError.isPresent()) {
+            ui.showResponse(formatError.get());
+            return;
         }
+        addTask(tasks, ui, storage, new Event(getDescription(), getStartInput(), getEndInput()));
     }
 
     /**
-     * Validates an event's details and adds the resulting task.
+     * Reports the first fault in this command's details.
      *
-     * @param tasks the task list to change.
-     * @param ui the console user interface.
-     * @param storage the persistent task storage.
-     * @param fromSeparatorIndex the position of the {@code /from} separator.
-     * @param toSeparatorIndex the position of the {@code /to} separator.
-     * @throws NoriException if the event cannot be parsed or saved.
+     * @return the correction to show the user, or empty when an event can be built.
      */
-    private void addEvent(TaskList tasks, Ui ui, Storage storage, int fromSeparatorIndex,
-            int toSeparatorIndex) throws NoriException {
-        String description = details.substring(0, fromSeparatorIndex).trim();
-        String from = details.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(),
-                toSeparatorIndex).trim();
-        String to = details.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
-        if (description.isEmpty()) {
-            ui.showResponse("NOOT?! An event needs a description before \"/from\"."
-                    + " Meeting whom, the invisible seals?");
-        } else if (from.isEmpty()) {
-            ui.showResponse("NOOT?! \"/from\" needs a start time."
-                    + " I cannot waddle in from the void.");
-        } else if (to.isEmpty()) {
-            ui.showResponse("NOOT?! \"/to\" needs an end time."
-                    + " Even penguin meetings eventually end.");
-        } else {
-            addTask(tasks, ui, storage, new Event(description, from, to));
+    private Optional<String> findFormatError() {
+        int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
+        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
+        if (details.startsWith("/from ")) {
+            return Optional.of("NOOT?! An event needs a description before \"/from\"."
+                    + " Try \"event team meeting /from Mon 2pm /to 4pm\".");
         }
+        if (fromSeparatorIndex == -1 && toSeparatorIndex == -1) {
+            return Optional.of("NOOT?! An event needs both \"/from\" and \"/to\"."
+                    + " Use \"event team meeting /from Mon 2pm /to 4pm\".");
+        }
+        if (fromSeparatorIndex == -1) {
+            return Optional.of("NOOT?! An event is missing \"/from\" and its start time."
+                    + " Tell me when to start waddling.");
+        }
+        if (toSeparatorIndex == -1) {
+            return Optional.of("NOOT?! An event is missing \"/to\" and its end time."
+                    + " Even penguin meetings eventually end.");
+        }
+        if (toSeparatorIndex < fromSeparatorIndex) {
+            return Optional.of("NOOT?! Put \"/from\" before \"/to\"."
+                    + " Time waddles forward, not backward.");
+        }
+        if (getDescription().isEmpty()) {
+            return Optional.of("NOOT?! An event needs a description before \"/from\"."
+                    + " Meeting whom, the invisible seals?");
+        }
+        if (getStartInput().isEmpty()) {
+            return Optional.of("NOOT?! \"/from\" needs a start time."
+                    + " I cannot waddle in from the void.");
+        }
+        if (getEndInput().isEmpty()) {
+            return Optional.of("NOOT?! \"/to\" needs an end time."
+                    + " Even penguin meetings eventually end.");
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns the text before the {@code /from} separator.
+     *
+     * @return the event description.
+     */
+    private String getDescription() {
+        return details.substring(0, details.indexOf(EVENT_FROM_SEPARATOR)).trim();
+    }
+
+    /**
+     * Returns the text between the {@code /from} and {@code /to} separators.
+     *
+     * @return the event start details.
+     */
+    private String getStartInput() {
+        int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
+        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
+        return details.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(),
+                toSeparatorIndex).trim();
+    }
+
+    /**
+     * Returns the text after the {@code /to} separator.
+     *
+     * @return the event end details.
+     */
+    private String getEndInput() {
+        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
+        return details.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
     }
 }
