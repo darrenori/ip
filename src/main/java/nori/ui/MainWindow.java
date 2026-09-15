@@ -62,12 +62,11 @@ public final class MainWindow {
     public void setNori(Nori nori, GuiUi guiUi) {
         this.nori = nori;
         this.guiUi = guiUi;
-        dialogContainer.getChildren().add(DialogBox.getNoriDialog(GREETING));
+        addDialog(DialogBox.getNoriDialog(GREETING));
 
         String loadingMessage = nori.getLoadingMessage();
         if (loadingMessage != null) {
-            dialogContainer.getChildren().add(
-                    DialogBox.getNoriDialog(loadingMessage, nori.hasLoadingError()));
+            addDialog(DialogBox.getNoriDialog(loadingMessage, nori.hasLoadingError()));
         }
     }
 
@@ -80,16 +79,25 @@ public final class MainWindow {
         }
 
         userInput.clear();
-        dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
+        addDialog(DialogBox.getUserDialog(input));
         boolean isExitRequested = nori.executeCommand(input);
-        dialogContainer.getChildren().add(
-                DialogBox.getNoriDialog(guiUi.consumeResponse(), guiUi.isErrorResponse()));
+        addDialog(DialogBox.getNoriDialog(guiUi.consumeResponse(), guiUi.isErrorResponse()));
 
         if (isExitRequested) {
             endSession();
         } else {
             Platform.runLater(userInput::requestFocus);
         }
+    }
+
+    /**
+     * Adds one message to the conversation, keeping its width in step with the window.
+     *
+     * @param dialogBox the message to add.
+     */
+    private void addDialog(DialogBox dialogBox) {
+        dialogBox.bindMessageWidthTo(scrollPane.widthProperty());
+        dialogContainer.getChildren().add(dialogBox);
     }
 
     /** Disables further input and closes the application after the goodbye is visible. */

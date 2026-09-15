@@ -13,8 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root"
-            minHeight="600.0"
-            minWidth="720.0"
+            minHeight="420.0"
+            minWidth="480.0"
             prefHeight="720.0"
             prefWidth="920.0"
             stylesheets="@../css/main.css"

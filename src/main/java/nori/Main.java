@@ -15,8 +15,9 @@ import nori.ui.MainWindow;
  * Displays Nori's JavaFX user interface.
  */
 public class Main extends Application {
-    private static final double WINDOW_MIN_HEIGHT = 600;
-    private static final double WINDOW_MIN_WIDTH = 720;
+    /** The smallest window Nori still lays out properly, verified against its own content. */
+    private static final double WINDOW_MIN_HEIGHT = 420;
+    private static final double WINDOW_MIN_WIDTH = 480;
     private static final double WINDOW_PREFERRED_HEIGHT = 720;
     private static final double WINDOW_PREFERRED_WIDTH = 920;
     /** Names the product, and the character behind it, wherever the window is listed. */
