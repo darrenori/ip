@@ -1,71 +1,107 @@
 # Nori User Guide
 
-// Update the title above to match the actual product name
+Nori is a desktop task companion for keeping to-dos, deadlines, and events in
+one calm, searchable list. Type a command in the field at the bottom and press
+Enter or select **Send**. Nori saves changes beside the application, so your
+tasks are there the next time you open it.
 
-// Product screenshot goes here
+![Nori showing a populated task list and daily schedule](Ui.png)
 
-// Product intro goes here
+## Getting started
 
-## Adding deadlines
-
-// Describe the action and its outcome.
-
-// Give examples of usage
-
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
+Start by adding a few tasks, then use `list` to see them:
 
 ```
-expected output
+todo review the CS2103 tutorial
+deadline submit reflection /by 2026-09-18
+event project stand-up /from 2026-09-16 1000 /to 2026-09-16 1030
+list
 ```
 
-## Viewing a schedule
+All commands are lowercase. Use dates in `yyyy-MM-dd` form, for example
+`2026-09-18`. Type `help` at any time for the built-in command reminder.
 
-Lays one date out in the order it happens. The events that start at a known time
-on that date come first, earliest first; below them come the events that run over
-the date without a time of their own, then the deadlines falling due, then your
-to-dos, which belong to no particular day. A section with nothing in it is left
-out.
+## Add tasks
 
-Nori reads an event's start time out of the `/from` text you already type, so put
-one there. `0900`, `9:30`, `9.30`, `2pm`, `2:30 PM` and `9 a.m.` are all
-understood. An event with a date but no time still appears, under **All day**.
+`todo <description>` adds a task without a date.
 
-The numbers are the ones `list` uses, so a number read off a schedule can be
-given straight to `mark`, `unmark` or `delete`.
+Example: `todo review lecture notes`
 
-Example: `schedule 2019-06-06`
+`deadline <description> /by <date>` adds a task due on one date.
 
-```
-Noot noot! Schedule for 2019-06-06:
-09:00 3.[E][ ] exam (from: 2019-06-06 0900 to: 2019-06-06 1200)
-10:00 5.[E][ ] book fair (from: 2019-06-06 1000 to: 1800)
-All day:
-      4.[E][ ] conference (from: 2019-06-06 to: 2019-06-08)
-Due:
-      2.[D][ ] return book (by: Jun 06 2019)
-Anytime:
-      1.[T][ ] read book
-```
+Example: `deadline submit reflection /by 2026-09-18`
 
-Leave the date out to see today instead.
+`event <description> /from <start> /to <end>` adds an event. Its start and end
+can be dates, times, or both. Add a date and time to `/from` when you want the
+event to appear in time order in a schedule.
 
-Example: `schedule`
+Example: `event project stand-up /from 2026-09-16 1000 /to 2026-09-16 1030`
 
-A date Nori cannot read is reported rather than guessed at.
+Nori understands common times such as `0900`, `9:30`, `2pm`, and `2:30 PM`.
 
-Example: `schedule tomorrow`
+## View and find tasks
+
+`list` shows every task. `list /from <date> /to <date>` shows dated tasks in an
+inclusive date range.
+
+Examples:
 
 ```
-NOOT?! I cannot understand "tomorrow" as a date. Use a date like "2019-10-15".
+list
+list /from 2026-09-15 /to 2026-09-21
 ```
 
-## Feature ABC
+`on <date>` finds the deadlines and events that fall on that date.
 
-// Feature details
+Example: `on 2026-09-16`
 
+`find <keyword>` searches task descriptions without regard to letter case.
 
-## Feature XYZ
+Example: `find project`
 
-// Feature details
+`schedule [date]` lays out one day: timed events come first, followed by all-day
+events, deadlines, and to-dos. Omit the date to see today.
+
+Examples:
+
+```
+schedule
+schedule 2026-09-16
+```
+
+## Update tasks
+
+Use the number shown by `list`, `find`, `on`, or `schedule`.
+
+| Command | What it does | Example |
+| --- | --- | --- |
+| `mark <number>` | Marks a task complete. | `mark 2` |
+| `unmark <number>` | Marks a task incomplete. | `unmark 2` |
+| `delete <number>` | Removes a task. | `delete 2` |
+
+## Helpful keyboard shortcuts
+
+After entering commands, press the up and down arrow keys in the command field
+to recall them. Recalled commands are editable before you send them again. The
+orange outline around the composer shows where keyboard input will go.
+
+## Finish a session
+
+`bye` closes Nori. Your saved tasks remain available when you launch it again.
+
+## Command reference
+
+| Command | Purpose |
+| --- | --- |
+| `todo <description>` | Add a to-do. |
+| `deadline <description> /by <date>` | Add a deadline. |
+| `event <description> /from <start> /to <end>` | Add an event. |
+| `list [ /from <date> /to <date> ]` | List all tasks or dated tasks in a range. |
+| `on <date>` | Show tasks falling on a date. |
+| `schedule [date]` | Show one day's schedule. |
+| `find <keyword>` | Search task descriptions. |
+| `mark <number>` | Complete a task. |
+| `unmark <number>` | Reopen a task. |
+| `delete <number>` | Delete a task. |
+| `help` | Show the in-app command summary. |
+| `bye` | Close Nori. |
