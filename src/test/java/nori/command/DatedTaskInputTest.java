@@ -148,6 +148,46 @@ public class DatedTaskInputTest {
     }
 
     @Test
+    public void execute_deadlineWithRepeatedDueDate_reportsRepeatedOption() {
+        assertResponse("NOOT?! A deadline takes only one \"/by\"."
+                        + " Try \"deadline submit report /by 2019-10-15\".",
+                "deadline submit report /by 2019-10-15 /by 2019-10-16");
+    }
+
+    @Test
+    public void execute_deadlineWithEventOption_reportsUnexpectedOption() {
+        assertResponse("NOOT?! A deadline does not use \"/from\"."
+                        + " Try \"deadline submit report /by 2019-10-15\".",
+                "deadline submit report /from Mon /by 2019-10-15");
+    }
+
+    @Test
+    public void execute_eventWithRepeatedEnd_reportsRepeatedOption() {
+        assertResponse("NOOT?! An event takes only one \"/to\"."
+                        + " Use \"event team meeting /from Mon 2pm /to 4pm\".",
+                "event team meeting /from Mon 2pm /to 4pm /to 6pm");
+    }
+
+    @Test
+    public void execute_eventWithDeadlineOption_reportsUnexpectedOption() {
+        assertResponse("NOOT?! An event does not use \"/by\"."
+                        + " Use \"event team meeting /from Mon 2pm /to 4pm\".",
+                "event team meeting /from Mon 2pm /to 4pm /by 2019-10-15");
+    }
+
+    @Test
+    public void execute_eventWithRepeatedEnd_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event team meeting /from Mon 2pm /to 4pm /to 6pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
+    }
+
+    @Test
     public void execute_validDeadline_addsTheTask() {
         assertResponse("Noot noot! Task tucked safely under my wing:\n"
                         + "  [D][ ] submit report (by: Oct 15 2019)\n"

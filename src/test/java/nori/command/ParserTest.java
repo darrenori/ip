@@ -194,6 +194,20 @@ public class ParserTest {
                 "NOOT?! The \"/to\" date cannot be before the \"/from\" date. Time only waddles forward.");
     }
 
+    @Test
+    public void parseListDateRange_repeatedEndDate_throwsRepeatedOption() {
+        assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /to 2019-09-09",
+                "NOOT?! A date-range list takes only one \"/to\"."
+                        + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+    }
+
+    @Test
+    public void parseListDateRange_deadlineOption_throwsUnexpectedOption() {
+        assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /by 2020-01-01",
+                "NOOT?! A date-range list does not use \"/by\"."
+                        + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+    }
+
     /**
      * Verifies that parsing a date range fails with the expected user-facing message.
      *

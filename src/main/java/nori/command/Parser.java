@@ -3,6 +3,7 @@ package nori.command;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Optional;
 
 import nori.NoriException;
 import nori.task.DateRange;
@@ -70,6 +71,17 @@ public class Parser {
                 && options.getDescription().isEmpty();
         if (!startsWithFrom) {
             throw new NoriException("NOOT?! Use either \"list\" or " + LIST_EXAMPLE + ".");
+        }
+        Optional<String> unexpectedOption = options.findUnexpectedOption(
+                CommandOptions.OPTION_FROM, CommandOptions.OPTION_TO);
+        if (unexpectedOption.isPresent()) {
+            throw new NoriException("NOOT?! A date-range list does not use \""
+                    + unexpectedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
+        }
+        Optional<String> repeatedOption = options.findRepeatedOption();
+        if (repeatedOption.isPresent()) {
+            throw new NoriException("NOOT?! A date-range list takes only one \""
+                    + repeatedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
         }
         if (!options.hasOption(CommandOptions.OPTION_TO)) {
             throw new NoriException("NOOT?! A date-range list needs \"/to\" and an end date."

@@ -46,6 +46,17 @@ class EventCommand extends AddTaskCommand {
      * @return the correction to show the user, or empty when an event can be built.
      */
     private Optional<String> findFormatError(CommandOptions options) {
+        Optional<String> unexpectedOption = options.findUnexpectedOption(
+                CommandOptions.OPTION_FROM, CommandOptions.OPTION_TO);
+        if (unexpectedOption.isPresent()) {
+            return Optional.of("NOOT?! An event does not use \"" + unexpectedOption.get() + "\"."
+                    + " Use " + EVENT_EXAMPLE + ".");
+        }
+        Optional<String> repeatedOption = options.findRepeatedOption();
+        if (repeatedOption.isPresent()) {
+            return Optional.of("NOOT?! An event takes only one \"" + repeatedOption.get() + "\"."
+                    + " Use " + EVENT_EXAMPLE + ".");
+        }
         boolean hasStart = options.hasOption(CommandOptions.OPTION_FROM);
         boolean hasEnd = options.hasOption(CommandOptions.OPTION_TO);
         if (!hasStart && !hasEnd) {

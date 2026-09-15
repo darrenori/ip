@@ -44,6 +44,16 @@ class DeadlineCommand extends AddTaskCommand {
      * @return the correction to show the user, or empty when a deadline can be built.
      */
     private Optional<String> findFormatError(CommandOptions options) {
+        Optional<String> unexpectedOption = options.findUnexpectedOption(CommandOptions.OPTION_BY);
+        if (unexpectedOption.isPresent()) {
+            return Optional.of("NOOT?! A deadline does not use \"" + unexpectedOption.get() + "\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
+        }
+        Optional<String> repeatedOption = options.findRepeatedOption();
+        if (repeatedOption.isPresent()) {
+            return Optional.of("NOOT?! A deadline takes only one \"/by\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
+        }
         if (!options.hasOption(CommandOptions.OPTION_BY)) {
             return Optional.of("NOOT?! I cannot find the \"/by\" part of that deadline."
                     + " Use " + DEADLINE_EXAMPLE + ".");

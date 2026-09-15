@@ -1366,3 +1366,74 @@ ____________________________________________________________
      Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
+
+## Test 19: Reject a command that repeats or misuses an option
+
+**Aim:** Verify that repeating an option, or using one a command does not accept, is named as the fault rather than folded into a value, and that no task is stored by any of them.
+
+**Covers:** The repeated-option and unexpected-option branches of the deadline, event and date-range list commands, and the adjoining-separator case that once threw out of `EventCommand`.
+
+### Input
+```text
+deadline report /by 2019-01-01 /by 2019-02-02
+event trip /from 2019-01-01 /to 2019-01-02 /to 2019-01-05
+deadline report /from 2019-01-01 /by 2019-02-02
+event trip /from 2019-01-01 /to 2019-01-02 /by 2019-01-05
+list /from 2019-01-01 /to 2019-01-01 /to 2019-05-05
+list /from 2019-01-01 /to 2019-05-05 /by 2020-01-01
+event x /from /to y
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A deadline takes only one "/by". Try "deadline submit report /by 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event takes only one "/to". Use "event team meeting /from Mon 2pm /to 4pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A deadline does not use "/from". Try "deadline submit report /by 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event does not use "/by". Use "event team meeting /from Mon 2pm /to 4pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A date-range list takes only one "/to". Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A date-range list does not use "/by". Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! "/from" needs a start time. I cannot waddle in from the void.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     The iceberg is empty. Try "todo borrow book". Noot noot!
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```
