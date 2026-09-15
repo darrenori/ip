@@ -1509,3 +1509,121 @@ ____________________________________________________________
      Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
+
+## Test 21: Refuse to add a task the iceberg already holds
+
+**Aim:** Verify that adding a task the list already records is refused and names the task already stored, while a task differing in its date, its span, or the case of its description is still added, and completion never makes a repeat look new.
+
+**Covers:** `Task.isSameTask` and its deadline and event overrides, `TaskList.findSameTask`, and the duplicate branch of `AddTaskCommand`.
+
+### Input
+```text
+todo read book
+todo read book
+mark 1
+todo read book
+todo Read Book
+deadline report /by 2019-01-01
+deadline report /by 2019-01-02
+deadline report /by 2019-01-01
+event fair /from 1pm /to 2pm
+event fair /from 1pm /to 3pm
+event fair /from 1pm /to 2pm
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [T][ ] read book
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [T][ ] read book
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! This task is now ice-cold complete:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [T][X] read book
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [T][ ] Read Book
+     The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [D][ ] report (by: Jan 01 2019)
+     The iceberg now holds 3 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [D][ ] report (by: Jan 02 2019)
+     The iceberg now holds 4 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [D][ ] report (by: Jan 01 2019)
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 1pm to: 2pm)
+     The iceberg now holds 5 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 1pm to: 3pm)
+     The iceberg now holds 6 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [E][ ] fair (from: 1pm to: 2pm)
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Tasks currently chilling on the iceberg:
+     1.[T][X] read book
+     2.[T][ ] Read Book
+     3.[D][ ] report (by: Jan 01 2019)
+     4.[D][ ] report (by: Jan 02 2019)
+     5.[E][ ] fair (from: 1pm to: 2pm)
+     6.[E][ ] fair (from: 1pm to: 3pm)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```

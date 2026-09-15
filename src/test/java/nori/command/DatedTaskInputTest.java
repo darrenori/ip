@@ -244,6 +244,32 @@ public class DatedTaskInputTest {
                 "event team meeting /from Mon 2pm /to 4pm");
     }
 
+    @Test
+    public void execute_repeatedDeadline_reportsTheStoredTask() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("deadline report /by 2019-10-15");
+        nori.executeCommand("deadline report /by 2019-10-15");
+
+        assertEquals("NOOT?! The iceberg already holds that task:" + "\n"
+                + "  [D][ ] report (by: Oct 15 2019)" + "\n"
+                + "I won\'t carry the same fish twice.", guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_deadlineOnAnotherDate_addsTheTask() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("deadline report /by 2019-10-15");
+        nori.executeCommand("deadline report /by 2019-10-16");
+
+        assertEquals("Noot noot! Task tucked safely under my wing:" + "\n"
+                + "  [D][ ] report (by: Oct 16 2019)" + "\n"
+                + "The iceberg now holds 2 task(s).", guiUi.consumeResponse());
+    }
+
     /**
      * Runs one command in a fresh session and checks the whole response.
      *

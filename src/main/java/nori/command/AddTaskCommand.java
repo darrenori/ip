@@ -1,5 +1,7 @@
 package nori.command;
 
+import java.util.Optional;
+
 import nori.NoriException;
 import nori.storage.Storage;
 import nori.task.Task;
@@ -29,6 +31,14 @@ abstract class AddTaskCommand extends InputCommand {
      * @throws NoriException if the task cannot be saved.
      */
     protected void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
+        Optional<Task> repeatedTask = tasks.findSameTask(task);
+        if (repeatedTask.isPresent()) {
+            ui.showResponse("NOOT?! The iceberg already holds that task:",
+                    "  " + repeatedTask.get(),
+                    "I won't carry the same fish twice.");
+            return;
+        }
+
         tasks.add(task);
         assert tasks.get(tasks.size() - 1) == task
                 : "The added task must be the last one, because a failed save removes the last task.";

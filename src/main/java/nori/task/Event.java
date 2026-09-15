@@ -233,6 +233,22 @@ public class Event extends Task {
     }
 
     /**
+     * Returns whether another task is an event for the same thing over the same span.
+     *
+     * @param other the task to compare this one with.
+     * @return {@code true} when the descriptions and both spans match.
+     */
+    @Override
+    public boolean isSameTask(Task other) {
+        if (!super.isSameTask(other)) {
+            return false;
+        }
+
+        Event otherEvent = (Event) other;
+        return otherEvent.from.equals(from) && otherEvent.to.equals(to);
+    }
+
+    /**
      * Returns this event with its {@code [E]} type icon and its start and end details.
      *
      * @return the task rendering behind an {@code [E]} type icon, followed

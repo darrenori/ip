@@ -93,6 +93,17 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns whether another task is a deadline for the same thing on the same date.
+     *
+     * @param other the task to compare this one with.
+     * @return {@code true} when the descriptions and the due dates both match.
+     */
+    @Override
+    public boolean isSameTask(Task other) {
+        return super.isSameTask(other) && ((Deadline) other).by.equals(by);
+    }
+
+    /**
      * Returns this deadline with its {@code [D]} type icon and readable due date.
      *
      * @return the task rendering behind a {@code [D]} type icon, followed
