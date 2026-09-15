@@ -192,6 +192,16 @@
     -fx-padding: 6px;
 }
 
+/* The command field's own background is transparent so that it reads as part
+   of the composer rather than as a box inside it, which leaves it nothing to
+   show focus with. The composer is ringed on its behalf, in the accent
+   colour and at no change of size, so nothing on the row moves when focus
+   arrives. */
+.composer-bar.composer-bar-focused {
+    -fx-border-color: -nori-beak;
+    -fx-effect: dropshadow(gaussian, rgba(194, 65, 12, 0.32), 9, 0.35, 0, 0);
+}
+
 .command-input {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -222,6 +232,10 @@
 .send-button:pressed {
     -fx-background-color: -nori-beak-press;
     -fx-translate-y: 1px;
+}
+
+.send-button:focused {
+    -fx-effect: dropshadow(gaussian, rgba(23, 42, 58, 0.5), 9, 0.4, 0, 0);
 }
 
 .send-button:disabled {
