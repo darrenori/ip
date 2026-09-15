@@ -1,5 +1,4 @@
 package nori;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,40 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
+import nori.testutil.IsolatedSessionTest;
 import nori.ui.GuiUi;
 
 /**
  * Tests the command-response boundary used by Nori's graphical interface.
  */
-public class NoriGuiTest {
-    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
-
-    @TempDir
-    private Path temporaryDirectory;
-    private String previousStorageDirectory;
-
-    @BeforeEach
-    public void redirectStorage() {
-        previousStorageDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
-        System.setProperty(STORAGE_DIRECTORY_PROPERTY, temporaryDirectory.toString());
-    }
-
-    @AfterEach
-    public void restoreStorage() {
-        if (previousStorageDirectory == null) {
-            System.clearProperty(STORAGE_DIRECTORY_PROPERTY);
-        } else {
-            System.setProperty(STORAGE_DIRECTORY_PROPERTY, previousStorageDirectory);
-        }
-    }
-
+public class NoriGuiTest extends IsolatedSessionTest {
     @Test
     public void executeCommand_addTodo_returnsResponseWithoutExiting() {
         GuiUi guiUi = new GuiUi();
@@ -66,7 +41,7 @@ public class NoriGuiTest {
 
     @Test
     public void hasLoadingError_unreadableStorage_returnsTrue() throws IOException {
-        Files.writeString(temporaryDirectory.resolve("nori.txt"), "this is not a task",
+        Files.writeString(storageDirectory.resolve("nori.txt"), "this is not a task",
                 StandardCharsets.UTF_8);
 
         Nori nori = new Nori(new GuiUi());

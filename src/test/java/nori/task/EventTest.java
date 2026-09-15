@@ -80,6 +80,13 @@ public class EventTest {
     }
 
     @Test
+    public void findOrderingError_missingDetail_returnsEmpty() {
+        assertEquals(Optional.empty(), Event.findOrderingError(null, "4pm"));
+        assertEquals(Optional.empty(), Event.findOrderingError("2pm", null));
+        assertEquals(Optional.empty(), Event.findOrderingError(null, null));
+    }
+
+    @Test
     public void findOrderingError_detailsWithoutTimes_returnsEmpty() {
         assertEquals(Optional.empty(), Event.findOrderingError("soon", "later"));
     }

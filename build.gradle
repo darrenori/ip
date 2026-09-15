@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -60,6 +61,38 @@ test {
         showStackTraces = true
         showStandardStreams = false
     }
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        html.required = true
+        xml.required = false
+    }
+
+    // Classes that cannot run without a display and a JavaFX toolkit are left out
+    // of the report. Counting them would only ever show them uncovered, which
+    // would hide movement in the code that JUnit can actually reach. They are
+    // checked by hand instead, against test/gui-test-plan.md.
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect { directory ->
+            fileTree(dir: directory, exclude: [
+                'nori/Main.class',
+                'nori/Launcher.class',
+                'nori/ui/BotAvatar.class',
+                'nori/ui/ConversationFont.class',
+                'nori/ui/DialogBox*.class',
+                'nori/ui/MainWindow*.class'
+            ])
+        }))
+    }
+}
+
+tasks.register('coverage') {
+    group = 'verification'
+    description = 'Runs the JUnit tests and reports the code they covered.'
+    dependsOn jacocoTestReport
 }
 
 sourceSets {

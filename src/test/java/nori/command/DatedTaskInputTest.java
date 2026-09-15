@@ -1,42 +1,16 @@
 package nori.command;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.nio.file.Path;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import nori.Nori;
+import nori.testutil.IsolatedSessionTest;
 import nori.ui.GuiUi;
 
 /**
  * Tests the fault each malformed deadline and event command is answered with.
  */
-public class DatedTaskInputTest {
-    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
-
-    @TempDir
-    private Path temporaryDirectory;
-    private String previousStorageDirectory;
-
-    @BeforeEach
-    public void redirectStorage() {
-        previousStorageDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
-        System.setProperty(STORAGE_DIRECTORY_PROPERTY, temporaryDirectory.toString());
-    }
-
-    @AfterEach
-    public void restoreStorage() {
-        if (previousStorageDirectory == null) {
-            System.clearProperty(STORAGE_DIRECTORY_PROPERTY);
-        } else {
-            System.setProperty(STORAGE_DIRECTORY_PROPERTY, previousStorageDirectory);
-        }
-    }
-
+public class DatedTaskInputTest extends IsolatedSessionTest {
     @Test
     public void execute_deadlineWithoutDescription_reportsMissingDescription() {
         assertResponse("NOOT?! A deadline needs a description before \"/by\"."
