@@ -168,6 +168,13 @@ public class Event extends Task {
      * @return the correction to show the user, or empty when the two are in order.
      */
     public static Optional<String> findOrderingError(String from, String to) {
+        if (from == null || to == null) {
+            // A detail that is not there has no place in an ordering. The
+            // constructor reports the missing detail itself, which is the fault
+            // the user actually needs to hear about.
+            return Optional.empty();
+        }
+
         LocalDate startDate = findDate(from);
         LocalDate endDate = findDate(to);
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
