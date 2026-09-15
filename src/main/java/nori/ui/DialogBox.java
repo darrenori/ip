@@ -41,6 +41,7 @@ public final class DialogBox extends HBox {
         }
 
         dialog.setText(text);
+        dialog.setStyle(ConversationFont.getFamilyStyle());
         dialog.getStyleClass().add(bubbleStyle);
         speakerLabel.setText(speaker);
         avatarSlot.getChildren().setAll(avatar);

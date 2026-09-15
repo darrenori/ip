@@ -126,10 +126,20 @@
     -fx-text-fill: -nori-ink-meta;
 }
 
+/* Task lists and the schedule are columns of text held together by spaces:
+   a task number, a status box, and the schedule's leading time. A
+   proportional font gives each of those a different width and the columns
+   come apart, so the conversation is set in a monospaced face, where they
+   cannot. A command echoed back is set the same way, being a command.
+
+   The family itself is chosen by ConversationFont against the fonts the
+   running machine actually has, because JavaFX reads only the first family
+   named here and falls back to a proportional face rather than trying the
+   next one. Size and spacing stay here with the rest of the type scale. */
 .message-bubble {
-    -fx-font-size: 14px;
-    -fx-line-spacing: 3px;
-    -fx-padding: 13px 16px;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 3.5px;
+    -fx-padding: 12px 15px;
 }
 
 /* Nori speaks from a light card; the user speaks from a solid ink chip. The two
