@@ -57,7 +57,7 @@ public class Deadline extends Task {
         try {
             return new Deadline(description, LocalDate.parse(storedDate));
         } catch (DateTimeParseException exception) {
-            throw new NoriException("OOPS!!! I couldn't read your saved tasks from disk.");
+            throw new NoriException("SAD NOOT! I couldn't read your saved tasks off the ice.");
         }
     }
 

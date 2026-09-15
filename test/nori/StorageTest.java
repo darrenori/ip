@@ -184,7 +184,7 @@ public class StorageTest {
 
             String output = runNori(testDirectory, "list\nbye\n");
 
-            assertContains(output, "Your saved tasks are corrupted and no backup is available.");
+            assertContains(output, "Your saved tasks are corrupted and I have no backup to waddle back to.");
             assertEquals(corruptContent, Files.readString(storageFile, StandardCharsets.UTF_8));
             assertTrue(Files.notExists(dataDirectory.resolve(CORRUPT_FILE)),
                     "Expected no corrupt copy without a recoverable backup.");
@@ -206,7 +206,7 @@ public class StorageTest {
             String output = runNori(testDirectory, "list\nbye\n");
 
             assertContains(output,
-                    "Your saved tasks are corrupted and the backup could not be restored.");
+                    "Your saved tasks are corrupted and the backup wouldn't come back either.");
             assertEquals(corruptContent, Files.readString(storageFile, StandardCharsets.UTF_8));
         } finally {
             deleteDirectory(testDirectory);

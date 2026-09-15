@@ -10,6 +10,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_25
 }
 
+// Nori's responses and its GUI contain non-ASCII characters, so the source
+// encoding must not be left to whichever platform happens to run the build.
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     google()
     mavenCentral()

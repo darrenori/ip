@@ -28,7 +28,7 @@ public class Storage {
     private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
     /** Reported whenever a stored line cannot be turned back into a task. */
     private static final String UNREADABLE_STORAGE_ERROR =
-            "OOPS!!! I couldn't read your saved tasks from disk.";
+            "SAD NOOT! I couldn't read your saved tasks off the ice.";
     /** Marks a stored field as Base64-encoded, distinguishing it from the older plain-text format. */
     private static final String ENCODED_FIELD_PREFIX = "b64:";
     /** Separates the fields of one stored task line. */
@@ -108,10 +108,10 @@ public class Storage {
      */
     public void saveTasks(List<Task> tasks) throws NoriException {
         if (!canWriteToStorage) {
-            throw new NoriException("OOPS!!! I won't overwrite saved tasks that could not be read.");
+            throw new NoriException("SAD NOOT! I won't bury saved tasks that I couldn't read.");
         }
         if (tasks == null) {
-            throw new NoriException("OOPS!!! I couldn't save an empty task list reference.");
+            throw new NoriException("SAD NOOT! I couldn't save a task list that isn't there.");
         }
 
         List<String> taskLines = new ArrayList<>();
@@ -130,7 +130,7 @@ public class Storage {
             replaceStorageFile(temporaryFile);
             updateBackupFile();
         } catch (IOException | SecurityException exception) {
-            throw new NoriException("OOPS!!! I couldn't save your tasks to disk.");
+            throw new NoriException("SAD NOOT! I couldn't write your tasks onto the ice.");
         } finally {
             deleteTemporaryFile(temporaryFile);
         }
@@ -220,9 +220,10 @@ public class Storage {
             if (Files.isRegularFile(legacyBackupFilePath)) {
                 Files.copy(legacyBackupFilePath, backupFilePath);
             }
-            loadingNotice = "I've imported saved tasks from src/main/java/data to data/nori.txt.";
+            loadingNotice = "Noot! I've imported saved tasks from src/main/java/data to data/nori.txt.";
         } catch (IOException | SecurityException exception) {
-            throw new NoriException("OOPS!!! I couldn't import saved tasks from src/main/java/data.");
+            throw new NoriException("SAD NOOT! I couldn't carry your saved tasks over"
+                    + " from src/main/java/data.");
         }
     }
 
@@ -245,7 +246,7 @@ public class Storage {
      */
     private static String formatTask(Task task) throws NoriException {
         if (task == null) {
-            throw new NoriException("OOPS!!! I couldn't save a missing task.");
+            throw new NoriException("SAD NOOT! I couldn't save a task that isn't there.");
         }
 
         String status = task.isDone() ? STATUS_DONE : STATUS_NOT_DONE;
@@ -266,7 +267,7 @@ public class Storage {
                     + TASK_SEPARATOR + encodeField(event.getFrom())
                     + TASK_SEPARATOR + encodeField(event.getTo());
         }
-        throw new NoriException("OOPS!!! I couldn't save an unsupported task type.");
+        throw new NoriException("SAD NOOT! I don't know how to save that kind of task.");
     }
 
     /**
@@ -351,20 +352,21 @@ public class Storage {
     private List<Task> recoverFromBackup() throws NoriException {
         if (Files.notExists(backupFilePath)) {
             canWriteToStorage = false;
-            throw new NoriException("OOPS!!! Your saved tasks are corrupted and no backup is available.");
+            throw new NoriException("SAD NOOT! Your saved tasks are corrupted"
+                    + " and I have no backup to waddle back to.");
         }
 
         try {
             List<Task> backupTasks = readTasks(backupFilePath);
             Files.copy(filePath, corruptFilePath, StandardCopyOption.REPLACE_EXISTING);
             Files.copy(backupFilePath, filePath, StandardCopyOption.REPLACE_EXISTING);
-            loadingNotice = "Your saved tasks were corrupted. I've restored the backup and kept the damaged "
-                    + "file as data/nori.txt.corrupt.";
+            loadingNotice = "Noot! Your saved tasks were corrupted. I've restored the backup"
+                    + " and kept the damaged file as data/nori.txt.corrupt.";
             return backupTasks;
         } catch (IOException | SecurityException | NoriException exception) {
             canWriteToStorage = false;
-            throw new NoriException("OOPS!!! Your saved tasks are corrupted"
-                    + " and the backup could not be restored.");
+            throw new NoriException("SAD NOOT! Your saved tasks are corrupted"
+                    + " and the backup wouldn't come back either.");
         }
     }
 
@@ -397,7 +399,7 @@ public class Storage {
      */
     private static String encodeField(String field) throws NoriException {
         if (field == null) {
-            throw new NoriException("OOPS!!! I couldn't save a task with missing details.");
+            throw new NoriException("SAD NOOT! I couldn't save a task with missing details.");
         }
         return ENCODED_FIELD_PREFIX + Base64.getEncoder().encodeToString(field.getBytes(StandardCharsets.UTF_8));
     }

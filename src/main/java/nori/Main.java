@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nori.ui.BotAvatar;
 import nori.ui.GuiUi;
 import nori.ui.MainWindow;
 
@@ -18,6 +19,8 @@ public class Main extends Application {
     private static final double WINDOW_MIN_WIDTH = 720;
     private static final double WINDOW_PREFERRED_HEIGHT = 720;
     private static final double WINDOW_PREFERRED_WIDTH = 920;
+    /** Names the product, and the character behind it, wherever the window is listed. */
+    private static final String WINDOW_TITLE = "Nori — Your task penguin";
 
     /** Captures command responses for display in the JavaFX interface. */
     private final GuiUi guiUi = new GuiUi();
@@ -37,7 +40,8 @@ public class Main extends Application {
         mainWindow.setNori(nori, guiUi);
 
         Scene scene = new Scene(root, WINDOW_PREFERRED_WIDTH, WINDOW_PREFERRED_HEIGHT);
-        stage.setTitle("Nori — Task companion");
+        stage.setTitle(WINDOW_TITLE);
+        stage.getIcons().add(BotAvatar.createWindowIcon());
         stage.setMinHeight(WINDOW_MIN_HEIGHT);
         stage.setMinWidth(WINDOW_MIN_WIDTH);
         stage.setScene(scene);
