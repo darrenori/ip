@@ -1124,9 +1124,9 @@ ____________________________________________________________
 
 ## Test 9: Tolerate stray whitespace but reject near-miss commands
 
-**Aim:** Verify that surrounding whitespace never turns a valid command into an unknown one, while blank input, wrong capitalisation, and words that merely start with a command keyword are still rejected.
+**Aim:** Verify that surrounding whitespace never turns a valid command into an unknown one, while blank input, wrong capitalisation, and words that merely start with a command keyword are still rejected -- each of them now naming the command the user most likely meant rather than listing every command Nori knows.
 
-**Covers:** Input trimming in the main loop and the keyword-boundary check in `isCommand`.
+**Covers:** Input trimming in the main loop, the keyword-boundary check in `isCommandTypeOf`, and the blank-input, wrong-case and nearest-keyword branches of `CommandSuggestions`.
 
 ### Input
 ```text
@@ -1156,23 +1156,23 @@ Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     Noot? You didn't say anything. Type "help" and I'll show you what my flippers can do.
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! My commands are all lowercase. Did you mean "todo"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "todos". Did you mean "todo"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "listen". Did you mean "list"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "marker". Did you mean "mark"?
     ____________________________________________________________
 
     ____________________________________________________________

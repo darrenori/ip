@@ -45,7 +45,7 @@ public class Parser {
 
         CommandType commandType = findCommandType(input);
         if (commandType == null) {
-            return Commands.createUnknown();
+            return Commands.createUnknown(input);
         }
 
         String details = getCommandDetails(input, commandType.getKeyword());
