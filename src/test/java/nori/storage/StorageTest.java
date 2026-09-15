@@ -1,5 +1,4 @@
 package nori.storage;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -16,16 +15,14 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import nori.NoriException;
 import nori.task.Deadline;
 import nori.task.Event;
 import nori.task.Task;
 import nori.task.Todo;
+import nori.testutil.IsolatedSessionTest;
 
 /**
  * Tests saving, loading, and recovering Nori's task file.
@@ -34,30 +31,10 @@ import nori.task.Todo;
  * property the application reads, so none of them can see or disturb the task
  * file of whoever is running them.
  */
-public class StorageTest {
-    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
+public class StorageTest extends IsolatedSessionTest {
     private static final String STORAGE_FILE = "nori.txt";
     private static final String BACKUP_FILE = "nori.txt.bak";
     private static final String CORRUPT_FILE = "nori.txt.corrupt";
-
-    @TempDir
-    private Path storageDirectory;
-    private String previousStorageDirectory;
-
-    @BeforeEach
-    public void redirectStorage() {
-        previousStorageDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
-        System.setProperty(STORAGE_DIRECTORY_PROPERTY, storageDirectory.toString());
-    }
-
-    @AfterEach
-    public void restoreStorage() {
-        if (previousStorageDirectory == null) {
-            System.clearProperty(STORAGE_DIRECTORY_PROPERTY);
-        } else {
-            System.setProperty(STORAGE_DIRECTORY_PROPERTY, previousStorageDirectory);
-        }
-    }
 
     @Test
     public void loadTasks_noStorageFile_returnsNoTasks() throws NoriException {

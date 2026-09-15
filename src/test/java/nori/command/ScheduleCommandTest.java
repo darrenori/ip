@@ -1,43 +1,16 @@
 package nori.command;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import nori.Nori;
-import nori.ui.GuiUi;
+import nori.testutil.IsolatedSessionTest;
 
 /**
  * Tests the day a schedule lays out, section by section and in order.
  */
-public class ScheduleCommandTest {
-    private static final String STORAGE_DIRECTORY_PROPERTY = "nori.storage.dir";
-
-    @TempDir
-    private Path temporaryDirectory;
-    private String previousStorageDirectory;
-
-    @BeforeEach
-    public void redirectStorage() {
-        previousStorageDirectory = System.getProperty(STORAGE_DIRECTORY_PROPERTY);
-        System.setProperty(STORAGE_DIRECTORY_PROPERTY, temporaryDirectory.toString());
-    }
-
-    @AfterEach
-    public void restoreStorage() {
-        if (previousStorageDirectory == null) {
-            System.clearProperty(STORAGE_DIRECTORY_PROPERTY);
-        } else {
-            System.setProperty(STORAGE_DIRECTORY_PROPERTY, previousStorageDirectory);
-        }
-    }
-
+public class ScheduleCommandTest extends IsolatedSessionTest {
     @Test
     public void execute_dayWithEveryKindOfTask_laysTheDayOut() {
         String response = runCommands(
@@ -174,21 +147,4 @@ public class ScheduleCommandTest {
                 + "09:00 1.[E][X] exam (from: 2019-06-06 0900 to: 1200)", response);
     }
 
-    /**
-     * Runs commands in one session and returns the response to the last of them.
-     *
-     * @param inputs the commands to run, in order.
-     * @return the response the final command produced.
-     */
-    private String runCommands(String... inputs) {
-        GuiUi guiUi = new GuiUi();
-        Nori nori = new Nori(guiUi);
-
-        String response = "";
-        for (String input : inputs) {
-            nori.executeCommand(input);
-            response = guiUi.consumeResponse();
-        }
-        return response;
-    }
 }
