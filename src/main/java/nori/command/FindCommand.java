@@ -21,7 +21,7 @@ class FindCommand extends InputCommand {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         if (details.isEmpty()) {
-            ui.showResponse("NOOT?! \"find\" needs a keyword."
+            ui.showError("NOOT?! \"find\" needs a keyword."
                     + " Try \"find book\"; even penguins need a clue.");
             return;
         }

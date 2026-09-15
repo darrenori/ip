@@ -33,7 +33,7 @@ abstract class AddTaskCommand extends InputCommand {
     protected void addTask(TaskList tasks, Ui ui, Storage storage, Task task) throws NoriException {
         Optional<Task> repeatedTask = tasks.findSameTask(task);
         if (repeatedTask.isPresent()) {
-            ui.showResponse("NOOT?! The iceberg already holds that task:",
+            ui.showError("NOOT?! The iceberg already holds that task:",
                     "  " + repeatedTask.get(),
                     "I won't carry the same fish twice.");
             return;

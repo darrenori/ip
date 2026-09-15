@@ -23,7 +23,7 @@ class TodoCommand extends AddTaskCommand {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
         if (details.isEmpty()) {
-            ui.showResponse("NOOT?! A todo needs a description."
+            ui.showError("NOOT?! A todo needs a description."
                     + " Try \"todo borrow book\"; my flippers cannot read minds.");
             return;
         }

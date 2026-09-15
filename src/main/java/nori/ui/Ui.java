@@ -78,12 +78,26 @@ public class Ui {
     }
 
     /**
+     * Displays a response reporting something Nori could not do.
+     *
+     * A console reader has the whole session in front of them and reads it in
+     * order, so an error needs no distinct format here and is printed like any
+     * other response. A graphical interface, where responses scroll away and
+     * are taken in at a glance, overrides this to mark an error out.
+     *
+     * @param lines the error lines to display.
+     */
+    public void showError(String... lines) {
+        showResponse(lines);
+    }
+
+    /**
      * Displays an error that occurred while loading saved tasks.
      *
      * @param message the loading error to display.
      */
     public void showLoadingError(String message) {
-        showResponse(message);
+        showError(message);
     }
 
     /**
