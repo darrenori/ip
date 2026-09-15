@@ -90,7 +90,8 @@ manual cases in [test/gui-test-plan.md](test/gui-test-plan.md).
   [SE-EDU guides](https://se-education.org/guides/), kept as working copies under
   [docs/conventions/](docs/conventions/).
 * Nori's portrait (`src/main/resources/images/pingu-background.png`), used as the chat avatar, the
-  window icon and the conversation's background texture, is a still of Pingu, the character from the
-  stop-motion series of the same name. It is not original work and is not mine; it is placeholder
-  artwork for a course project and is not licensed for redistribution.
+  window icon and the conversation's background texture, comes from the BBC's
+  [Pingu image](https://ichef.bbci.co.uk/images/ic/1200x675/p01lcg17.jpg). It is not original work
+  and is not mine; it is placeholder artwork for a course project and is not licensed for
+  redistribution.
 * No third-party code beyond the template above has been reused in this project.
