@@ -2,8 +2,13 @@ package nori;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterEach;
@@ -49,6 +54,25 @@ public class NoriGuiTest {
         assertEquals("Noot noot! Task tucked safely under my wing:\n"
                 + "  [T][ ] finish tutorial\n"
                 + "The iceberg now holds 1 task(s).", guiUi.consumeResponse());
+    }
+
+    @Test
+    public void hasLoadingError_readableStorage_returnsFalse() {
+        Nori nori = new Nori(new GuiUi());
+
+        assertFalse(nori.hasLoadingError());
+        assertNull(nori.getLoadingMessage());
+    }
+
+    @Test
+    public void hasLoadingError_unreadableStorage_returnsTrue() throws IOException {
+        Files.writeString(temporaryDirectory.resolve("nori.txt"), "this is not a task",
+                StandardCharsets.UTF_8);
+
+        Nori nori = new Nori(new GuiUi());
+
+        assertTrue(nori.hasLoadingError());
+        assertNotNull(nori.getLoadingMessage());
     }
 
     @Test
