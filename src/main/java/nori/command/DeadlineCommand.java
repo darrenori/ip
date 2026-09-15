@@ -12,8 +12,8 @@ import nori.ui.Ui;
  * Adds a deadline task.
  */
 class DeadlineCommand extends AddTaskCommand {
-    /** Separates a deadline description from its due date. */
-    private static final String DEADLINE_SEPARATOR = " /by ";
+    /** Shown alongside every complaint, so a correction is always in view. */
+    private static final String DEADLINE_EXAMPLE = "\"deadline submit report /by 2019-10-15\"";
 
     /**
      * Creates a command that adds a deadline.
@@ -27,52 +27,45 @@ class DeadlineCommand extends AddTaskCommand {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
-        Optional<String> formatError = findFormatError();
+        CommandOptions options = CommandOptions.parse(details);
+        Optional<String> formatError = findFormatError(options);
         if (formatError.isPresent()) {
             ui.showResponse(formatError.get());
             return;
         }
-        addTask(tasks, ui, storage,
-                new Deadline(getDescription(), Deadline.parseInput(getDueDateInput())));
+        addTask(tasks, ui, storage, new Deadline(options.getDescription(),
+                Deadline.parseInput(options.getValue(CommandOptions.OPTION_BY))));
     }
 
     /**
      * Reports the first fault in this command's details.
      *
+     * @param options the options read from the details.
      * @return the correction to show the user, or empty when a deadline can be built.
      */
-    private Optional<String> findFormatError() {
-        if (details.startsWith("/by ")) {
-            return Optional.of("NOOT?! A deadline needs a description before \"/by\"."
-                    + " Try \"deadline submit report /by 2019-10-15\".");
+    private Optional<String> findFormatError(CommandOptions options) {
+        Optional<String> unexpectedOption = options.findUnexpectedOption(CommandOptions.OPTION_BY);
+        if (unexpectedOption.isPresent()) {
+            return Optional.of("NOOT?! A deadline does not use \"" + unexpectedOption.get() + "\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
         }
-        if (details.endsWith("/by")) {
-            return Optional.of("NOOT?! A deadline needs a due date after \"/by\"."
-                    + " Try \"deadline submit report /by 2019-10-15\".");
+        Optional<String> repeatedOption = options.findRepeatedOption();
+        if (repeatedOption.isPresent()) {
+            return Optional.of("NOOT?! A deadline takes only one \"/by\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
         }
-        if (!details.contains(DEADLINE_SEPARATOR)) {
+        if (!options.hasOption(CommandOptions.OPTION_BY)) {
             return Optional.of("NOOT?! I cannot find the \"/by\" part of that deadline."
-                    + " Use \"deadline submit report /by 2019-10-15\".");
+                    + " Use " + DEADLINE_EXAMPLE + ".");
+        }
+        if (options.getDescription().isEmpty()) {
+            return Optional.of("NOOT?! A deadline needs a description before \"/by\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
+        }
+        if (options.getValue(CommandOptions.OPTION_BY).isEmpty()) {
+            return Optional.of("NOOT?! A deadline needs a due date after \"/by\"."
+                    + " Try " + DEADLINE_EXAMPLE + ".");
         }
         return Optional.empty();
-    }
-
-    /**
-     * Returns the text before the {@code /by} separator.
-     *
-     * @return the deadline description.
-     */
-    private String getDescription() {
-        return details.substring(0, details.indexOf(DEADLINE_SEPARATOR)).trim();
-    }
-
-    /**
-     * Returns the text after the {@code /by} separator.
-     *
-     * @return the unparsed due date.
-     */
-    private String getDueDateInput() {
-        int separatorIndex = details.indexOf(DEADLINE_SEPARATOR);
-        return details.substring(separatorIndex + DEADLINE_SEPARATOR.length()).trim();
     }
 }

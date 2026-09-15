@@ -207,6 +207,18 @@ public class TaskList {
     }
 
     /**
+     * Finds a stored task that records the same thing as the given one.
+     *
+     * @param task the task to look for.
+     * @return the stored task it repeats, or empty when the list holds no such task.
+     */
+    public Optional<Task> findSameTask(Task task) {
+        assert task != null : "A duplicate check is made for a task a command has just built.";
+
+        return tasks.stream().filter(task::isSameTask).findFirst();
+    }
+
+    /**
      * Returns the number of tasks in the list.
      *
      * @return the task count.

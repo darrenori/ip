@@ -1124,9 +1124,9 @@ ____________________________________________________________
 
 ## Test 9: Tolerate stray whitespace but reject near-miss commands
 
-**Aim:** Verify that surrounding whitespace never turns a valid command into an unknown one, while blank input, wrong capitalisation, and words that merely start with a command keyword are still rejected.
+**Aim:** Verify that surrounding whitespace never turns a valid command into an unknown one, while blank input, wrong capitalisation, and words that merely start with a command keyword are still rejected -- each of them now naming the command the user most likely meant rather than listing every command Nori knows.
 
-**Covers:** Input trimming in the main loop and the keyword-boundary check in `isCommand`.
+**Covers:** Input trimming in the main loop, the keyword-boundary check in `isCommandTypeOf`, and the blank-input, wrong-case and nearest-keyword branches of `CommandSuggestions`.
 
 ### Input
 ```text
@@ -1156,23 +1156,23 @@ Waddle in a command and I'll get flapping.
 ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     Noot? You didn't say anything. Type "help" and I'll show you what my flippers can do.
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! My commands are all lowercase. Did you mean "todo"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "todos". Did you mean "todo"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "listen". Did you mean "list"?
     ____________________________________________________________
 
     ____________________________________________________________
-     CONFUSED NOOT! My flippers do not understand that command. Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.
+     NOOT?! I do not know "marker". Did you mean "mark"?
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1360,6 +1360,267 @@ ____________________________________________________________
 
     ____________________________________________________________
      NOOT?! I cannot understand "tomorrow" as a date. Use a date like "2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```
+
+## Test 19: Reject a command that repeats or misuses an option
+
+**Aim:** Verify that repeating an option, or using one a command does not accept, is named as the fault rather than folded into a value, and that no task is stored by any of them.
+
+**Covers:** The repeated-option and unexpected-option branches of the deadline, event and date-range list commands, and the adjoining-separator case that once threw out of `EventCommand`.
+
+### Input
+```text
+deadline report /by 2019-01-01 /by 2019-02-02
+event trip /from 2019-01-01 /to 2019-01-02 /to 2019-01-05
+deadline report /from 2019-01-01 /by 2019-02-02
+event trip /from 2019-01-01 /to 2019-01-02 /by 2019-01-05
+list /from 2019-01-01 /to 2019-01-01 /to 2019-05-05
+list /from 2019-01-01 /to 2019-05-05 /by 2020-01-01
+event x /from /to y
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A deadline takes only one "/by". Try "deadline submit report /by 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event takes only one "/to". Use "event team meeting /from Mon 2pm /to 4pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A deadline does not use "/from". Try "deadline submit report /by 2019-10-15".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event does not use "/by". Use "event team meeting /from Mon 2pm /to 4pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A date-range list takes only one "/to". Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! A date-range list does not use "/by". Try "list /from 2019-01-01 /to 2021-01-01".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! "/from" needs a start time. I cannot waddle in from the void.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     The iceberg is empty. Try "todo borrow book". Noot noot!
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```
+
+## Test 20: Reject an event that ends before it starts
+
+**Aim:** Verify that an event whose end falls at or before its start is rejected whenever Nori can be sure of the order, and that details naming a day in words Nori cannot read are still accepted rather than guessed at.
+
+**Covers:** `Event.findOrderingError`, for reversed dates, reversed bare clock times, an undated end time on a dated start, and identical times; and its deliberate silence on "Mon 2pm" to "Tue 1pm".
+
+### Input
+```text
+event talk /from 2pm /to 1pm
+event workshop /from 2019-06-06 1000 /to 0800
+event standup /from 0900 /to 0900
+event backwards /from 2026-09-03 /to 2026-09-01
+event overnight /from Mon 2pm /to Tue 1pm
+event fair /from 2019-06-06 1000 /to 1800
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event cannot end before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] overnight (from: Mon 2pm to: Tue 1pm)
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 2019-06-06 1000 to: 1800)
+     The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Tasks currently chilling on the iceberg:
+     1.[E][ ] overnight (from: Mon 2pm to: Tue 1pm)
+     2.[E][ ] fair (from: 2019-06-06 1000 to: 1800)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```
+
+## Test 21: Refuse to add a task the iceberg already holds
+
+**Aim:** Verify that adding a task the list already records is refused and names the task already stored, while a task differing in its date, its span, or the case of its description is still added, and completion never makes a repeat look new.
+
+**Covers:** `Task.isSameTask` and its deadline and event overrides, `TaskList.findSameTask`, and the duplicate branch of `AddTaskCommand`.
+
+### Input
+```text
+todo read book
+todo read book
+mark 1
+todo read book
+todo Read Book
+deadline report /by 2019-01-01
+deadline report /by 2019-01-02
+deadline report /by 2019-01-01
+event fair /from 1pm /to 2pm
+event fair /from 1pm /to 3pm
+event fair /from 1pm /to 2pm
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [T][ ] read book
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [T][ ] read book
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! This task is now ice-cold complete:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [T][X] read book
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [T][ ] Read Book
+     The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [D][ ] report (by: Jan 01 2019)
+     The iceberg now holds 3 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [D][ ] report (by: Jan 02 2019)
+     The iceberg now holds 4 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [D][ ] report (by: Jan 01 2019)
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 1pm to: 2pm)
+     The iceberg now holds 5 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 1pm to: 3pm)
+     The iceberg now holds 6 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [E][ ] fair (from: 1pm to: 2pm)
+     I won't carry the same fish twice.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Tasks currently chilling on the iceberg:
+     1.[T][X] read book
+     2.[T][ ] Read Book
+     3.[D][ ] report (by: Jan 01 2019)
+     4.[D][ ] report (by: Jan 02 2019)
+     5.[E][ ] fair (from: 1pm to: 2pm)
+     6.[E][ ] fair (from: 1pm to: 3pm)
     ____________________________________________________________
 
     ____________________________________________________________

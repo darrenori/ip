@@ -194,6 +194,96 @@ public class ParserTest {
                 "NOOT?! The \"/to\" date cannot be before the \"/from\" date. Time only waddles forward.");
     }
 
+    @Test
+    public void parse_blankInput_returnsNudge() {
+        assertEquals("Noot? You didn't say anything."
+                + " Type \"help\" and I'll show you what my flippers can do.", getRefusal(""));
+    }
+
+    @Test
+    public void parse_keywordInCapitals_suggestsTheLowercaseKeyword() {
+        assertEquals("NOOT?! My commands are all lowercase. Did you mean \"todo\"?",
+                getRefusal("TODO read book"));
+        assertEquals("NOOT?! My commands are all lowercase. Did you mean \"deadline\"?",
+                getRefusal("Deadline report /by 2019-10-15"));
+    }
+
+    @Test
+    public void parse_misspeltKeyword_suggestsTheNearestKeyword() {
+        assertEquals("NOOT?! I do not know \"todos\". Did you mean \"todo\"?",
+                getRefusal("todos read book"));
+        assertEquals("NOOT?! I do not know \"listen\". Did you mean \"list\"?",
+                getRefusal("listen"));
+        assertEquals("NOOT?! I do not know \"marker\". Did you mean \"mark\"?",
+                getRefusal("marker 1"));
+        assertEquals("NOOT?! I do not know \"delet\". Did you mean \"delete\"?",
+                getRefusal("delet 1"));
+    }
+
+    @Test
+    public void parse_keywordFollowedByJunk_reportsTheKeywordTakesNothing() {
+        assertEquals("NOOT?! \"bye\" takes nothing after it. Type \"bye\" on its own.",
+                getRefusal("bye now"));
+    }
+
+    @Test
+    public void parse_wordResemblingNoKeyword_reportsEveryCommand() {
+        String everyCommand = "CONFUSED NOOT! My flippers do not understand that command."
+                + " Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.";
+
+        assertEquals(everyCommand, getRefusal("xyzzy frobnicate"));
+        assertEquals(everyCommand, getRefusal("l"));
+    }
+
+    @Test
+    public void parse_commandAtTheLengthLimit_returnsTheCommand() {
+        String input = "todo " + "a".repeat(495);
+
+        assertEquals(500, input.length());
+        assertInstanceOf(TodoCommand.class, Parser.parse(input));
+    }
+
+    @Test
+    public void parse_commandPastTheLengthLimit_returnsRefusal() {
+        String input = "todo " + "a".repeat(496);
+
+        assertEquals(501, input.length());
+        assertEquals("GIANT NOOT! That command is 501 characters long."
+                + " Keep it to 500 or fewer; my flippers are small.", getRefusal(input));
+    }
+
+    @Test
+    public void parse_commandHidingATab_returnsRefusal() {
+        assertEquals("NOOT?! That command hides a tab or control character."
+                + " My flippers read plain text only.", getRefusal("todo read\tbook"));
+    }
+
+    @Test
+    public void parseListDateRange_repeatedEndDate_throwsRepeatedOption() {
+        assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /to 2019-09-09",
+                "NOOT?! A date-range list takes only one \"/to\"."
+                        + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+    }
+
+    @Test
+    public void parseListDateRange_deadlineOption_throwsUnexpectedOption() {
+        assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /by 2020-01-01",
+                "NOOT?! A date-range list does not use \"/by\"."
+                        + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+    }
+
+    /**
+     * Runs a command that refuses its input and returns the reason it gave.
+     *
+     * @param input the input to parse and run.
+     * @return the refusal message.
+     */
+    private static String getRefusal(String input) {
+        NoriException exception = assertThrows(
+                NoriException.class, () -> Parser.parse(input).execute(null, null, null));
+        return exception.getMessage();
+    }
+
     /**
      * Verifies that parsing a date range fails with the expected user-facing message.
      *

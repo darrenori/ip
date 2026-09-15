@@ -122,10 +122,110 @@ public class DatedTaskInputTest {
     }
 
     @Test
-    public void execute_eventEndingAtSeparator_reportsMissingEnd() {
-        assertResponse("NOOT?! An event is missing \"/to\" and its end time."
+    public void execute_eventEndingAtEndSeparator_reportsEmptyEnd() {
+        assertResponse("NOOT?! \"/to\" needs an end time."
                         + " Even penguin meetings eventually end.",
                 "event team meeting /from Mon 2pm /to");
+    }
+
+    @Test
+    public void execute_eventWithAdjoiningSeparators_reportsEmptyStart() {
+        assertResponse("NOOT?! \"/from\" needs a start time."
+                        + " I cannot waddle in from the void.",
+                "event team meeting /from /to 4pm");
+    }
+
+    @Test
+    public void execute_eventWithAdjoiningSeparators_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event team meeting /from /to 4pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_deadlineWithRepeatedDueDate_reportsRepeatedOption() {
+        assertResponse("NOOT?! A deadline takes only one \"/by\"."
+                        + " Try \"deadline submit report /by 2019-10-15\".",
+                "deadline submit report /by 2019-10-15 /by 2019-10-16");
+    }
+
+    @Test
+    public void execute_deadlineWithEventOption_reportsUnexpectedOption() {
+        assertResponse("NOOT?! A deadline does not use \"/from\"."
+                        + " Try \"deadline submit report /by 2019-10-15\".",
+                "deadline submit report /from Mon /by 2019-10-15");
+    }
+
+    @Test
+    public void execute_eventWithRepeatedEnd_reportsRepeatedOption() {
+        assertResponse("NOOT?! An event takes only one \"/to\"."
+                        + " Use \"event team meeting /from Mon 2pm /to 4pm\".",
+                "event team meeting /from Mon 2pm /to 4pm /to 6pm");
+    }
+
+    @Test
+    public void execute_eventWithDeadlineOption_reportsUnexpectedOption() {
+        assertResponse("NOOT?! An event does not use \"/by\"."
+                        + " Use \"event team meeting /from Mon 2pm /to 4pm\".",
+                "event team meeting /from Mon 2pm /to 4pm /by 2019-10-15");
+    }
+
+    @Test
+    public void execute_eventWithRepeatedEnd_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event team meeting /from Mon 2pm /to 4pm /to 6pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_eventWithReversedDates_reportsReversedDates() {
+        assertResponse("NOOT?! An event cannot end before it starts."
+                        + " Time only waddles forward.",
+                "event backwards /from 2026-09-03 /to 2026-09-01");
+    }
+
+    @Test
+    public void execute_eventWithReversedBareTimes_reportsReversedTimes() {
+        assertResponse("NOOT?! That event ends at or before it starts."
+                        + " Time only waddles forward.",
+                "event talk /from 2pm /to 1pm");
+    }
+
+    @Test
+    public void execute_eventEndingBeforeItStartsOnOneDate_reportsReversedTimes() {
+        assertResponse("NOOT?! That event ends at or before it starts."
+                        + " Time only waddles forward.",
+                "event talk /from 2019-06-06 1000 /to 0800");
+    }
+
+    @Test
+    public void execute_eventWithReversedTimes_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event talk /from 2pm /to 1pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_eventNamingDaysInWords_addsTheTask() {
+        assertResponse("Noot noot! Task tucked safely under my wing:\n"
+                        + "  [E][ ] standup (from: Mon 2pm to: Tue 1pm)\n"
+                        + "The iceberg now holds 1 task(s).",
+                "event standup /from Mon 2pm /to Tue 1pm");
     }
 
     @Test
@@ -142,6 +242,32 @@ public class DatedTaskInputTest {
                         + "  [E][ ] team meeting (from: Mon 2pm to: 4pm)\n"
                         + "The iceberg now holds 1 task(s).",
                 "event team meeting /from Mon 2pm /to 4pm");
+    }
+
+    @Test
+    public void execute_repeatedDeadline_reportsTheStoredTask() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("deadline report /by 2019-10-15");
+        nori.executeCommand("deadline report /by 2019-10-15");
+
+        assertEquals("NOOT?! The iceberg already holds that task:" + "\n"
+                + "  [D][ ] report (by: Oct 15 2019)" + "\n"
+                + "I won\'t carry the same fish twice.", guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_deadlineOnAnotherDate_addsTheTask() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("deadline report /by 2019-10-15");
+        nori.executeCommand("deadline report /by 2019-10-16");
+
+        assertEquals("Noot noot! Task tucked safely under my wing:" + "\n"
+                + "  [D][ ] report (by: Oct 16 2019)" + "\n"
+                + "The iceberg now holds 2 task(s).", guiUi.consumeResponse());
     }
 
     /**

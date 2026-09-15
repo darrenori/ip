@@ -2,9 +2,12 @@ package nori.task;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -187,5 +190,55 @@ public class TaskListTest {
                 new Event("book fair", "2019-06-06 1000", "2019-06-06 1800"),
                 new Todo("Bookshop errand"),
                 new Todo("buy milk"));
+    }
+
+    @Test
+    public void isSameTask_repeatedTodoIgnoringCompletion_returnsTrue() {
+        Todo storedTodo = new Todo("read book");
+        storedTodo.markAsDone();
+
+        assertTrue(storedTodo.isSameTask(new Todo("read book")));
+    }
+
+    @Test
+    public void isSameTask_differentTaskType_returnsFalse() throws NoriException {
+        assertFalse(new Todo("read book").isSameTask(
+                new Deadline("read book", LocalDate.parse("2019-01-01"))));
+    }
+
+    @Test
+    public void isSameTask_descriptionsDifferingInCase_returnsFalse() {
+        assertFalse(new Todo("read book").isSameTask(new Todo("Read Book")));
+    }
+
+    @Test
+    public void isSameTask_deadlinesOnDifferentDates_returnsFalse() {
+        assertFalse(new Deadline("report", LocalDate.parse("2019-01-01"))
+                .isSameTask(new Deadline("report", LocalDate.parse("2019-01-02"))));
+    }
+
+    @Test
+    public void isSameTask_eventsOverDifferentSpans_returnsFalse() throws NoriException {
+        assertFalse(new Event("fair", "1pm", "2pm").isSameTask(new Event("fair", "1pm", "3pm")));
+    }
+
+    @Test
+    public void isSameTask_nullTask_returnsFalse() {
+        assertFalse(new Todo("read book").isSameTask(null));
+    }
+
+    @Test
+    public void findSameTask_repeatedTask_returnsTheStoredTask() {
+        Todo storedTodo = new Todo("read book");
+        TaskList tasks = new TaskList(new Todo("other"), storedTodo);
+
+        assertEquals(Optional.of(storedTodo), tasks.findSameTask(new Todo("read book")));
+    }
+
+    @Test
+    public void findSameTask_newTask_returnsEmpty() {
+        TaskList tasks = new TaskList(new Todo("read book"));
+
+        assertEquals(Optional.empty(), tasks.findSameTask(new Todo("write book")));
     }
 }

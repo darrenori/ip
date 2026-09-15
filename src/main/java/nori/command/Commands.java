@@ -16,7 +16,7 @@ public final class Commands {
      * @return the corresponding executable command.
      */
     public static Command create(CommandType commandType, String details) {
-        assert commandType != null : "Unrecognised input is turned into a command by createUnknown instead.";
+        assert commandType != null : "Unrecognized input becomes a command through createUnknown instead.";
         assert details != null : "The parser always supplies the text after the keyword, empty at the least.";
 
         switch (commandType) {
@@ -46,16 +46,29 @@ public final class Commands {
                 return new ExitCommand();
             default:
                 assert false : "Every command type needs a command, but " + commandType + " has none.";
-                return new UnknownCommand();
+                return createRejected(CommandSuggestions.UNKNOWN_COMMAND_MESSAGE);
         }
     }
 
     /**
-     * Creates a command that reports unrecognized input.
+     * Creates a command that reports unrecognized input, naming a likely correction.
      *
+     * @param input the trimmed user input that names no command.
      * @return an unrecognized-command handler.
      */
-    public static Command createUnknown() {
-        return new UnknownCommand();
+    public static Command createUnknown(String input) {
+        return new UnknownCommand(CommandSuggestions.explain(input));
+    }
+
+    /**
+     * Creates a command that refuses input for a stated reason.
+     *
+     * @param message the explanation and correction to show the user.
+     * @return a handler that reports that reason.
+     */
+    public static Command createRejected(String message) {
+        assert message != null && !message.isEmpty() : "Refused input is always given a reason.";
+
+        return new UnknownCommand(message);
     }
 }

@@ -34,7 +34,6 @@ public class Event extends Task {
         super(description);
         validateDates(from);
         validateDates(to);
-        validateDateOrder(from, to);
         this.from = from;
         this.to = to;
     }
@@ -151,23 +150,64 @@ public class Event extends Task {
     }
 
     /**
-     * Rejects a dated event whose end date is before its start date.
+     * Reports a start and an end that a user has written the wrong way round.
      *
-     * Events may still use free-form times or provide a date on only one side.
-     * Those forms have insufficient date information for an ordering check and
-     * remain valid.
+     * Only an ordering Nori can be sure of is reported. Start and end details
+     * are free-form, so they may name a day in words Nori does not read: "Mon
+     * 2pm" to "Tue 2pm" is left alone, because the two times say nothing about
+     * which of them falls first. Two details naming one explicit date, or two
+     * bare clock times, are not ambiguous and are compared.
+     *
+     * This is a fault in what a user typed rather than a broken event, so it
+     * is reported to the caller instead of refusing construction. An event
+     * saved before this check existed therefore still loads from disk, rather
+     * than reading as a corrupted file.
      *
      * @param from the event's start details.
      * @param to the event's end details.
-     * @throws NoriException if both details contain dates in reverse order.
+     * @return the correction to show the user, or empty when the two are in order.
      */
-    private static void validateDateOrder(String from, String to) throws NoriException {
-        LocalDate eventStart = findDate(from);
-        LocalDate eventEnd = findDate(to);
-        if (eventStart != null && eventEnd != null && eventEnd.isBefore(eventStart)) {
-            throw new NoriException("NOOT?! An event cannot end before it starts."
+    public static Optional<String> findOrderingError(String from, String to) {
+        LocalDate startDate = findDate(from);
+        LocalDate endDate = findDate(to);
+        if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+            return Optional.of("NOOT?! An event cannot end before it starts."
                     + " Time only waddles forward.");
         }
+        if (!isCertainlyOneDay(from, to)) {
+            return Optional.empty();
+        }
+
+        Optional<LocalTime> startTime = ClockTimes.findFirstIn(removeDates(from));
+        Optional<LocalTime> endTime = ClockTimes.findFirstIn(removeDates(to));
+        boolean isOrdered = startTime.isEmpty() || endTime.isEmpty()
+                || endTime.get().isAfter(startTime.get());
+        if (isOrdered) {
+            return Optional.empty();
+        }
+        return Optional.of("NOOT?! That event ends at or before it starts."
+                + " Time only waddles forward.");
+    }
+
+    /**
+     * Returns whether the start and end details are certain to fall on one day.
+     *
+     * @param from the event's start details.
+     * @param to the event's end details.
+     * @return {@code true} only when no reading of the details puts them on two days.
+     */
+    private static boolean isCertainlyOneDay(String from, String to) {
+        LocalDate startDate = findDate(from);
+        LocalDate endDate = findDate(to);
+        if (startDate != null && endDate != null) {
+            return startDate.equals(endDate);
+        }
+        if (startDate == null && endDate == null) {
+            return ClockTimes.isOnlyClockTime(from) && ClockTimes.isOnlyClockTime(to);
+        }
+
+        String undatedDetail = startDate == null ? from : to;
+        return ClockTimes.isOnlyClockTime(undatedDetail);
     }
 
     /**
@@ -190,6 +230,22 @@ public class Event extends Task {
         } catch (DateTimeParseException exception) {
             return null;
         }
+    }
+
+    /**
+     * Returns whether another task is an event for the same thing over the same span.
+     *
+     * @param other the task to compare this one with.
+     * @return {@code true} when the descriptions and both spans match.
+     */
+    @Override
+    public boolean isSameTask(Task other) {
+        if (!super.isSameTask(other)) {
+            return false;
+        }
+
+        Event otherEvent = (Event) other;
+        return otherEvent.from.equals(from) && otherEvent.to.equals(to);
     }
 
     /**

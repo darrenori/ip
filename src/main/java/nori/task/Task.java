@@ -48,6 +48,23 @@ public abstract class Task {
     }
 
     /**
+     * Returns whether another task records the same thing as this one.
+     *
+     * Completion is deliberately left out of the comparison, because a
+     * finished "read book" and an unfinished one are one task a user has
+     * entered twice, not two tasks. Descriptions are compared exactly rather
+     * than ignoring case, so a user who deliberately keeps "Draft" and "draft"
+     * apart is allowed to.
+     *
+     * @param other the task to compare this one with.
+     * @return {@code true} when both are of one type and describe the same thing.
+     */
+    public boolean isSameTask(Task other) {
+        return other != null && other.getClass() == getClass()
+                && other.getDescription().equals(description);
+    }
+
+    /**
      * Returns the marker used in task lists to show whether this task is complete.
      *
      * @return the single character {@code "X"} when this task is done, or
