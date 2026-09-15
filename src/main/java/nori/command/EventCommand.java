@@ -1,5 +1,6 @@
 package nori.command;
 
+import java.util.List;
 import java.util.Optional;
 
 import nori.NoriException;
@@ -12,10 +13,8 @@ import nori.ui.Ui;
  * Adds an event task.
  */
 class EventCommand extends AddTaskCommand {
-    /** Separates an event description from its start details. */
-    private static final String EVENT_FROM_SEPARATOR = " /from ";
-    /** Separates an event start from its end details. */
-    private static final String EVENT_TO_SEPARATOR = " /to ";
+    /** Shown alongside every complaint, so a correction is always in view. */
+    private static final String EVENT_EXAMPLE = "\"event team meeting /from Mon 2pm /to 4pm\"";
 
     /**
      * Creates a command that adds an event.
@@ -29,77 +28,66 @@ class EventCommand extends AddTaskCommand {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws NoriException {
-        Optional<String> formatError = findFormatError();
+        CommandOptions options = CommandOptions.parse(details);
+        Optional<String> formatError = findFormatError(options);
         if (formatError.isPresent()) {
             ui.showResponse(formatError.get());
             return;
         }
-        addTask(tasks, ui, storage, new Event(getDescription(), getStartInput(), getEndInput()));
+        addTask(tasks, ui, storage, new Event(options.getDescription(),
+                options.getValue(CommandOptions.OPTION_FROM),
+                options.getValue(CommandOptions.OPTION_TO)));
     }
 
     /**
      * Reports the first fault in this command's details.
      *
+     * @param options the options read from the details.
      * @return the correction to show the user, or empty when an event can be built.
      */
-    private Optional<String> findFormatError() {
-        int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
-        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
-        if (details.startsWith("/from ")) {
-            return Optional.of("NOOT?! An event needs a description before \"/from\"."
-                    + " Try \"event team meeting /from Mon 2pm /to 4pm\".");
-        }
-        if (fromSeparatorIndex == -1 && toSeparatorIndex == -1) {
+    private Optional<String> findFormatError(CommandOptions options) {
+        boolean hasStart = options.hasOption(CommandOptions.OPTION_FROM);
+        boolean hasEnd = options.hasOption(CommandOptions.OPTION_TO);
+        if (!hasStart && !hasEnd) {
             return Optional.of("NOOT?! An event needs both \"/from\" and \"/to\"."
-                    + " Use \"event team meeting /from Mon 2pm /to 4pm\".");
+                    + " Use " + EVENT_EXAMPLE + ".");
         }
-        if (fromSeparatorIndex == -1) {
+        if (!hasStart) {
             return Optional.of("NOOT?! An event is missing \"/from\" and its start time."
                     + " Tell me when to start waddling.");
         }
-        if (toSeparatorIndex == -1) {
+        if (!hasEnd) {
             return Optional.of("NOOT?! An event is missing \"/to\" and its end time."
                     + " Even penguin meetings eventually end.");
         }
-        if (toSeparatorIndex < fromSeparatorIndex) {
+        if (isEndBeforeStart(options)) {
             return Optional.of("NOOT?! Put \"/from\" before \"/to\"."
                     + " Time waddles forward, not backward.");
         }
-        if (getStartInput().isEmpty()) {
+        if (options.getDescription().isEmpty()) {
+            return Optional.of("NOOT?! An event needs a description before \"/from\"."
+                    + " Try " + EVENT_EXAMPLE + ".");
+        }
+        if (options.getValue(CommandOptions.OPTION_FROM).isEmpty()) {
             return Optional.of("NOOT?! \"/from\" needs a start time."
                     + " I cannot waddle in from the void.");
+        }
+        if (options.getValue(CommandOptions.OPTION_TO).isEmpty()) {
+            return Optional.of("NOOT?! \"/to\" needs an end time."
+                    + " Even penguin meetings eventually end.");
         }
         return Optional.empty();
     }
 
     /**
-     * Returns the text before the {@code /from} separator.
+     * Returns whether the user wrote the end marker ahead of the start marker.
      *
-     * @return the event description.
+     * @param options the options read from the details.
+     * @return {@code true} when {@code /to} was typed before {@code /from}.
      */
-    private String getDescription() {
-        return details.substring(0, details.indexOf(EVENT_FROM_SEPARATOR)).trim();
-    }
-
-    /**
-     * Returns the text between the {@code /from} and {@code /to} separators.
-     *
-     * @return the event start details.
-     */
-    private String getStartInput() {
-        int fromSeparatorIndex = details.indexOf(EVENT_FROM_SEPARATOR);
-        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
-        return details.substring(fromSeparatorIndex + EVENT_FROM_SEPARATOR.length(),
-                toSeparatorIndex).trim();
-    }
-
-    /**
-     * Returns the text after the {@code /to} separator.
-     *
-     * @return the event end details.
-     */
-    private String getEndInput() {
-        int toSeparatorIndex = details.indexOf(EVENT_TO_SEPARATOR);
-        return details.substring(toSeparatorIndex + EVENT_TO_SEPARATOR.length()).trim();
+    private static boolean isEndBeforeStart(CommandOptions options) {
+        List<String> optionNames = options.getOptionNames();
+        return optionNames.indexOf(CommandOptions.OPTION_TO)
+                < optionNames.indexOf(CommandOptions.OPTION_FROM);
     }
 }

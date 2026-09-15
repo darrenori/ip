@@ -122,10 +122,29 @@ public class DatedTaskInputTest {
     }
 
     @Test
-    public void execute_eventEndingAtSeparator_reportsMissingEnd() {
-        assertResponse("NOOT?! An event is missing \"/to\" and its end time."
+    public void execute_eventEndingAtEndSeparator_reportsEmptyEnd() {
+        assertResponse("NOOT?! \"/to\" needs an end time."
                         + " Even penguin meetings eventually end.",
                 "event team meeting /from Mon 2pm /to");
+    }
+
+    @Test
+    public void execute_eventWithAdjoiningSeparators_reportsEmptyStart() {
+        assertResponse("NOOT?! \"/from\" needs a start time."
+                        + " I cannot waddle in from the void.",
+                "event team meeting /from /to 4pm");
+    }
+
+    @Test
+    public void execute_eventWithAdjoiningSeparators_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event team meeting /from /to 4pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
     }
 
     @Test

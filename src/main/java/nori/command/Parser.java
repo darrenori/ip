@@ -11,10 +11,8 @@ import nori.task.DateRange;
  * Interprets raw user input and creates the corresponding executable command.
  */
 public class Parser {
-    /** Introduces the start date of a date-range list. */
-    private static final String LIST_FROM_PREFIX = "/from ";
-    /** Separates the start and end dates of a date-range list. */
-    private static final String LIST_TO_SEPARATOR = " /to ";
+    /** Shown alongside every date-range complaint, so a correction is always in view. */
+    private static final String LIST_EXAMPLE = "\"list /from 2019-01-01 /to 2021-01-01\"";
 
     /** Prevents instantiation of this stateless parser. */
     private Parser() {
@@ -66,25 +64,27 @@ public class Parser {
      * @throws NoriException if the range format, dates, or order is invalid.
      */
     public static DateRange parseListDateRange(String listDetails) throws NoriException {
-        if (!listDetails.startsWith(LIST_FROM_PREFIX)) {
-            throw new NoriException("NOOT?! Use either \"list\" or"
-                    + " \"list /from 2019-01-01 /to 2021-01-01\".");
+        CommandOptions options = CommandOptions.parse(listDetails);
+        boolean startsWithFrom = !options.getOptionNames().isEmpty()
+                && options.getOptionNames().get(0).equals(CommandOptions.OPTION_FROM)
+                && options.getDescription().isEmpty();
+        if (!startsWithFrom) {
+            throw new NoriException("NOOT?! Use either \"list\" or " + LIST_EXAMPLE + ".");
         }
-        int toSeparatorIndex = listDetails.indexOf(LIST_TO_SEPARATOR);
-        if (toSeparatorIndex == -1) {
+        if (!options.hasOption(CommandOptions.OPTION_TO)) {
             throw new NoriException("NOOT?! A date-range list needs \"/to\" and an end date."
-                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+                    + " Try " + LIST_EXAMPLE + ".");
         }
 
-        String fromInput = listDetails.substring(LIST_FROM_PREFIX.length(), toSeparatorIndex).trim();
-        String toInput = listDetails.substring(toSeparatorIndex + LIST_TO_SEPARATOR.length()).trim();
+        String fromInput = options.getValue(CommandOptions.OPTION_FROM);
+        String toInput = options.getValue(CommandOptions.OPTION_TO);
         if (fromInput.isEmpty()) {
             throw new NoriException("NOOT?! \"/from\" needs a start date."
-                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+                    + " Try " + LIST_EXAMPLE + ".");
         }
         if (toInput.isEmpty()) {
             throw new NoriException("NOOT?! \"/to\" needs an end date."
-                    + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+                    + " Try " + LIST_EXAMPLE + ".");
         }
 
         LocalDate fromDate = parseRangeDate(fromInput, "/from");
