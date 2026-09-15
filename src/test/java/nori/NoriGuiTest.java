@@ -52,6 +52,58 @@ public class NoriGuiTest {
     }
 
     @Test
+    public void executeCommand_validCommand_marksTheResponseAsOrdinary() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("todo finish tutorial");
+
+        assertFalse(guiUi.isErrorResponse());
+    }
+
+    @Test
+    public void executeCommand_unknownCommand_marksTheResponseAsAnError() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("xyzzy frobnicate");
+
+        assertTrue(guiUi.isErrorResponse());
+    }
+
+    @Test
+    public void executeCommand_malformedDeadline_marksTheResponseAsAnError() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("deadline submit report");
+
+        assertTrue(guiUi.isErrorResponse());
+    }
+
+    @Test
+    public void executeCommand_errorThenSuccess_clearsTheErrorMark() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("xyzzy frobnicate");
+        nori.executeCommand("todo finish tutorial");
+
+        assertFalse(guiUi.isErrorResponse());
+    }
+
+    @Test
+    public void isErrorResponse_afterConsumingTheResponse_isUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("xyzzy frobnicate");
+        guiUi.consumeResponse();
+
+        assertTrue(guiUi.isErrorResponse());
+    }
+
+    @Test
     public void executeCommand_bye_returnsGoodbyeAndRequestsExit() {
         GuiUi guiUi = new GuiUi();
         Nori nori = new Nori(guiUi);

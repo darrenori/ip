@@ -95,7 +95,7 @@ public class Nori {
                 return true;
             }
         } catch (NoriException exception) {
-            ui.showResponse(exception.getMessage());
+            ui.showError(exception.getMessage());
         }
         return false;
     }
@@ -107,6 +107,15 @@ public class Nori {
      */
     public String getLoadingMessage() {
         return loadingError != null ? loadingError : loadingNotice;
+    }
+
+    /**
+     * Returns whether the message produced while loading saved tasks reported a failure.
+     *
+     * @return {@code true} when saved tasks could not be loaded.
+     */
+    public boolean hasLoadingError() {
+        return loadingError != null;
     }
 
     /**

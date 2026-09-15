@@ -33,6 +33,10 @@
     -nori-sea-tint: #e8f4f8;
     -nori-sea-ink: #155e75;
 
+    -nori-alarm: #b42318;
+    -nori-alarm-tint: #fff4f2;
+    -nori-alarm-line: #f3c7c0;
+
     -fx-background-color: linear-gradient(to bottom,
         -nori-ice-top 0%, -nori-ice-mid 48%, -nori-ice-bottom 100%);
     -fx-font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", "Nimbus Sans", "System";
@@ -145,6 +149,22 @@
     -fx-background-radius: 18px 5px 18px 18px;
     -fx-effect: dropshadow(gaussian, rgba(17, 37, 51, 0.18), 15, 0.18, 0, 4);
     -fx-text-fill: -nori-surface;
+}
+
+/* A reply that reports something Nori could not do is the one a user most
+   needs to notice, so it is given a tinted ground, a warm border and a bar
+   down its left edge. The bar carries the difference even where colour does
+   not: a colour-blind reader, a greyscale screen, or a glance too quick to
+   read the text. */
+.nori-bubble.bubble-error {
+    -fx-background-color: -nori-alarm-tint;
+    -fx-border-color: -nori-alarm-line -nori-alarm-line -nori-alarm-line -nori-alarm;
+    -fx-border-width: 1px 1px 1px 4px;
+    -fx-text-fill: -nori-alarm;
+}
+
+.speaker-label.bubble-error {
+    -fx-text-fill: -nori-alarm;
 }
 
 .composer-shell {

@@ -31,7 +31,7 @@ class EventCommand extends AddTaskCommand {
         CommandOptions options = CommandOptions.parse(details);
         Optional<String> formatError = findFormatError(options);
         if (formatError.isPresent()) {
-            ui.showResponse(formatError.get());
+            ui.showError(formatError.get());
             return;
         }
         addTask(tasks, ui, storage, new Event(options.getDescription(),

@@ -17,6 +17,8 @@ import javafx.scene.shape.Circle;
  */
 public final class DialogBox extends HBox {
     private static final double AVATAR_SIZE = 46;
+    /** Style class marking a reply that reports something Nori could not do. */
+    private static final String ERROR_STYLE_CLASS = "bubble-error";
 
     @FXML
     private StackPane avatarSlot;
@@ -63,7 +65,29 @@ public final class DialogBox extends HBox {
      * @return Nori's dialog box.
      */
     public static DialogBox getNoriDialog(String text) {
-        return new DialogBox(text, "NORI", new BotAvatar(AVATAR_SIZE), "nori-bubble");
+        return getNoriDialog(text, false);
+    }
+
+    /**
+     * Creates a dialog aligned to the left for Nori's response, marking an error as one.
+     *
+     * A reply saying a command could not be carried out is the reply a user
+     * most needs to notice, and it arrives among replies that all look alike.
+     * Marking it out means a user scanning the conversation can see that
+     * something did not happen without reading every bubble to find out.
+     *
+     * @param text Nori's response text.
+     * @param isError whether the response reports something Nori could not do.
+     * @return Nori's dialog box.
+     */
+    public static DialogBox getNoriDialog(String text, boolean isError) {
+        DialogBox dialogBox = new DialogBox(text, isError ? "NORI · PROBLEM" : "NORI",
+                new BotAvatar(AVATAR_SIZE), "nori-bubble");
+        if (isError) {
+            dialogBox.dialog.getStyleClass().add(ERROR_STYLE_CLASS);
+            dialogBox.speakerLabel.getStyleClass().add(ERROR_STYLE_CLASS);
+        }
+        return dialogBox;
     }
 
     /** Creates the user's simple, original text avatar. */

@@ -66,7 +66,8 @@ public final class MainWindow {
 
         String loadingMessage = nori.getLoadingMessage();
         if (loadingMessage != null) {
-            dialogContainer.getChildren().add(DialogBox.getNoriDialog(loadingMessage));
+            dialogContainer.getChildren().add(
+                    DialogBox.getNoriDialog(loadingMessage, nori.hasLoadingError()));
         }
     }
 
@@ -81,7 +82,8 @@ public final class MainWindow {
         userInput.clear();
         dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
         boolean isExitRequested = nori.executeCommand(input);
-        dialogContainer.getChildren().add(DialogBox.getNoriDialog(guiUi.consumeResponse()));
+        dialogContainer.getChildren().add(
+                DialogBox.getNoriDialog(guiUi.consumeResponse(), guiUi.isErrorResponse()));
 
         if (isExitRequested) {
             endSession();
