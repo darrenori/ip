@@ -4,6 +4,11 @@ package nori.command;
  * Creates concrete commands from their recognized types and details.
  */
 public final class Commands {
+    /** Told to a user whose input begins with nothing Nori recognizes. */
+    private static final String UNKNOWN_COMMAND_MESSAGE =
+            "CONFUSED NOOT! My flippers do not understand that command."
+                    + " Try todo, deadline, event, on, list, find, mark, unmark, delete, help, or bye.";
+
     /** Prevents instantiation of this command factory. */
     private Commands() {
     }
@@ -46,7 +51,7 @@ public final class Commands {
                 return new ExitCommand();
             default:
                 assert false : "Every command type needs a command, but " + commandType + " has none.";
-                return new UnknownCommand();
+                return createUnknown();
         }
     }
 
@@ -56,6 +61,18 @@ public final class Commands {
      * @return an unrecognized-command handler.
      */
     public static Command createUnknown() {
-        return new UnknownCommand();
+        return new UnknownCommand(UNKNOWN_COMMAND_MESSAGE);
+    }
+
+    /**
+     * Creates a command that refuses input for a stated reason.
+     *
+     * @param message the explanation and correction to show the user.
+     * @return a handler that reports that reason.
+     */
+    public static Command createRejected(String message) {
+        assert message != null && !message.isEmpty() : "Refused input is always given a reason.";
+
+        return new UnknownCommand(message);
     }
 }

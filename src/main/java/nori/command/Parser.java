@@ -12,6 +12,15 @@ import nori.task.DateRange;
  * Interprets raw user input and creates the corresponding executable command.
  */
 public class Parser {
+    /**
+     * The longest command Nori reads.
+     *
+     * Far longer than any real task needs, and short enough that a pasted
+     * document cannot be written into the storage file or carried through
+     * every later reload of it.
+     */
+    private static final int MAX_COMMAND_LENGTH = 500;
+
     /** Shown alongside every date-range complaint, so a correction is always in view. */
     private static final String LIST_EXAMPLE = "\"list /from 2019-01-01 /to 2021-01-01\"";
 
@@ -28,6 +37,11 @@ public class Parser {
     public static Command parse(String input) {
         assert input != null : "Parsing starts only after a user interface has supplied a command line.";
         assert input.equals(input.trim()) : "Both user interfaces trim a command line before parsing it.";
+
+        Optional<String> inputError = findInputError(input);
+        if (inputError.isPresent()) {
+            return Commands.createRejected(inputError.get());
+        }
 
         CommandType commandType = findCommandType(input);
         if (commandType == null) {
@@ -106,6 +120,25 @@ public class Parser {
                     + " Time only waddles forward.");
         }
         return new DateRange(fromDate, toDate);
+    }
+
+    /**
+     * Reports input Nori will not read at all, whatever command it names.
+     *
+     * @param input the trimmed user input.
+     * @return the correction to show the user, or empty when the input is readable.
+     */
+    private static Optional<String> findInputError(String input) {
+        if (input.length() > MAX_COMMAND_LENGTH) {
+            return Optional.of("GIANT NOOT! That command is " + input.length()
+                    + " characters long. Keep it to " + MAX_COMMAND_LENGTH
+                    + " or fewer; my flippers are small.");
+        }
+        if (input.chars().anyMatch(Character::isISOControl)) {
+            return Optional.of("NOOT?! That command hides a tab or control character."
+                    + " My flippers read plain text only.");
+        }
+        return Optional.empty();
     }
 
     /**

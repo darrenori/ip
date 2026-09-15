@@ -195,6 +195,29 @@ public class ParserTest {
     }
 
     @Test
+    public void parse_commandAtTheLengthLimit_returnsTheCommand() {
+        String input = "todo " + "a".repeat(495);
+
+        assertEquals(500, input.length());
+        assertInstanceOf(TodoCommand.class, Parser.parse(input));
+    }
+
+    @Test
+    public void parse_commandPastTheLengthLimit_returnsRefusal() {
+        String input = "todo " + "a".repeat(496);
+
+        assertEquals(501, input.length());
+        assertEquals("GIANT NOOT! That command is 501 characters long."
+                + " Keep it to 500 or fewer; my flippers are small.", getRefusal(input));
+    }
+
+    @Test
+    public void parse_commandHidingATab_returnsRefusal() {
+        assertEquals("NOOT?! That command hides a tab or control character."
+                + " My flippers read plain text only.", getRefusal("todo read\tbook"));
+    }
+
+    @Test
     public void parseListDateRange_repeatedEndDate_throwsRepeatedOption() {
         assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /to 2019-09-09",
                 "NOOT?! A date-range list takes only one \"/to\"."
@@ -206,6 +229,18 @@ public class ParserTest {
         assertRangeParsingFails("/from 2019-01-01 /to 2019-05-05 /by 2020-01-01",
                 "NOOT?! A date-range list does not use \"/by\"."
                         + " Try \"list /from 2019-01-01 /to 2021-01-01\".");
+    }
+
+    /**
+     * Runs a command that refuses its input and returns the reason it gave.
+     *
+     * @param input the input to parse and run.
+     * @return the refusal message.
+     */
+    private static String getRefusal(String input) {
+        NoriException exception = assertThrows(
+                NoriException.class, () -> Parser.parse(input).execute(null, null, null));
+        return exception.getMessage();
     }
 
     /**
