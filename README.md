@@ -63,3 +63,34 @@ Nori creates its `data` folder beside the JAR when it first saves a task. See th
 
 For the maintainer workflow, including isolated verification and attaching the binary to GitHub, see
 [Releasing Nori](docs/releasing.md).
+
+## Testing
+
+Nori is checked three ways, all from the project root:
+
+```powershell
+.\gradlew.bat check
+```
+
+`check` runs the JUnit tests, the standalone command and storage regression suites, and Checkstyle.
+Add `.\gradlew.bat coverage` to see which code the JUnit tests reached; the report lands in
+`build/reports/jacoco/test/html/index.html`.
+
+The console interface is driven by the recorded sessions in [test/ui-test-plan.md](test/ui-test-plan.md),
+which are compared against Nori's actual output. The graphical interface cannot be checked that way, so
+the things only a running window can show -- colour, type, layout and the keyboard -- are written down as
+manual cases in [test/gui-test-plan.md](test/gui-test-plan.md).
+
+## Acknowledgements
+
+* The project structure, the separate `Launcher` entry point and the JavaFX dialog layout follow the
+  [SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFx.html) and the course's
+  Duke project template.
+* The coding, commit message and Checkstyle conventions this repository follows are the
+  [SE-EDU guides](https://se-education.org/guides/), kept as working copies under
+  [docs/conventions/](docs/conventions/).
+* Nori's portrait (`src/main/resources/images/pingu-background.png`), used as the chat avatar, the
+  window icon and the conversation's background texture, is a still of Pingu, the character from the
+  stop-motion series of the same name. It is not original work and is not mine; it is placeholder
+  artwork for a course project and is not licensed for redistribution.
+* No third-party code beyond the template above has been reused in this project.
