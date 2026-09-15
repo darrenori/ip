@@ -1437,3 +1437,75 @@ ____________________________________________________________
      Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
+
+## Test 20: Reject an event that ends before it starts
+
+**Aim:** Verify that an event whose end falls at or before its start is rejected whenever Nori can be sure of the order, and that details naming a day in words Nori cannot read are still accepted rather than guessed at.
+
+**Covers:** `Event.findOrderingError`, for reversed dates, reversed bare clock times, an undated end time on a dated start, and identical times; and its deliberate silence on "Mon 2pm" to "Tue 1pm".
+
+### Input
+```text
+event talk /from 2pm /to 1pm
+event workshop /from 2019-06-06 1000 /to 0800
+event standup /from 0900 /to 0900
+event backwards /from 2026-09-03 /to 2026-09-01
+event overnight /from Mon 2pm /to Tue 1pm
+event fair /from 2019-06-06 1000 /to 1800
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! That event ends at or before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! An event cannot end before it starts. Time only waddles forward.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] overnight (from: Mon 2pm to: Tue 1pm)
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] fair (from: 2019-06-06 1000 to: 1800)
+     The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Tasks currently chilling on the iceberg:
+     1.[E][ ] overnight (from: Mon 2pm to: Tue 1pm)
+     2.[E][ ] fair (from: 2019-06-06 1000 to: 1800)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```

@@ -20,9 +20,68 @@ import nori.NoriException;
 public class EventTest {
 
     @Test
-    public void constructor_endBeforeStart_throwsNoriException() {
+    public void constructor_endBeforeStart_acceptsEvent() {
+        assertDoesNotThrow(() -> new Event("backwards", "2026-09-03", "2026-09-01"));
+    }
+
+    @Test
+    public void constructor_impossibleDate_throwsNoriException() {
         assertThrows(NoriException.class, () ->
-                new Event("backwards", "2026-09-03", "2026-09-01"));
+                new Event("impossible", "2019-02-31 1400", "2019-02-31 1500"));
+    }
+
+    @Test
+    public void findOrderingError_endDateBeforeStartDate_reportsReversedDates() {
+        assertEquals(Optional.of("NOOT?! An event cannot end before it starts."
+                + " Time only waddles forward."),
+                Event.findOrderingError("2026-09-03", "2026-09-01"));
+    }
+
+    @Test
+    public void findOrderingError_bareTimesOutOfOrder_reportsReversedTimes() {
+        assertEquals(Optional.of("NOOT?! That event ends at or before it starts."
+                + " Time only waddles forward."),
+                Event.findOrderingError("2pm", "1pm"));
+    }
+
+    @Test
+    public void findOrderingError_sameDateTimesOutOfOrder_reportsReversedTimes() {
+        assertEquals(Optional.of("NOOT?! That event ends at or before it starts."
+                + " Time only waddles forward."),
+                Event.findOrderingError("2019-06-06 1000", "2019-06-06 0900"));
+    }
+
+    @Test
+    public void findOrderingError_endUndatedTimeBeforeStart_reportsReversedTimes() {
+        assertEquals(Optional.of("NOOT?! That event ends at or before it starts."
+                + " Time only waddles forward."),
+                Event.findOrderingError("2019-06-06 1000", "0800"));
+    }
+
+    @Test
+    public void findOrderingError_identicalTimes_reportsReversedTimes() {
+        assertEquals(Optional.of("NOOT?! That event ends at or before it starts."
+                + " Time only waddles forward."),
+                Event.findOrderingError("0900", "0900"));
+    }
+
+    @Test
+    public void findOrderingError_detailsNamingDaysInWords_returnsEmpty() {
+        assertEquals(Optional.empty(), Event.findOrderingError("Mon 2pm", "Tue 1pm"));
+        assertEquals(Optional.empty(), Event.findOrderingError("Mon 2pm", "1pm"));
+        assertEquals(Optional.empty(), Event.findOrderingError("Aug 6th 2pm", "4pm"));
+    }
+
+    @Test
+    public void findOrderingError_orderedDetails_returnsEmpty() {
+        assertEquals(Optional.empty(), Event.findOrderingError("2pm", "4pm"));
+        assertEquals(Optional.empty(), Event.findOrderingError("2019-06-06 1000", "1800"));
+        assertEquals(Optional.empty(), Event.findOrderingError("2019-06-06", "2019-06-08"));
+    }
+
+    @Test
+    public void findOrderingError_detailsWithoutTimes_returnsEmpty() {
+        assertEquals(Optional.empty(), Event.findOrderingError("soon", "later"));
     }
 
     @Test

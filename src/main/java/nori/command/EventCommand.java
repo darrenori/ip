@@ -87,7 +87,8 @@ class EventCommand extends AddTaskCommand {
             return Optional.of("NOOT?! \"/to\" needs an end time."
                     + " Even penguin meetings eventually end.");
         }
-        return Optional.empty();
+        return Event.findOrderingError(options.getValue(CommandOptions.OPTION_FROM),
+                options.getValue(CommandOptions.OPTION_TO));
     }
 
     /**

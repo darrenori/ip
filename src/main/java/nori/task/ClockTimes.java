@@ -66,6 +66,27 @@ final class ClockTimes {
     }
 
     /**
+     * Returns whether some task details say a clock time and nothing else.
+     *
+     * Details that carry anything besides one time may name a day in words
+     * Nori does not read, such as {@code Mon 2pm}. A caller comparing two
+     * times uses this to tell the details it can place on one day from the
+     * details it cannot.
+     *
+     * @param details the task details to read, with every date removed.
+     * @return {@code true} when the details are exactly one clock time.
+     */
+    static boolean isOnlyClockTime(String details) {
+        String trimmedDetails = details.trim();
+        if (trimmedDetails.isEmpty()) {
+            return false;
+        }
+
+        Matcher matcher = TIME_PATTERN.matcher(trimmedDetails);
+        return matcher.find() && matcher.start() == 0 && matcher.end() == trimmedDetails.length();
+    }
+
+    /**
      * Converts an hour as a user wrote it into an hour of the day.
      *
      * @param hour the hour as written.

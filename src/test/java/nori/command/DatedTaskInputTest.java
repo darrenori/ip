@@ -188,6 +188,47 @@ public class DatedTaskInputTest {
     }
 
     @Test
+    public void execute_eventWithReversedDates_reportsReversedDates() {
+        assertResponse("NOOT?! An event cannot end before it starts."
+                        + " Time only waddles forward.",
+                "event backwards /from 2026-09-03 /to 2026-09-01");
+    }
+
+    @Test
+    public void execute_eventWithReversedBareTimes_reportsReversedTimes() {
+        assertResponse("NOOT?! That event ends at or before it starts."
+                        + " Time only waddles forward.",
+                "event talk /from 2pm /to 1pm");
+    }
+
+    @Test
+    public void execute_eventEndingBeforeItStartsOnOneDate_reportsReversedTimes() {
+        assertResponse("NOOT?! That event ends at or before it starts."
+                        + " Time only waddles forward.",
+                "event talk /from 2019-06-06 1000 /to 0800");
+    }
+
+    @Test
+    public void execute_eventWithReversedTimes_leavesTheListUnchanged() {
+        GuiUi guiUi = new GuiUi();
+        Nori nori = new Nori(guiUi);
+
+        nori.executeCommand("event talk /from 2pm /to 1pm");
+        nori.executeCommand("list");
+
+        assertEquals("The iceberg is empty. Try \"todo borrow book\". Noot noot!",
+                guiUi.consumeResponse());
+    }
+
+    @Test
+    public void execute_eventNamingDaysInWords_addsTheTask() {
+        assertResponse("Noot noot! Task tucked safely under my wing:\n"
+                        + "  [E][ ] standup (from: Mon 2pm to: Tue 1pm)\n"
+                        + "The iceberg now holds 1 task(s).",
+                "event standup /from Mon 2pm /to Tue 1pm");
+    }
+
+    @Test
     public void execute_validDeadline_addsTheTask() {
         assertResponse("Noot noot! Task tucked safely under my wing:\n"
                         + "  [D][ ] submit report (by: Oct 15 2019)\n"
