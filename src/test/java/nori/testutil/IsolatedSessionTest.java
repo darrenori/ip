@@ -53,6 +53,10 @@ public abstract class IsolatedSessionTest {
     /**
      * Runs commands in one fresh session and returns the response to the last of them.
      *
+     * Each command is trimmed first, because both of Nori's user interfaces trim
+     * a line before handing it over and the parser is written to rely on that. A
+     * test that skipped the trim would be exercising input no user can produce.
+     *
      * @param inputs the commands to run, in order.
      * @return the response the final command produced.
      */
@@ -62,7 +66,7 @@ public abstract class IsolatedSessionTest {
 
         String response = "";
         for (String input : inputs) {
-            nori.executeCommand(input);
+            nori.executeCommand(input.trim());
             response = guiUi.consumeResponse();
         }
         return response;
@@ -79,7 +83,7 @@ public abstract class IsolatedSessionTest {
         Nori nori = new Nori(guiUi);
 
         for (String input : inputs) {
-            nori.executeCommand(input);
+            nori.executeCommand(input.trim());
             guiUi.consumeResponse();
         }
         return guiUi.isErrorResponse();
