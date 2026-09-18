@@ -80,27 +80,7 @@ public class Parser {
      */
     public static DateRange parseListDateRange(String listDetails) throws NoriException {
         CommandOptions options = CommandOptions.parse(listDetails);
-        boolean startsWithFrom = !options.getOptionNames().isEmpty()
-                && options.getOptionNames().get(0).equals(CommandOptions.OPTION_FROM)
-                && options.getDescription().isEmpty();
-        if (!startsWithFrom) {
-            throw new NoriException("NOOT?! Use either \"list\" or " + LIST_EXAMPLE + ".");
-        }
-        Optional<String> unexpectedOption = options.findUnexpectedOption(
-                CommandOptions.OPTION_FROM, CommandOptions.OPTION_TO);
-        if (unexpectedOption.isPresent()) {
-            throw new NoriException("NOOT?! A date-range list does not use \""
-                    + unexpectedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
-        }
-        Optional<String> repeatedOption = options.findRepeatedOption();
-        if (repeatedOption.isPresent()) {
-            throw new NoriException("NOOT?! A date-range list takes only one \""
-                    + repeatedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
-        }
-        if (!options.hasOption(CommandOptions.OPTION_TO)) {
-            throw new NoriException("NOOT?! A date-range list needs \"/to\" and an end date."
-                    + " Try " + LIST_EXAMPLE + ".");
-        }
+        checkDateRangeOptions(options);
 
         String fromInput = options.getValue(CommandOptions.OPTION_FROM);
         String toInput = options.getValue(CommandOptions.OPTION_TO);
@@ -120,6 +100,36 @@ public class Parser {
                     + " Time only waddles forward.");
         }
         return new DateRange(fromDate, toDate);
+    }
+
+    /**
+     * Checks that a date-range list opens with "/from" and holds "/from" and "/to" once each.
+     *
+     * @param options the options read from the text after the {@code list} command.
+     * @throws NoriException if an option is missing, repeated, out of place, or not one a list uses.
+     */
+    private static void checkDateRangeOptions(CommandOptions options) throws NoriException {
+        boolean isFromFirst = !options.getOptionNames().isEmpty()
+                && options.getOptionNames().get(0).equals(CommandOptions.OPTION_FROM)
+                && options.getDescription().isEmpty();
+        if (!isFromFirst) {
+            throw new NoriException("NOOT?! Use either \"list\" or " + LIST_EXAMPLE + ".");
+        }
+        Optional<String> unexpectedOption = options.findUnexpectedOption(
+                CommandOptions.OPTION_FROM, CommandOptions.OPTION_TO);
+        if (unexpectedOption.isPresent()) {
+            throw new NoriException("NOOT?! A date-range list does not use \""
+                    + unexpectedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
+        }
+        Optional<String> repeatedOption = options.findRepeatedOption();
+        if (repeatedOption.isPresent()) {
+            throw new NoriException("NOOT?! A date-range list takes only one \""
+                    + repeatedOption.get() + "\". Try " + LIST_EXAMPLE + ".");
+        }
+        if (!options.hasOption(CommandOptions.OPTION_TO)) {
+            throw new NoriException("NOOT?! A date-range list needs \"/to\" and an end date."
+                    + " Try " + LIST_EXAMPLE + ".");
+        }
     }
 
     /**
