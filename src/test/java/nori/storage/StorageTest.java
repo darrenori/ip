@@ -225,8 +225,10 @@ public class StorageTest extends IsolatedSessionTest {
 
         NoriException exception = assertThrows(NoriException.class, () -> new Storage().loadTasks());
 
-        assertEquals("SAD NOOT! Your saved tasks are corrupted"
-                + " and I have no backup to waddle back to.", exception.getMessage());
+        assertEquals("SAD NOOT! Your saved tasks in data/nori.txt are corrupted"
+                + " and I have no backup to waddle back to."
+                + " Repair that file or move it out of the data folder, then open me again.",
+                exception.getMessage());
     }
 
     @Test
@@ -237,8 +239,10 @@ public class StorageTest extends IsolatedSessionTest {
 
         NoriException exception = assertThrows(NoriException.class, () -> new Storage().loadTasks());
 
-        assertEquals("SAD NOOT! Your saved tasks are corrupted"
-                + " and the backup wouldn't come back either.", exception.getMessage());
+        assertEquals("SAD NOOT! Your saved tasks in data/nori.txt are corrupted"
+                + " and the backup wouldn't come back either."
+                + " Repair that file or move it out of the data folder, then open me again.",
+                exception.getMessage());
     }
 
     @Test
@@ -250,7 +254,8 @@ public class StorageTest extends IsolatedSessionTest {
         NoriException exception = assertThrows(
                 NoriException.class, () -> storage.saveTasks(List.of(new Todo("replacement"))));
 
-        assertEquals("SAD NOOT! I won't bury saved tasks that I couldn't read.",
+        assertEquals("SAD NOOT! I won't save over data/nori.txt while I can't read the tasks in it."
+                + " Repair that file or move it out of the data folder, then open me again.",
                 exception.getMessage());
         assertEquals("this is not a task",
                 Files.readString(storageDirectory.resolve(STORAGE_FILE), StandardCharsets.UTF_8)

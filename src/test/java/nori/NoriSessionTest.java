@@ -116,7 +116,8 @@ public class NoriSessionTest extends IsolatedSessionTest {
 
         String output = runSession("list", "bye");
 
-        assertTrue(output.contains("Your saved tasks are corrupted"));
+        assertTrue(output.contains("Your saved tasks in data/nori.txt are corrupted"));
+        assertTrue(output.contains("Repair that file or move it out of the data folder"));
         assertTrue(output.contains("The iceberg is empty."));
     }
 

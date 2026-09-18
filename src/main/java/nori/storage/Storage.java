@@ -29,6 +29,15 @@ public class Storage {
     /** Reported whenever a stored line cannot be turned back into a task. */
     private static final String UNREADABLE_STORAGE_ERROR =
             "SAD NOOT! I couldn't read your saved tasks off the ice.";
+    /**
+     * Tells a user how to get past a storage file Nori can neither read nor recover.
+     *
+     * Nori refuses to save over such a file so that the tasks in it are not lost,
+     * which leaves every change failing until the user deals with the file.
+     * Moving the file aside keeps those tasks for a later repair.
+     */
+    private static final String UNREADABLE_FILE_REMEDY =
+            "Repair that file or move it out of the data folder, then open me again.";
     /** Marks a stored field as Base64-encoded, distinguishing it from the older plain-text format. */
     private static final String ENCODED_FIELD_PREFIX = "b64:";
     /** Separates the fields of one stored task line. */
@@ -108,7 +117,8 @@ public class Storage {
      */
     public void saveTasks(List<Task> tasks) throws NoriException {
         if (!canWriteToStorage) {
-            throw new NoriException("SAD NOOT! I won't bury saved tasks that I couldn't read.");
+            throw new NoriException("SAD NOOT! I won't save over data/nori.txt while I can't read"
+                    + " the tasks in it. " + UNREADABLE_FILE_REMEDY);
         }
         if (tasks == null) {
             throw new NoriException("SAD NOOT! I couldn't save a task list that isn't there.");
@@ -352,8 +362,8 @@ public class Storage {
     private List<Task> recoverFromBackup() throws NoriException {
         if (Files.notExists(backupFilePath)) {
             canWriteToStorage = false;
-            throw new NoriException("SAD NOOT! Your saved tasks are corrupted"
-                    + " and I have no backup to waddle back to.");
+            throw new NoriException("SAD NOOT! Your saved tasks in data/nori.txt are corrupted"
+                    + " and I have no backup to waddle back to. " + UNREADABLE_FILE_REMEDY);
         }
 
         try {
@@ -365,8 +375,8 @@ public class Storage {
             return backupTasks;
         } catch (IOException | SecurityException | NoriException exception) {
             canWriteToStorage = false;
-            throw new NoriException("SAD NOOT! Your saved tasks are corrupted"
-                    + " and the backup wouldn't come back either.");
+            throw new NoriException("SAD NOOT! Your saved tasks in data/nori.txt are corrupted"
+                    + " and the backup wouldn't come back either. " + UNREADABLE_FILE_REMEDY);
         }
     }
 
