@@ -25,6 +25,34 @@ public class EventTest {
     }
 
     @Test
+    public void constructor_impossibleTime_acceptsEvent() {
+        // An event saved before times were checked must still load from disk.
+        assertDoesNotThrow(() -> new Event("old", "2026-10-01 25:00", "2026-10-02"));
+    }
+
+    @Test
+    public void findTimeError_impossibleStartTime_reportsTheTime() {
+        assertEquals(Optional.of("NOOT?! I cannot understand \"25:00\" as an event time."
+                        + " Use a time like \"1400\" or \"2:30pm\"."),
+                Event.findTimeError("2026-10-01 25:00", "2026-10-02"));
+    }
+
+    @Test
+    public void findTimeError_impossibleEndTime_reportsTheTime() {
+        assertEquals(Optional.of("NOOT?! I cannot understand \"2400\" as an event time."
+                        + " Use a time like \"1400\" or \"2:30pm\"."),
+                Event.findTimeError("2026-10-01 1000", "2026-10-01 2400"));
+    }
+
+    @Test
+    public void findTimeError_realTimesOrNoTimes_returnsEmpty() {
+        assertEquals(Optional.empty(), Event.findTimeError("2026-10-01 0930", "2026-10-01 11:45"));
+        assertEquals(Optional.empty(), Event.findTimeError("Mon 2pm", "Tue 1pm"));
+        assertEquals(Optional.empty(), Event.findTimeError("2026-10-01", "2026-10-02"));
+        assertEquals(Optional.empty(), Event.findTimeError(null, null));
+    }
+
+    @Test
     public void constructor_impossibleDate_throwsNoriException() {
         assertThrows(NoriException.class, () ->
                 new Event("impossible", "2019-02-31 1400", "2019-02-31 1500"));

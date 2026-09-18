@@ -89,6 +89,36 @@ public class ClockTimesTest {
         assertNoTime("Mon");
     }
 
+    @Test
+    public void findImpossibleTime_timeNoClockShows_returnsItAsWritten() {
+        assertEquals(Optional.of("25:00"), ClockTimes.findImpossibleTime("25:00"));
+        assertEquals(Optional.of("9:60"), ClockTimes.findImpossibleTime(" 9:60"));
+        assertEquals(Optional.of("2400"), ClockTimes.findImpossibleTime("2400"));
+        assertEquals(Optional.of("1260"), ClockTimes.findImpossibleTime(" 1260 "));
+        assertEquals(Optional.of("13pm"), ClockTimes.findImpossibleTime("13pm"));
+        assertEquals(Optional.of("0am"), ClockTimes.findImpossibleTime("Mon 0am"));
+    }
+
+    @Test
+    public void findImpossibleTime_realTimes_returnsEmpty() {
+        assertNoImpossibleTime("0930");
+        assertNoImpossibleTime("23:59");
+        assertNoImpossibleTime("2:30 PM");
+        assertNoImpossibleTime("12:30am");
+        assertNoImpossibleTime("13:30pm");
+        assertNoImpossibleTime("Mon 2pm");
+        assertNoImpossibleTime("0900 and 1100");
+    }
+
+    @Test
+    public void findImpossibleTime_textThatIsNotATime_returnsEmpty() {
+        assertNoImpossibleTime("room 2500");
+        assertNoImpossibleTime("costs 9.75");
+        assertNoImpossibleTime("12345");
+        assertNoImpossibleTime("soon");
+        assertNoImpossibleTime("");
+    }
+
     /**
      * Checks that some details give exactly one expected time.
      *
@@ -108,5 +138,14 @@ public class ClockTimesTest {
      */
     private void assertNoTime(String details) {
         assertTrue(ClockTimes.findFirstIn(details).isEmpty(), details);
+    }
+
+    /**
+     * Checks that some details hold no time-shaped text that fails to be a real time.
+     *
+     * @param details the task details to read.
+     */
+    private void assertNoImpossibleTime(String details) {
+        assertTrue(ClockTimes.findImpossibleTime(details).isEmpty(), details);
     }
 }

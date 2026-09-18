@@ -87,8 +87,9 @@ class EventCommand extends AddTaskCommand {
             return Optional.of("NOOT?! \"/to\" needs an end time."
                     + " Even penguin meetings eventually end.");
         }
-        return Event.findOrderingError(options.getValue(CommandOptions.OPTION_FROM),
-                options.getValue(CommandOptions.OPTION_TO));
+        String from = options.getValue(CommandOptions.OPTION_FROM);
+        String to = options.getValue(CommandOptions.OPTION_TO);
+        return Event.findTimeError(from, to).or(() -> Event.findOrderingError(from, to));
     }
 
     /**

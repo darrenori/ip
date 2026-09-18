@@ -197,6 +197,37 @@ public class Event extends Task {
     }
 
     /**
+     * Reports a start or end that names a clock time no clock can show, such as {@code 25:00}.
+     *
+     * Like a reversed ordering, this is a fault in what a user typed, so it is
+     * reported to the caller rather than refusing construction. An event saved
+     * before this check existed therefore still loads from disk.
+     *
+     * @param from the event's start details.
+     * @param to the event's end details.
+     * @return the correction to show the user, or empty when every time is real.
+     */
+    public static Optional<String> findTimeError(String from, String to) {
+        return findImpossibleTime(from)
+                .or(() -> findImpossibleTime(to))
+                .map(time -> "NOOT?! I cannot understand \"" + time + "\" as an event time."
+                        + " Use a time like \"1400\" or \"2:30pm\".");
+    }
+
+    /**
+     * Returns the first impossible clock time in one event detail.
+     *
+     * @param eventDetail the start or end detail to inspect.
+     * @return the impossible time as written, or empty when there is none or no detail at all.
+     */
+    private static Optional<String> findImpossibleTime(String eventDetail) {
+        if (eventDetail == null) {
+            return Optional.empty();
+        }
+        return ClockTimes.findImpossibleTime(removeDates(eventDetail));
+    }
+
+    /**
      * Returns whether the start and end details are certain to fall on one day.
      *
      * @param from the event's start details.

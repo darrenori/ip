@@ -1634,3 +1634,67 @@ ____________________________________________________________
      Noot noot! Time to waddle off. Stay frosty!
     ____________________________________________________________
 ```
+
+## Test 22: Reject an event time no clock can show
+
+**Aim:** Verify that an event whose start or end names a clock time that does not exist is rejected and names that time, while real times in the same forms are still accepted.
+
+**Covers:** `Event.findTimeError` and `ClockTimes.findImpossibleTime`, for an hour past 23, a minute past 59, a compact time past 2359, and an hour past 12 before a meridiem.
+
+### Input
+```text
+event talk /from 2026-10-01 25:00 /to 2026-10-02
+event talk /from 2026-10-01 9:75 /to 2026-10-01 1000
+event talk /from 2026-10-01 1000 /to 2026-10-01 2400
+event talk /from 13pm /to 2pm
+event talk /from 2026-10-01 0930 /to 2026-10-01 11:45
+list
+bye
+```
+
+### Expected output
+```text
+  _   _  ____  _____  _____ 
+ | \ | |/ __ \|  __ \|_   _|
+ |  \| | |  | | |__) | | |  
+ | . ` | |  | |  _  /  | |  
+ | |\  | |__| | | \ \ _| |_ 
+ |_| \_|\____/|_|  \_\_____|
+
+
+____________________________________________________________
+Noot noot! I'm Nori, your tiny task penguin.
+Waddle in a command and I'll get flapping.
+____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! I cannot understand "25:00" as an event time. Use a time like "1400" or "2:30pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! I cannot understand "9:75" as an event time. Use a time like "1400" or "2:30pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! I cannot understand "2400" as an event time. Use a time like "1400" or "2:30pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! I cannot understand "13pm" as an event time. Use a time like "1400" or "2:30pm".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Task tucked safely under my wing:
+       [E][ ] talk (from: 2026-10-01 0930 to: 2026-10-01 11:45)
+     The iceberg now holds 1 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Tasks currently chilling on the iceberg:
+     1.[E][ ] talk (from: 2026-10-01 0930 to: 2026-10-01 11:45)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noot noot! Time to waddle off. Stay frosty!
+    ____________________________________________________________
+```

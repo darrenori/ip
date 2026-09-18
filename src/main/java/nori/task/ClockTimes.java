@@ -27,6 +27,25 @@ final class ClockTimes {
                     + "|(?<wholeHour>1[0-2]|0?[1-9])\\s*(?<wholeMeridiem>[ap]\\.?m\\.?)"
                     + ")(?![0-9])",
             Pattern.CASE_INSENSITIVE);
+    /**
+     * Matches text written in the shape of a clock time, whether or not a clock could show it.
+     *
+     * The two shapes are a colon-separated time such as {@code 25:00} and an
+     * hour followed by a meridiem such as {@code 13pm}. A dotted pair is left
+     * out because {@code 9.75} may be a price, not a time.
+     */
+    private static final Pattern TIME_SHAPE_PATTERN = Pattern.compile(
+            "(?<![0-9:.])(?:"
+                    + "(?<hour>[0-9]{1,2}):(?<minute>[0-9]{2})"
+                    + "|(?<meridiemHour>[0-9]{1,2})\\s*[ap]\\.?m\\.?"
+                    + ")(?![0-9])",
+            Pattern.CASE_INSENSITIVE);
+    /** Matches details that are one compact 24-hour time and nothing else, such as {@code 2500}. */
+    private static final Pattern COMPACT_TIME_SHAPE_PATTERN = Pattern.compile("[0-9]{4}");
+    /** Last hour of a day on a 24-hour clock. */
+    private static final int LAST_HOUR_OF_DAY = 23;
+    /** Last minute of an hour. */
+    private static final int LAST_MINUTE_OF_HOUR = 59;
 
     /** Prevents instantiation of this stateless reader. */
     private ClockTimes() {
@@ -84,6 +103,49 @@ final class ClockTimes {
 
         Matcher matcher = TIME_PATTERN.matcher(trimmedDetails);
         return matcher.find() && matcher.start() == 0 && matcher.end() == trimmedDetails.length();
+    }
+
+    /**
+     * Returns the first text in some task details that looks like a clock time but is not one.
+     *
+     * {@link #findFirstIn} passes over such text, so without this check a
+     * detail such as {@code 2026-10-01 25:00} would be kept as an event with
+     * no time at all. A lone four-digit detail such as {@code 2500} counts,
+     * because that is the form Nori's own examples use; four digits among
+     * other words may be a room number and are left alone.
+     *
+     * @param details the task details to read, with every date removed.
+     * @return the impossible time as the user wrote it, or empty when there is none.
+     */
+    static Optional<String> findImpossibleTime(String details) {
+        String trimmedDetails = details.strip();
+        boolean isCompactTimeShape = COMPACT_TIME_SHAPE_PATTERN.matcher(trimmedDetails).matches();
+        if (isCompactTimeShape && !isOnlyClockTime(trimmedDetails)) {
+            return Optional.of(trimmedDetails);
+        }
+
+        Matcher matcher = TIME_SHAPE_PATTERN.matcher(details);
+        while (matcher.find()) {
+            if (!isRealTime(matcher)) {
+                return Optional.of(matcher.group().strip());
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns whether a match of {@link #TIME_SHAPE_PATTERN} names a time a clock can show.
+     *
+     * @param matcher a matcher positioned on a match of that pattern.
+     * @return {@code true} when the hour and minute are both in range.
+     */
+    private static boolean isRealTime(Matcher matcher) {
+        if (matcher.group("hour") != null) {
+            return Integer.parseInt(matcher.group("hour")) <= LAST_HOUR_OF_DAY
+                    && Integer.parseInt(matcher.group("minute")) <= LAST_MINUTE_OF_HOUR;
+        }
+        int meridiemHour = Integer.parseInt(matcher.group("meridiemHour"));
+        return meridiemHour >= 1 && meridiemHour <= HOURS_IN_HALF_DAY;
     }
 
     /**

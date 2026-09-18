@@ -183,6 +183,13 @@ public class DatedTaskInputTest extends IsolatedSessionTest {
     }
 
     @Test
+    public void execute_eventWithImpossibleTime_reportsTheTime() {
+        assertResponse("NOOT?! I cannot understand \"9:75\" as an event time."
+                        + " Use a time like \"1400\" or \"2:30pm\".",
+                "event talk /from 2026-10-01 9:75 /to 2026-10-01 1000");
+    }
+
+    @Test
     public void execute_eventWithReversedTimes_leavesTheListUnchanged() {
         GuiUi guiUi = new GuiUi();
         Nori nori = new Nori(guiUi);
