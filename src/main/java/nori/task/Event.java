@@ -242,6 +242,9 @@ public class Event extends Task {
     /**
      * Returns whether another task is an event for the same thing over the same span.
      *
+     * The start and end details are compared the way descriptions are, so
+     * spacing alone never makes two spans differ.
+     *
      * @param other the task to compare this one with.
      * @return {@code true} when the descriptions and both spans match.
      */
@@ -252,7 +255,7 @@ public class Event extends Task {
         }
 
         Event otherEvent = (Event) other;
-        return otherEvent.from.equals(from) && otherEvent.to.equals(to);
+        return isSameText(otherEvent.from, from) && isSameText(otherEvent.to, to);
     }
 
     /**

@@ -1512,7 +1512,7 @@ ____________________________________________________________
 
 ## Test 21: Refuse to add a task the iceberg already holds
 
-**Aim:** Verify that adding a task the list already records is refused and names the task already stored, while a task differing in its date, its span, or the case of its description is still added, and completion never makes a repeat look new.
+**Aim:** Verify that adding a task the list already records is refused and names the task already stored, while a task differing in its date, its span, or the case of its description is still added, and neither completion nor extra spacing makes a repeat look new.
 
 **Covers:** `Task.isSameTask` and its deadline and event overrides, `TaskList.findSameTask`, and the duplicate branch of `AddTaskCommand`.
 
@@ -1523,6 +1523,7 @@ todo read book
 mark 1
 todo read book
 todo Read Book
+todo read   book
 deadline report /by 2019-01-01
 deadline report /by 2019-01-02
 deadline report /by 2019-01-01
@@ -1575,6 +1576,12 @@ ____________________________________________________________
      Noot noot! Task tucked safely under my wing:
        [T][ ] Read Book
      The iceberg now holds 2 task(s).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     NOOT?! The iceberg already holds that task:
+       [T][X] read book
+     I won't carry the same fish twice.
     ____________________________________________________________
 
     ____________________________________________________________

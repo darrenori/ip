@@ -52,16 +52,41 @@ public abstract class Task {
      *
      * Completion is deliberately left out of the comparison, because a
      * finished "read book" and an unfinished one are one task a user has
-     * entered twice, not two tasks. Descriptions are compared exactly rather
-     * than ignoring case, so a user who deliberately keeps "Draft" and "draft"
-     * apart is allowed to.
+     * entered twice, not two tasks. Descriptions keep their case, so a user who
+     * deliberately keeps "Draft" and "draft" apart is allowed to. Their spacing
+     * is ignored, because nobody means "read  book" to be a different task
+     * from "read book".
      *
      * @param other the task to compare this one with.
      * @return {@code true} when both are of one type and describe the same thing.
      */
     public boolean isSameTask(Task other) {
         return other != null && other.getClass() == getClass()
-                && other.getDescription().equals(description);
+                && isSameText(other.getDescription(), description);
+    }
+
+    /**
+     * Returns whether two pieces of task text read the same once their spacing is ignored.
+     *
+     * Runs of whitespace count as one space, and leading or trailing whitespace
+     * counts for nothing. Case still matters.
+     *
+     * @param first one piece of text.
+     * @param second the other piece of text.
+     * @return {@code true} when the two differ in nothing but spacing.
+     */
+    static boolean isSameText(String first, String second) {
+        return collapseSpacing(first).equals(collapseSpacing(second));
+    }
+
+    /**
+     * Returns text with every run of whitespace reduced to one space and its ends trimmed.
+     *
+     * @param text the text to tidy.
+     * @return the text as a spacing-insensitive comparison sees it.
+     */
+    private static String collapseSpacing(String text) {
+        return text.strip().replaceAll("\\s+", " ");
     }
 
     /**

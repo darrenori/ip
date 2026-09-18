@@ -212,6 +212,18 @@ public class TaskListTest {
     }
 
     @Test
+    public void isSameTask_descriptionsDifferingOnlyInSpacing_returnsTrue() {
+        assertTrue(new Todo("read book").isSameTask(new Todo("read   book")));
+        assertTrue(new Todo("read book").isSameTask(new Todo(" read\tbook ")));
+    }
+
+    @Test
+    public void isSameTask_eventSpansDifferingOnlyInSpacing_returnsTrue() throws NoriException {
+        assertTrue(new Event("fair", "2019-06-06 1000", "1800")
+                .isSameTask(new Event("fair", "2019-06-06   1000", "1800")));
+    }
+
+    @Test
     public void isSameTask_deadlinesOnDifferentDates_returnsFalse() {
         assertFalse(new Deadline("report", LocalDate.parse("2019-01-01"))
                 .isSameTask(new Deadline("report", LocalDate.parse("2019-01-02"))));
