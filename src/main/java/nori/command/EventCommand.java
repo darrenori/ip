@@ -42,10 +42,23 @@ class EventCommand extends AddTaskCommand {
     /**
      * Reports the first fault in this command's details.
      *
+     * The markers are checked before what is written after them, so a user
+     * who left out "/to" hears about that rather than about an empty value.
+     *
      * @param options the options read from the details.
      * @return the correction to show the user, or empty when an event can be built.
      */
     private Optional<String> findFormatError(CommandOptions options) {
+        return findOptionError(options).or(() -> findDetailError(options));
+    }
+
+    /**
+     * Reports the first fault in which options were typed, and in what order.
+     *
+     * @param options the options read from the details.
+     * @return the correction to show the user, or empty when both options appear once, in order.
+     */
+    private static Optional<String> findOptionError(CommandOptions options) {
         Optional<String> unexpectedOption = options.findUnexpectedOption(
                 CommandOptions.OPTION_FROM, CommandOptions.OPTION_TO);
         if (unexpectedOption.isPresent()) {
@@ -75,20 +88,30 @@ class EventCommand extends AddTaskCommand {
             return Optional.of("NOOT?! Put \"/from\" before \"/to\"."
                     + " Time waddles forward, not backward.");
         }
+        return Optional.empty();
+    }
+
+    /**
+     * Reports the first fault in the description, start, or end a user wrote.
+     *
+     * @param options the options read from the details, already known to hold both options once.
+     * @return the correction to show the user, or empty when an event can be built.
+     */
+    private static Optional<String> findDetailError(CommandOptions options) {
+        String from = options.getValue(CommandOptions.OPTION_FROM);
+        String to = options.getValue(CommandOptions.OPTION_TO);
         if (options.getDescription().isEmpty()) {
             return Optional.of("NOOT?! An event needs a description before \"/from\"."
                     + " Try " + EVENT_EXAMPLE + ".");
         }
-        if (options.getValue(CommandOptions.OPTION_FROM).isEmpty()) {
+        if (from.isEmpty()) {
             return Optional.of("NOOT?! \"/from\" needs a start time."
                     + " I cannot waddle in from the void.");
         }
-        if (options.getValue(CommandOptions.OPTION_TO).isEmpty()) {
+        if (to.isEmpty()) {
             return Optional.of("NOOT?! \"/to\" needs an end time."
                     + " Even penguin meetings eventually end.");
         }
-        String from = options.getValue(CommandOptions.OPTION_FROM);
-        String to = options.getValue(CommandOptions.OPTION_TO);
         return Event.findTimeError(from, to).or(() -> Event.findOrderingError(from, to));
     }
 
